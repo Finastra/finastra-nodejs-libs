@@ -11,9 +11,9 @@
 
 ## Packages
 
-| Project       | Package                                                                    | Version                                                                                                               | Links                                                                             |
-| ------------- | -------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| **OIDC Auth** | [`@ffdc/nestjs-oidc`](https://npmjs.com/package/@angular-devkit/architect) | [![latest](https://img.shields.io/npm/v/%ffdc%2Fnestjs-oidc/latest.svg)](https://npmjs.com/package/@ffdc/nestjs-oidc) | [![README](https://img.shields.io/badge/README--green.svg)](/libs/oidc/README.md) |
+| Project       | Package                                                                    | Version                                                                                                             | Links                                                                             |
+| ------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| **OIDC Auth** | [`@ffdc/nestjs-oidc`](https://npmjs.com/package/@angular-devkit/architect) | [![latest](https://img.shields.io/npm/v/@ffdc/nestjs-oidc/latest.svg)](https://npmjs.com/package/@ffdc/nestjs-oidc) | [![README](https://img.shields.io/badge/README--green.svg)](/libs/oidc/README.md) |
 
 ## Installation
 
