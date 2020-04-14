@@ -4,8 +4,9 @@
   
   <p align="center">A set of opinionated libraries for building efficient and scalable server-side applications with <a href="http://nodejs.org" target="blank">Node.js</a>.</p>
 <p align="center">
-  <a href="https://github.com/fusionfabric/finastra-nodejs-libs/actions?query=workflow%3Adevelop"><img src="https://github.com/fusionfabric/finastra-nodejs-libs/workflows/develop/badge.svg" alt="Build status" /></a>
+  <a href="https://github.com/fusionfabric/finastra-nodejs-libs/actions?query=workflow%3ABuild"><img src="https://github.com/fusionfabric/finastra-nodejs-libs/workflows/Build/badge.svg" alt="Build status" /></a>
   <a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
+  <img src="https://img.shields.io/badge/PRs-welcome-green" alt="PRs welcome"/>
   <a href="https://twitter.com/FinastraFS"><img src="https://img.shields.io/twitter/follow/FinastraFS.svg?style=social&label=Follow"></a>
 </p>
 
