@@ -1,0 +1,23 @@
+{
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "src",
+  "projects": {
+    "oidc": {
+      "type": "library",
+      "root": "libs/oidc",
+      "entryFile": "src/index",
+      "sourceRoot": "libs/oidc",
+      "compilerOptions": {
+        "tsConfigPath": "libs/oidc/tsconfig.lib.json",
+        "assets": [
+          "package.json",
+          "README.md"
+        ],
+        "deleteOutDir": true
+      }
+    }
+  },
+  "compilerOptions": {
+    "webpack": false
+  }
+}
