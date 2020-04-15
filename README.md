@@ -5,6 +5,9 @@
   <p align="center">A set of opinionated libraries for building efficient and scalable server-side applications with <a href="http://nodejs.org" target="blank">Node.js</a>.</p>
 <p align="center">
   <a href="https://github.com/fusionfabric/finastra-nodejs-libs/actions?query=workflow%3ABuild"><img src="https://github.com/fusionfabric/finastra-nodejs-libs/workflows/Build/badge.svg" alt="Build status" /></a>
+  <a href="https://codecov.io/gh/fusionfabric/finastra-nodejs-libs">
+  <img src="https://codecov.io/gh/fusionfabric/finastra-nodejs-libs/branch/develop/graph/badge.svg" />
+</a>
   <a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
   <img src="https://img.shields.io/badge/PRs-welcome-green" alt="PRs welcome"/>
   <a href="https://twitter.com/FinastraFS"><img src="https://img.shields.io/twitter/follow/FinastraFS.svg?style=social&label=Follow"></a>
@@ -12,9 +15,10 @@
 
 ## Packages
 
-| Project       | Package                                                            | Version                                                                                                             | Links                                                                             |
-| ------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| **OIDC Auth** | [`@ffdc/nestjs-oidc`](https://npmjs.com/package/@ffdc/nestjs-oidc) | [![latest](https://img.shields.io/npm/v/@ffdc/nestjs-oidc/latest.svg)](https://npmjs.com/package/@ffdc/nestjs-oidc) | [![README](https://img.shields.io/badge/README--green.svg)](/libs/oidc/README.md) |
+| Project                                                                           | Package                                                            | Version                                                                                                             | Coverage                                                                                                                                                                | Links |
+| --------------------------------------------------------------------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
+| **OIDC Auth**                                                                     | [`@ffdc/nestjs-oidc`](https://npmjs.com/package/@ffdc/nestjs-oidc) | [![latest](https://img.shields.io/npm/v/@ffdc/nestjs-oidc/latest.svg)](https://npmjs.com/package/@ffdc/nestjs-oidc) | [![codecov](https://codecov.io/gh/fusionfabric/finastra-nodejs-libs/branch/develop/graph/badge.svg?flag=oidc)](https://codecov.io/gh/fusionfabric/finastra-nodejs-libs) |
+| [![README](https://img.shields.io/badge/README--green.svg)](/libs/oidc/README.md) |
 
 ## Installation
 

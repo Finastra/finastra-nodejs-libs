@@ -83,6 +83,7 @@
     "collectCoverageFrom": [
       "**/*.(t|j)s",
       "!src/**/*.ts",
+      "!**/index.ts",
       "!**/*mock.ts"
     ],
     "coverageDirectory": "./coverage",
