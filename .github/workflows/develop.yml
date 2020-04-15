@@ -38,11 +38,10 @@ jobs:
       - name: Codecov
         uses: codecov/codecov-action@v1.0.6
         with:
-          token: ${{ secrets.FFDC_BOT_NPM_AUTH_TOKEN }}
+          token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage/lcov.info
           flags: unit
           fail_ci_if_error: true
-      #
 
       # Build
       - name: Build Package
