@@ -42,6 +42,7 @@ jobs:
           file: ./coverage/lcov.info
           flags: unit
           fail_ci_if_error: true
+      #
 
       # Build
       - name: Build Package
