@@ -47,6 +47,7 @@
     "rxjs": "^6.5.4"
   },
   "devDependencies": {
+    "@golevelup/nestjs-testing": "^0.1.2",
     "@nestjs/cli": "^6.13.2",
     "@nestjs/schematics": "^6.8.1",
     "@nestjs/testing": "^6.10.14",
@@ -87,12 +88,6 @@
       "!**/*mock.ts"
     ],
     "coverageDirectory": "./coverage",
-    "coverageReporters": [
-      "json",
-      "lcovonly",
-      "text",
-      "clover"
-    ],
     "testEnvironment": "node",
     "roots": [
       "<rootDir>/src/",
