@@ -22,29 +22,29 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
   }
 
   async validate(tokenset: TokenSet): Promise<any> {
-    try {
-      const userinfo =
-        this.oidcHelpers.config.userInfoMethod === UserInfoMethod.ffdc
-          ? this.userInfoFFDC(tokenset)
-          : this.getUserInfo(tokenset);
+    const userinfo =
+      this.oidcHelpers.config.userInfoMethod === UserInfoMethod.ffdc
+        ? this.userInfoFFDC(tokenset)
+        : this.getUserInfo(tokenset);
 
-      const id_token = tokenset.id_token;
-      const access_token = tokenset.access_token;
-      const refresh_token = tokenset.refresh_token;
-      const user = {
-        id_token,
-        access_token,
-        refresh_token,
-        userinfo,
-      };
-      return user;
-    } catch (err) {
-      throw new UnauthorizedException();
-    }
+    const id_token = tokenset.id_token;
+    const access_token = tokenset.access_token;
+    const refresh_token = tokenset.refresh_token;
+    const user = {
+      id_token,
+      access_token,
+      refresh_token,
+      userinfo,
+    };
+    return user;
   }
 
   private async getUserInfo(tokenset: TokenSet) {
-    return await this.oidcHelpers.client.userinfo(tokenset);
+    try {
+      return await this.oidcHelpers.client.userinfo(tokenset);
+    } catch (err) {
+      throw new UnauthorizedException();
+    }
   }
 
   private userInfoFFDC(tokenset: TokenSet) {
