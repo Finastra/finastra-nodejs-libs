@@ -8,6 +8,10 @@ coverage:
       flags:
         - oidc
       target: 80%
+    patch:
+      default:
+        target: 80%
+
 flags:
   oidc:
     paths:
