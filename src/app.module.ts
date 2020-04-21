@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CatsModule } from './cats/cats.module';
-import { OidcModule } from '@uxd-finastra/oidc';
+import { OidcModule } from '@ffdc/nestjs-oidc';
+import { ProxyModule } from '@ffdc/nestjs-proxy';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { OidcModule } from '@uxd-finastra/oidc';
       inject: [ConfigService],
     }),
     CatsModule,
+    ProxyModule,
   ],
   controllers: [],
   providers: [],

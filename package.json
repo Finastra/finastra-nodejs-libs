@@ -38,6 +38,7 @@
     "csurf": "^1.11.0",
     "express-session": "^1.17.0",
     "helmet": "^3.21.2",
+    "http-proxy": "^1.18.0",
     "mongoose": "^5.8.11",
     "openid-client": "^3.12.2",
     "passport": "^0.4.1",
@@ -94,8 +95,10 @@
       "<rootDir>/libs/"
     ],
     "moduleNameMapper": {
-      "@uxd-finastra/oidc/(.*)": "<rootDir>/libs/oidc/src/$1",
-      "@uxd-finastra/oidc": "<rootDir>/libs/oidc/src"
+      "@ffdc/nestjs-oidc/(.*)": "<rootDir>/libs/oidc/src/$1",
+      "@ffdc/nestjs-oidc": "<rootDir>/libs/oidc/src",
+      "@ffdc/nestjs-proxy/(.*)": "<rootDir>/libs/proxy/src/$1",
+      "@ffdc/nestjs-proxy": "<rootDir>/libs/proxy/src"
     }
   }
 }

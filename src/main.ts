@@ -1,6 +1,6 @@
 import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { TokenGuard, setupSession, getTokenStore } from '@uxd-finastra/oidc';
+import { TokenGuard, setupSession, getTokenStore } from '@ffdc/nestjs-oidc';
 import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
