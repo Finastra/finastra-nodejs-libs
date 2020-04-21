@@ -2,17 +2,24 @@ import { Injectable, Inject, Logger } from '@nestjs/common';
 import { Server } from 'http-proxy';
 import { parse } from 'url';
 import { Request, Response } from 'express';
-import { ProxyOptions, Service } from '../interfaces';
-import { USER_ID_HEADER } from '../proxy.constants';
+import { ProxyModuleOptions } from '../interfaces';
+import {
+  USER_ID_HEADER,
+  PROXY_MODULE_OPTIONS,
+  HTTP_PROXY,
+} from '../proxy.constants';
 import { concatPath, getBaseURL } from '../utils';
 
 @Injectable()
 export class ProxyService {
   private readonly logger = new Logger(ProxyService.name);
 
-  constructor(@Inject('httpProxy') private proxy: Server) {}
+  constructor(
+    @Inject(HTTP_PROXY) private proxy: Server,
+    @Inject(PROXY_MODULE_OPTIONS) private options: ProxyModuleOptions,
+  ) {}
 
-  async proxyRequest(req: Request, res: Response, options: ProxyOptions = {}) {
+  async proxyRequest(req: Request, res: Response) {
     const target = req.query.target;
     const serviceId = req.query.serviceId;
     let token = null;
@@ -22,19 +29,14 @@ export class ProxyService {
     }
 
     if (target && !serviceId) {
-      return this.doProxy(req, res, target, token, options);
+      return this.doProxy(req, res, target, token);
     }
 
     if (serviceId) {
-      const servicesCollection: Service[] = [
-        {
-          id: 'ffdc-accounts',
-          url:
-            'https://api.fusionfabric.cloud/retail-us/me/account/v1/accounts',
-        },
-      ];
       const services = new Map(
-        servicesCollection.map(service => [service.id, service]),
+        this.options.services
+          ? this.options.services.map(service => [service.id, service])
+          : [],
       );
       if (services.has(serviceId)) {
         const service = services.get(serviceId);
@@ -64,7 +66,7 @@ export class ProxyService {
     res: Response,
     target: string,
     token: string,
-    options: ProxyOptions = {},
+    options: Server.ServerOptions = {},
   ) {
     let userId = null;
     if (req.user && (req.user as any).userinfo.username) {

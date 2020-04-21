@@ -1,16 +1,25 @@
 import { Module, Logger } from '@nestjs/common';
+import { createConfigurableDynamicRootModule } from '@golevelup/nestjs-modules';
 import { createProxyServer } from 'http-proxy';
 import * as queryString from 'querystring';
 import { concatPath } from './utils';
 import { ProxyService } from './services';
 import { ProxyController } from './controllers';
-import { defaultProxyOptions } from './proxy.constants';
+import {
+  defaultProxyOptions,
+  PROXY_MODULE_OPTIONS,
+  HTTP_PROXY,
+} from './proxy.constants';
+import { ProxyModuleOptions } from './interfaces';
 
 const proxyFactory = {
-  provide: 'httpProxy',
-  useFactory: async () => {
+  provide: HTTP_PROXY,
+  useFactory: async (options: ProxyModuleOptions) => {
     const logger = new Logger('httpProxy');
-    const proxy = createProxyServer(defaultProxyOptions);
+    const proxy = createProxyServer({
+      ...defaultProxyOptions,
+      ...options.config,
+    });
 
     proxy.on('proxyReq', function(proxyReq, req, res, options) {
       const url = concatPath(proxyReq.getHeader('host'), req.url);
@@ -43,10 +52,14 @@ const proxyFactory = {
     });
     return proxy;
   },
+  inject: [PROXY_MODULE_OPTIONS],
 };
 
 @Module({
   providers: [ProxyService, proxyFactory],
   controllers: [ProxyController],
 })
-export class ProxyModule {}
+export class ProxyModule extends createConfigurableDynamicRootModule<
+  ProxyModule,
+  ProxyModuleOptions
+>(PROXY_MODULE_OPTIONS) {}

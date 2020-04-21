@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CatsModule } from './cats/cats.module';
 import { OidcModule } from '@ffdc/nestjs-oidc';
 import { ProxyModule } from '@ffdc/nestjs-proxy';
+import { ProxyConfigService } from './proxy-config.service';
 
 @Module({
   imports: [
@@ -22,7 +23,10 @@ import { ProxyModule } from '@ffdc/nestjs-proxy';
       inject: [ConfigService],
     }),
     CatsModule,
-    ProxyModule,
+    ProxyModule.forRootAsync(ProxyModule, {
+      useClass: ProxyConfigService,
+      imports: [ConfigModule.forRoot()],
+    }),
   ],
   controllers: [],
   providers: [],

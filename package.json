@@ -23,6 +23,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@golevelup/nestjs-modules": "^0.4.0",
     "@nestjs/common": "^6.10.14",
     "@nestjs/config": "^0.1.0",
     "@nestjs/core": "^6.10.14",
