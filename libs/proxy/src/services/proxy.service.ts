@@ -15,7 +15,7 @@ export class ProxyService {
   private readonly logger = new Logger(ProxyService.name);
 
   constructor(
-    @Inject(HTTP_PROXY) private proxy: Server,
+    @Inject(HTTP_PROXY) private proxy: Server | any,
     @Inject(PROXY_MODULE_OPTIONS) private options: ProxyModuleOptions,
   ) {}
 
@@ -69,7 +69,11 @@ export class ProxyService {
     options: Server.ServerOptions = {},
   ) {
     let userId = null;
-    if (req.user && (req.user as any).userinfo.username) {
+    if (
+      req.user &&
+      (req.user as any).userinfo &&
+      (req.user as any).userinfo.username
+    ) {
       userId = (req.user as any).userinfo.username;
     }
 
