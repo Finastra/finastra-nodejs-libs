@@ -2,21 +2,6 @@
 
 ## Use it
 
-Configure yout environment variables.
-
-`.env`
-
-```
-OIDC_ISSUER=""
-OIDC_CLIENT_ID=""
-OIDC_CLIENT_SECRET=""
-OIDC_SCOPES=""
-OIDC_LOGIN_REDIRECT_URI=""
-OIDC_LOGOUT_REDIRECT_URI=""
-OIDC_RESOURCE=""
-SESSION_SECRET=""
-```
-
 `app.module.ts`
 
 ```typescript
@@ -33,7 +18,6 @@ import { OidcModule } from '@ffdc/nestjs-oidc';
         scopes: configService.get('OIDC_SCOPES'),
         redirectUriLogin: configService.get('OIDC_LOGIN_REDIRECT_URI'),
         redirectUriLogout: configService.get('OIDC_LOGOUT_REDIRECT_URI'),
-        resource: configService.get('OIDC_RESOURCE'), //Optional
       }),
       inject: [ConfigService],
     }),
@@ -51,6 +35,8 @@ import { setupSession } from '@ffdc/nestjs-oidc';
 
 setupSession(app);
 ```
+
+> By default, session secret will be looked for in the `SESSION_SECRET` environment variable
 
 ### Auth Guards
 
@@ -111,3 +97,4 @@ import { TokenGuard } from '@ffdc/nestjs-oidc';
 | -------------- | ---------------- |
 | clockTolerance | Clock tolerance  |
 | userInfoMethod | 'ffdc' or 'oidc' |
+| resource       | URL of resource  |
