@@ -9,6 +9,7 @@ export interface OidcModuleOptions {
   redirectUriLogout: string;
   userInfoMethod?: UserInfoMethod;
   clockTolerance?: number;
+  resource?: string;
 }
 
 export interface OidcOptionsFactory {

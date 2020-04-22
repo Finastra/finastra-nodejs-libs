@@ -18,6 +18,7 @@ import { OidcModule } from '@ffdc/nestjs-oidc';
         scopes: configService.get('OIDC_SCOPES'),
         redirectUriLogin: configService.get('OIDC_LOGIN_REDIRECT_URI'),
         redirectUriLogout: configService.get('OIDC_LOGOUT_REDIRECT_URI'),
+        resource: configService.get('OIDC_RESOURCE'), //Optional
       }),
       inject: [ConfigService],
     }),
