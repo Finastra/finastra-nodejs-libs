@@ -3,7 +3,7 @@ name: Pull requests
 on: pull_request
 
 jobs:
-  publish:
+  build:
     runs-on: ubuntu-latest
 
     strategy:
