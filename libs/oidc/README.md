@@ -93,8 +93,8 @@ import { TokenGuard } from '@ffdc/nestjs-oidc';
 
 ## Other options to register OidcModule
 
-| Option         | Description      |
-| -------------- | ---------------- |
-| clockTolerance | Clock tolerance  |
-| userInfoMethod | 'ffdc' or 'oidc' |
-| resource       | URL of resource  |
+| Option         | Description                                                                                |
+| -------------- | ------------------------------------------------------------------------------------------ |
+| clockTolerance | Clock tolerance                                                                            |
+| userInfoMethod | 'ffdc' or 'oidc'                                                                           |
+| resource       | In Azure AD context, it is the application resource in which we need to provide the access |
