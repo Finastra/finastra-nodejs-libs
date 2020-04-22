@@ -1,27 +1,18 @@
 coverage:
-  range: '70...100'
   status:
     project:
-      target: 80%
-      threshold: 5%
-    oidc:
-      flags:
-        - oidc
-      target: 80%
-    proxy:
-      flags:
-        - oidc
-      target: 80%
+      default:
+        target: 80%
     patch:
       default:
         target: 80%
 
+comment: false
+
 flags:
   oidc:
     paths:
-      - libs/oidc/src
+      - libs/oidc/src/
   proxy:
     paths:
-      - libs/proxy/src
-
-comment: false
+      - libs/proxy/src/
