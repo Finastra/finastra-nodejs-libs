@@ -1,3 +1,5 @@
+import { endsWith } from './string.utils';
+
 export function getBaseURL(path) {
   var url = path.split('/');
   var baseUrl = url[0] + '//' + url[2];
@@ -14,7 +16,7 @@ export function concatPath(...args: any[]) {
     if (
       i < arguments.length - 1 &&
       !this.isAbsolute(arguments[i + 1]) &&
-      !this.endsWith(path, '/')
+      !endsWith(path, '/')
     ) {
       path += '/';
     }
