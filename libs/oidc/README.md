@@ -2,6 +2,21 @@
 
 ## Use it
 
+Configure yout environment variables.
+
+`.env`
+
+```
+OIDC_ISSUER=""
+OIDC_CLIENT_ID=""
+OIDC_CLIENT_SECRET=""
+OIDC_SCOPES=""
+OIDC_LOGIN_REDIRECT_URI=""
+OIDC_LOGOUT_REDIRECT_URI=""
+OIDC_RESOURCE=""
+SESSION_SECRET=""
+```
+
 `app.module.ts`
 
 ```typescript
