@@ -8,11 +8,10 @@ coverage:
         target: 80%
 
 comment: false
-
-flags:
-  oidc:
-    paths:
-      - libs/oidc/src/
-  proxy:
-    paths:
-      - libs/proxy/src/
+# flags:
+#   oidc:
+#     paths:
+#       - libs/oidc/src/
+#   proxy:
+#     paths:
+#       - libs/proxy/src/
