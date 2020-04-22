@@ -39,6 +39,11 @@ jobs:
           file: ./coverage/lcov.info
           fail_ci_if_error: true
 
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
       # Build
       - name: Build Package
         run: npm run build -- ${{ matrix.package }}
