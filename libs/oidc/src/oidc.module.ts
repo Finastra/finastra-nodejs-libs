@@ -29,9 +29,7 @@ const OidcHelperFactory = {
     const TrustIssuer = await Issuer.discover(issuer);
     const client = new TrustIssuer.Client(options.clientMetadata);
     const tokenStore = await TrustIssuer.keystore();
-    if (!options.authParams.redirect_uri) {
-      options.authParams.redirect_uri = `${options.origin}/login/callback`;
-    }
+    options.authParams.redirect_uri = `${options.origin}/login/callback`;
     const helpers = new OidcHelpers(tokenStore, client, options);
     return helpers;
   },
