@@ -46,7 +46,7 @@ export class ProxyService {
           res,
           target ? concatPath(baseUrl, target) : baseUrl,
           token,
-          service.options,
+          service.config,
         );
       } else {
         const error = `Could not find serviceId ${serviceId}`;

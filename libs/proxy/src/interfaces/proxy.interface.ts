@@ -4,7 +4,7 @@ import { ModuleConfigFactory } from '@golevelup/nestjs-modules';
 export interface Service {
   id: string;
   url: string;
-  options?: Server.ServerOptions;
+  config?: Server.ServerOptions;
 }
 
 export interface ProxyModuleOptions {
