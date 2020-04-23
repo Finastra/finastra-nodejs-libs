@@ -36,7 +36,7 @@ import { setupSession } from '@ffdc/nestjs-oidc';
 setupSession(app);
 ```
 
-> By default, session secret will be looked for in the `SESSION_SECRET` environment variable
+> By default, session secret will be looked for in the `SESSION_SECRET` environment variable. If not provided, a uuid will be generated instead
 
 ### Auth Guards
 

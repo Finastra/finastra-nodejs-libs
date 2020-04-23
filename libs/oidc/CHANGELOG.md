@@ -1,13 +1,15 @@
-# CHANGELOG
-
 **Table of Contents**
 
-- [CHANGELOG](#changelog)
-  - [Version 0.1.x](#version-01x)
-    - [Version 0.1.2](#version-012)
+<!-- TOC -->
 
-## Version 0.1.x
+- [0.1.2 (2020-04-23)](#012-2020-04-23)
+  - [Bug fixes](#bug-fixes)
 
-### Version 0.1.2
+<!-- /TOC -->
+
+# 0.1.2 (2020-04-23)
+
+## Bug fixes
 
 - Add resource parameter in oidc config
+- provide a default value for `setupSession` instead of requiring `SESSION_SECRET` as a env variable
