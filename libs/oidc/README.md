@@ -36,6 +36,8 @@ import { setupSession } from '@ffdc/nestjs-oidc';
 setupSession(app);
 ```
 
+> By default, session secret will be looked for in the `SESSION_SECRET` environment variable. If not provided, a uuid will be generated instead
+
 ### Auth Guards
 
 Only one guard is exposed. \
@@ -91,7 +93,8 @@ import { TokenGuard } from '@ffdc/nestjs-oidc';
 
 ## Other options to register OidcModule
 
-| Option         | Description      |
-| -------------- | ---------------- |
-| clockTolerance | Clock tolerance  |
-| userInfoMethod | 'ffdc' or 'oidc' |
+| Option         | Description                                                                                |
+| -------------- | ------------------------------------------------------------------------------------------ |
+| clockTolerance | Clock tolerance                                                                            |
+| userInfoMethod | 'ffdc' or 'oidc'                                                                           |
+| resource       | In Azure AD context, it is the application resource in which we need to provide the access |
