@@ -44,9 +44,9 @@ export class AuthController {
         res.redirect(
           end_session_endpoint +
             '?post_logout_redirect_uri=' +
-            this.options.redirectUriLogout +
+            this.options.origin +
             '&client_id=' +
-            this.options.clientId +
+            this.options.clientMetadata.client_id +
             (id_token ? '&id_token_hint=' + id_token : ''),
         );
       } else {
