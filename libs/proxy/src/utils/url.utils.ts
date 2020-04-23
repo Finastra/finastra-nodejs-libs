@@ -1,9 +1,8 @@
 import { endsWith } from './string.utils';
 
 export function getBaseURL(path) {
-  var url = path.split('/');
-  var baseUrl = url[0] + '//' + url[2];
-  return baseUrl;
+  const url = new URL(path);
+  return url.origin;
 }
 
 export function concatPath(...args: any[]) {
