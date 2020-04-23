@@ -15,6 +15,7 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
       params: {
         redirect_uri: oidcHelpers.config.redirectUriLogin,
         scope: oidcHelpers.config.scopes,
+        resource: oidcHelpers.config.resource,
       },
       passReqToCallback: false,
       usePKCE: false,
