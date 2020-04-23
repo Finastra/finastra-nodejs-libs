@@ -98,7 +98,8 @@ import { TokenGuard } from '@ffdc/nestjs-oidc';
 
 ## Other options to register OidcModule
 
-| Option         | Description                                              |
-| -------------- | -------------------------------------------------------- |
-| usePKCE        | Boolean to user or not [PKCE](https://oauth.net/2/pkce/) |
-| userInfoMethod | 'ffdc' or 'oidc'                                         |
+| Option            | Description                                                             |
+| ----------------- | ----------------------------------------------------------------------- |
+| redirectUriLogout | Where to redirect user after logout. If not specified, `origin` is used |
+| usePKCE           | Boolean to user or not [PKCE](https://oauth.net/2/pkce/)                |
+| userInfoMethod    | 'ffdc' or 'oidc'                                                        |
