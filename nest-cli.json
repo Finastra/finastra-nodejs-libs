@@ -15,6 +15,20 @@
         ],
         "deleteOutDir": true
       }
+    },
+    "proxy": {
+      "type": "library",
+      "root": "libs/proxy",
+      "entryFile": "src/index",
+      "sourceRoot": "libs/proxy",
+      "compilerOptions": {
+        "tsConfigPath": "libs/proxy/tsconfig.lib.json",
+        "assets": [
+          "package.json",
+          "README.md"
+        ],
+        "deleteOutDir": true
+      }
     }
   },
   "compilerOptions": {

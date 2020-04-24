@@ -12,13 +12,9 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
   ) {
     super({
       client: oidcHelpers.client,
-      params: {
-        redirect_uri: oidcHelpers.config.redirectUriLogin,
-        scope: oidcHelpers.config.scopes,
-        resource: oidcHelpers.config.resource,
-      },
+      params: oidcHelpers.config.authParams,
       passReqToCallback: false,
-      usePKCE: false,
+      usePKCE: oidcHelpers.config.usePKCE,
     });
   }
 

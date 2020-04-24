@@ -26,16 +26,12 @@ const OidcHelperFactory = {
   provide: 'OidcHelpers',
   useFactory: async (options: OidcModuleOptions) => {
     const issuer = options.issuer;
-    const client_id = options.clientId;
-    const client_secret = options.clientSecret;
     const TrustIssuer = await Issuer.discover(issuer);
-    const client = new TrustIssuer.Client({
-      client_id,
-      client_secret,
-    });
+    const client = new TrustIssuer.Client(options.clientMetadata);
     const tokenStore = await TrustIssuer.keystore();
-    const guard = new OidcHelpers(tokenStore, client, options);
-    return guard;
+    options.authParams.redirect_uri = `${options.origin}/login/callback`;
+    const helpers = new OidcHelpers(tokenStore, client, options);
+    return helpers;
   },
   inject: [OIDC_MODULE_OPTIONS],
 };
