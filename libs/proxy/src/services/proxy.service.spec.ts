@@ -2,11 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ProxyService } from './proxy.service';
 import { Server } from 'http-proxy';
 import { createMock } from '@golevelup/nestjs-testing';
-import {
-  PROXY_MODULE_OPTIONS,
-  HTTP_PROXY,
-  USER_ID_HEADER,
-} from '../proxy.constants';
+import { PROXY_MODULE_OPTIONS, HTTP_PROXY } from '../proxy.constants';
 import { Request, Response } from 'express';
 import { Logger } from '@nestjs/common';
 
@@ -109,19 +105,15 @@ describe('ProxyService', () => {
     it('should call proxy with token', () => {
       const req = createMock<Request>();
       const res = createMock<Response>();
-      const username = 'test-user';
       req.query = {
         serviceId: services[0].id,
       };
-      req.user = { access_token: 'test', userinfo: { username } };
+      req.user = { access_token: 'test' };
 
       const spy = jest.spyOn(proxy, 'web');
       service.proxyRequest(req, res);
       expect((spy.mock.calls[0][2] as any).headers).toHaveProperty(
         'authorization',
-      );
-      expect((spy.mock.calls[0][2] as any).headers[USER_ID_HEADER]).toBe(
-        username,
       );
     });
 

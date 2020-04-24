@@ -3,11 +3,7 @@ import { Server } from 'http-proxy';
 import { parse } from 'url';
 import { Request, Response } from 'express';
 import { ProxyModuleOptions } from '../interfaces';
-import {
-  USER_ID_HEADER,
-  PROXY_MODULE_OPTIONS,
-  HTTP_PROXY,
-} from '../proxy.constants';
+import { PROXY_MODULE_OPTIONS, HTTP_PROXY } from '../proxy.constants';
 import { concatPath, getBaseURL } from '../utils';
 
 @Injectable()
@@ -68,22 +64,12 @@ export class ProxyService {
     token: string,
     options: Server.ServerOptions = {},
   ) {
-    let userId = null;
-    if (
-      req.user &&
-      (req.user as any).userinfo &&
-      (req.user as any).userinfo.username
-    ) {
-      userId = (req.user as any).userinfo.username;
-    }
-
     req.url = parse(target).path;
 
     let defaultOptions = {
       target: getBaseURL(target),
       headers: {
         ...(token && { authorization: 'Bearer ' + token }),
-        [USER_ID_HEADER]: userId,
         'content-type': 'application/json',
         accept: 'application/json',
       },
