@@ -42,12 +42,13 @@ export class AuthController {
       const end_session_endpoint = TrustIssuer.metadata.end_session_endpoint;
       if (end_session_endpoint) {
         res.redirect(
-          end_session_endpoint +
-            '?post_logout_redirect_uri=' +
-            this.options.redirectUriLogout +
-            '&client_id=' +
-            this.options.clientId +
-            (id_token ? '&id_token_hint=' + id_token : ''),
+          `${end_session_endpoint}?post_logout_redirect_uri=${
+            this.options.redirectUriLogout
+              ? this.options.redirectUriLogout
+              : this.options.origin
+          }&client_id=${this.options.clientMetadata.client_id}${
+            id_token ? '&id_token_hint=' + id_token : ''
+          }`,
         );
       } else {
         res.redirect('/');

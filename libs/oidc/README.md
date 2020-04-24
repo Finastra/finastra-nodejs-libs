@@ -13,11 +13,14 @@ import { OidcModule } from '@ffdc/nestjs-oidc';
       imports: [ConfigModule.forRoot()],
       useFactory: async (configService: ConfigService) => ({
         issuer: configService.get('OIDC_ISSUER'),
-        clientId: configService.get('OIDC_CLIENT_ID'),
-        clientSecret: configService.get('OIDC_CLIENT_SECRET'),
-        scopes: configService.get('OIDC_SCOPES'),
-        redirectUriLogin: configService.get('OIDC_LOGIN_REDIRECT_URI'),
-        redirectUriLogout: configService.get('OIDC_LOGOUT_REDIRECT_URI'),
+        clientMetadata: {
+          client_id: configService.get('OIDC_CLIENT_ID'),
+          client_secret: configService.get('OIDC_CLIENT_SECRET'),
+        },
+        authParams: {
+          scopes: configService.get('OIDC_SCOPES'),
+        },
+        origin: configService.get('ORIGIN'),
       }),
       inject: [ConfigService],
     }),
@@ -27,6 +30,8 @@ import { OidcModule } from '@ffdc/nestjs-oidc';
 })
 export class AppModule {}
 ```
+
+> [clientMetadata](https://github.com/panva/node-openid-client/blob/master/docs/README.md#new-clientmetadata-jwks-options) and [authParams](https://github.com/panva/node-openid-client/blob/master/docs/README.md#clientauthorizationurlparameters) are coming from the openid-client library.
 
 `main.ts`
 
@@ -93,8 +98,8 @@ import { TokenGuard } from '@ffdc/nestjs-oidc';
 
 ## Other options to register OidcModule
 
-| Option         | Description                                                                                |
-| -------------- | ------------------------------------------------------------------------------------------ |
-| clockTolerance | Clock tolerance                                                                            |
-| userInfoMethod | 'ffdc' or 'oidc'                                                                           |
-| resource       | In Azure AD context, it is the application resource in which we need to provide the access |
+| Option            | Description                                                             |
+| ----------------- | ----------------------------------------------------------------------- |
+| redirectUriLogout | Where to redirect user after logout. If not specified, `origin` is used |
+| usePKCE           | Boolean to user or not [PKCE](https://oauth.net/2/pkce/)                |
+| userInfoMethod    | 'ffdc' or 'oidc'                                                        |

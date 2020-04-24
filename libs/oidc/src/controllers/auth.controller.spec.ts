@@ -4,9 +4,11 @@ import { MOCK_OIDC_MODULE_OPTIONS } from '../mocks';
 import { OIDC_MODULE_OPTIONS } from '../oidc.constants';
 import { createResponse, createRequest } from 'node-mocks-http';
 import { Issuer } from 'openid-client';
+import { OidcModuleOptions } from '../interfaces';
 
 describe('AuthController', () => {
   let controller: AuthController;
+  let options: OidcModuleOptions;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -20,6 +22,7 @@ describe('AuthController', () => {
     }).compile();
 
     controller = module.get<AuthController>(AuthController);
+    options = module.get<OidcModuleOptions>(OIDC_MODULE_OPTIONS);
   });
 
   it('should be defined', () => {
@@ -88,6 +91,21 @@ describe('AuthController', () => {
       controller.logout(req, res);
     });
 
+    it('should redirect without id_token_hint', done => {
+      req.user = {};
+      (req.session as any) = {
+        destroy: jest.fn().mockImplementation(callback => {
+          callback().then(() => {
+            expect(spyResponse).toHaveBeenCalledWith(
+              expect.not.stringContaining('id_token_hint'),
+            );
+            done();
+          });
+        }),
+      };
+      controller.logout(req, res);
+    });
+
     it('should redirect with id_token_hint', done => {
       req.user = {
         id_token: '123',
@@ -97,6 +115,25 @@ describe('AuthController', () => {
           callback().then(() => {
             expect(spyResponse).toHaveBeenCalledWith(
               expect.stringContaining('id_token_hint'),
+            );
+            done();
+          });
+        }),
+      };
+      controller.logout(req, res);
+    });
+
+    it('should redirect on redirectUriLogout if set', done => {
+      req.user = {
+        id_token: '123',
+      };
+      const mockRedirectLogout = 'other-website';
+      options.redirectUriLogout = mockRedirectLogout;
+      (req.session as any) = {
+        destroy: jest.fn().mockImplementation(callback => {
+          callback().then(() => {
+            expect(spyResponse).toHaveBeenCalledWith(
+              expect.stringContaining(mockRedirectLogout),
             );
             done();
           });

@@ -14,12 +14,15 @@ import { ProxyConfigService } from './proxy-config.service';
       imports: [ConfigModule.forRoot()],
       useFactory: async (configService: ConfigService) => ({
         issuer: configService.get('OIDC_ISSUER'),
-        clientId: configService.get('OIDC_CLIENT_ID'),
-        clientSecret: configService.get('OIDC_CLIENT_SECRET'),
-        scopes: configService.get('OIDC_SCOPES'),
-        redirectUriLogin: configService.get('OIDC_LOGIN_REDIRECT_URI'),
-        redirectUriLogout: configService.get('OIDC_LOGOUT_REDIRECT_URI'),
-        resource: configService.get('OIDC_RESOURCE'),
+        clientMetadata: {
+          client_id: configService.get('OIDC_CLIENT_ID'),
+          client_secret: configService.get('OIDC_CLIENT_SECRET'),
+        },
+        authParams: {
+          scopes: configService.get('OIDC_SCOPES'),
+          resource: configService.get('OIDC_RESOURCE'),
+        },
+        origin: configService.get('OIDC_ORIGIN'),
       }),
       inject: [ConfigService],
     }),

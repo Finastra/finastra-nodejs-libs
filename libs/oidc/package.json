@@ -1,13 +1,13 @@
 {
   "name": "@ffdc/nestjs-oidc",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "author": "David Boclé <david.bocle@finastra.com>",
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
     "@nestjs/jwt": "^7.0.0",
     "@nestjs/passport": "^7.0.0",
-    "openid-client": "^3.14.1",
+    "openid-client": "^3.14.2",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0"
   }

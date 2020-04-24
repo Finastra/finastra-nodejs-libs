@@ -10,10 +10,13 @@ export const MOCK_CLIENT_INSTANCE = new MOCK_ISSUER_INSTANCE.Client({
 });
 
 export const MOCK_OIDC_MODULE_OPTIONS: OidcModuleOptions = {
-  clientId: CLIENT_ID,
-  clientSecret: '456',
   issuer: MOCK_ISSUER,
-  redirectUriLogin: 'bla',
-  redirectUriLogout: 'bla',
-  scopes: 'oidc profile',
+  clientMetadata: {
+    client_id: CLIENT_ID,
+    client_secret: '456',
+  },
+  authParams: {
+    scopes: 'oidc profile',
+  },
+  origin: 'bla',
 };
