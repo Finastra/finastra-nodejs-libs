@@ -71,3 +71,36 @@ Whether synchronously or asynchronously, the module takes two parameters (both o
 ### Default module configuration
 
 If you do not provide any, the default proxy configuration for this module can be found in [proxy.constants.ts](./src/proxy.constants.ts), under `defaultProxyOptions`
+
+## Client-side usage examples
+
+### Requesting without pre-defined service
+
+```typescript
+const serverUri = 'http://localhost:3000';
+const target = 'http://localhost:3001/cats';
+
+// GET
+fetch(`${serverUri}/proxy?target=${target}`);
+
+// POST
+const data = { name: 'Garfield' };
+fetch(`${serverUri}/proxy?target=${target}`, {
+  method: 'POST',
+  body: JSON.stringify(data),
+});
+```
+
+### Requesting a specific service
+
+```typescript
+const serverUri = 'http://localhost:3000';
+const serviceId = 'ACCOUNT_INFORMATION_US';
+
+fetch(`${serverUri}/proxy?serviceId=${serviceId}`);
+
+// Defining path
+const accountId = '112';
+const target = `${accountId}/details`;
+fetch(`${serverUri}/proxy?serviceId=${serviceId}&target=${target}`);
+```
