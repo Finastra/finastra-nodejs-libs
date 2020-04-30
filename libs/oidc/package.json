@@ -1,7 +1,10 @@
 {
   "name": "@ffdc/nestjs-oidc",
-  "version": "0.2.0",
-  "author": "David Boclé <david.bocle@finastra.com>",
+  "version": "0.2.1",
+  "contributors": [
+    "David Boclé <david.bocle@finastra.com>",
+    "Francine Ong <francine.ong@finastra.com>"
+  ],
   "main": "index.js",
   "license": "MIT",
   "dependencies": {

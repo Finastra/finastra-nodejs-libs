@@ -102,4 +102,4 @@ import { TokenGuard } from '@ffdc/nestjs-oidc';
 | ----------------- | ----------------------------------------------------------------------- |
 | redirectUriLogout | Where to redirect user after logout. If not specified, `origin` is used |
 | usePKCE           | Boolean to user or not [PKCE](https://oauth.net/2/pkce/)                |
-| userInfoMethod    | 'ffdc' or 'oidc'                                                        |
+| userInfoMethod    | `token` or `endpoint`. Default being `token`                            |

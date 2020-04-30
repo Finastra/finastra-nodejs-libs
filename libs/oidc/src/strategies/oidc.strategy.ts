@@ -20,9 +20,9 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
 
   async validate(tokenset: TokenSet): Promise<any> {
     const userinfo =
-      this.oidcHelpers.config.userInfoMethod === UserInfoMethod.ffdc
-        ? this.userInfoFFDC(tokenset)
-        : this.getUserInfo(tokenset);
+      this.oidcHelpers.config.userInfoMethod === UserInfoMethod.token
+        ? this.userInfo(tokenset)
+        : this.userInfoRemote(tokenset);
 
     const id_token = tokenset.id_token;
     const access_token = tokenset.access_token;
@@ -36,7 +36,7 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
     return user;
   }
 
-  private async getUserInfo(tokenset: TokenSet) {
+  private async userInfoRemote(tokenset: TokenSet) {
     try {
       return await this.oidcHelpers.client.userinfo(tokenset);
     } catch (err) {
@@ -44,10 +44,11 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
     }
   }
 
-  private userInfoFFDC(tokenset: TokenSet) {
+  private userInfo(tokenset: TokenSet) {
     const identity: any = this.jwtService.decode(tokenset.id_token);
     return {
-      username: identity.username,
+      username: identity.username || identity.name,
+      groups: identity.groups,
     };
   }
 }
