@@ -51,13 +51,13 @@ describe('OidcStrategy', () => {
   });
 });
 
-describe('OidcStrategy with ffdc userInfo', () => {
+describe('OidcStrategy with token userInfo method', () => {
   let jwtService;
   let strategy;
   beforeEach(() => {
     jwtService = createMock<JwtService>();
     let helpers = { ...MockOidcHelpers };
-    helpers.config.userInfoMethod = UserInfoMethod.ffdc;
+    helpers.config.userInfoMethod = UserInfoMethod.token;
     strategy = new OidcStrategy(jwtService, helpers);
   });
 
@@ -66,10 +66,19 @@ describe('OidcStrategy with ffdc userInfo', () => {
   });
 
   describe('validate', () => {
-    it('should return true', async () => {
+    it('should call decode token', async () => {
       const spy = jest
         .spyOn(jwtService, 'decode')
         .mockReturnValue({ username: 'test-user' });
+      const result = await strategy.validate(createMock<TokenSet>());
+      expect(result).toBeTruthy();
+      expect(spy).toHaveBeenCalled();
+    });
+
+    it('should return decode token', async () => {
+      const spy = jest
+        .spyOn(jwtService, 'decode')
+        .mockReturnValue({ name: 'User' });
       const result = await strategy.validate(createMock<TokenSet>());
       expect(result).toBeTruthy();
       expect(spy).toHaveBeenCalled();

@@ -22,7 +22,7 @@ import { ProxyConfigService } from './proxy-config.service';
           scopes: configService.get('OIDC_SCOPES'),
           resource: configService.get('OIDC_RESOURCE'),
         },
-        origin: configService.get('OIDC_ORIGIN'),
+        origin: configService.get('ORIGIN'),
       }),
       inject: [ConfigService],
     }),

@@ -26,6 +26,6 @@ export interface OidcModuleAsyncOptions
 }
 
 export enum UserInfoMethod {
-  ffdc = 'ffdc',
-  oidc = 'oidc',
+  token = 'token',
+  endpoint = 'endpoint',
 }

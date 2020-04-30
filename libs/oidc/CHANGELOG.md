@@ -6,10 +6,12 @@
 
 - [0.3.0 (2020-04-30)](#030-2020-04-30)
   - [Features](#features)
+- [0.2.1 (2020-04-30)](#021-2020-04-30)
+  - [Bug fixes](#bug-fixes)
 - [0.2.0 (2020-04-23)](#020-2020-04-23)
   - [Features](#features-1)
 - [0.1.2 (2020-04-23)](#012-2020-04-23)
-  - [Bug fixes](#bug-fixes)
+  - [Bug fixes](#bug-fixes-1)
 
 <!-- /TOC -->
 
@@ -18,6 +20,12 @@
 ### Features
 
 - New endpoint `/user` that returns user information
+
+## 0.2.1 (2020-04-30)
+
+### Bug fixes
+
+- Add user groups in `req.user.userinfo`
 
 ## 0.2.0 (2020-04-23)
 
