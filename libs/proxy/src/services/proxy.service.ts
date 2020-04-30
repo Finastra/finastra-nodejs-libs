@@ -47,13 +47,13 @@ export class ProxyService {
       } else {
         const error = `Could not find serviceId ${serviceId}`;
         this.logger.warn(error);
-        return res.status(500).send({
+        return res.status(404).send({
           error,
         });
       }
     }
 
-    res.status(500).send({ error: "Could not find 'target' or 'serviceId'" });
+    res.status(404).send({ error: "Could not find 'target' or 'serviceId'" });
     this.logger.error("Could not find 'target' or 'serviceId'", 'Proxy');
   }
 

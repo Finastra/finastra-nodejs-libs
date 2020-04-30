@@ -99,7 +99,7 @@ describe('ProxyService', () => {
 
       const spy = jest.spyOn(res, 'status');
       service.proxyRequest(req, res);
-      expect(spy).toHaveBeenCalledWith(500);
+      expect(spy).toHaveBeenCalledWith(404);
     });
 
     it('should call proxy with token', () => {
@@ -187,7 +187,7 @@ describe('Proxy Service - empty configuration provided', () => {
     expect(service).toBeDefined();
   });
 
-  it('should send a 500 if no serviceId found', () => {
+  it('should send a 404 if no serviceId found', () => {
     const req = createMock<Request>();
     const res = createMock<Response>();
     req.query = {
@@ -196,6 +196,6 @@ describe('Proxy Service - empty configuration provided', () => {
 
     const spy = jest.spyOn(res, 'status');
     service.proxyRequest(req, res);
-    expect(spy).toHaveBeenCalledWith(500);
+    expect(spy).toHaveBeenCalledWith(404);
   });
 });
