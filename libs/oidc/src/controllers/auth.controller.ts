@@ -32,6 +32,11 @@ export class AuthController {
     res.redirect('/');
   }
 
+  @Get('/user')
+  user(@Request() req) {
+    return req.user.userinfo;
+  }
+
   @Public()
   @Get('/logout')
   async logout(@Request() req, @Res() res: Response) {

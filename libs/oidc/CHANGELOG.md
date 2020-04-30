@@ -4,12 +4,20 @@
 
 <!-- TOC depthFrom:2 depthTo:3 -->
 
-- [0.2.0 (2020-04-23)](#020-2020-04-23)
+- [0.3.0 (2020-04-30)](#030-2020-04-30)
   - [Features](#features)
+- [0.2.0 (2020-04-23)](#020-2020-04-23)
+  - [Features](#features-1)
 - [0.1.2 (2020-04-23)](#012-2020-04-23)
   - [Bug fixes](#bug-fixes)
 
 <!-- /TOC -->
+
+## 0.3.0 (2020-04-30)
+
+### Features
+
+- New endpoint `/user` that returns user information
 
 ## 0.2.0 (2020-04-23)
 
