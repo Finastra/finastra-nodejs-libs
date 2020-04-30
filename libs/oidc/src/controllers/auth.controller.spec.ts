@@ -29,12 +29,29 @@ describe('AuthController', () => {
     expect(controller).toBeDefined();
   });
 
+  describe('login', () => {
+    it('should not return anything', () => {
+      expect(controller.login()).toBeUndefined();
+    });
+  });
+
   describe('loginCallback', () => {
     it('should call redirect', () => {
       const res = createResponse();
       const spy = jest.spyOn(res, 'redirect');
       controller.loginCallback(null, res);
       expect(spy).toHaveBeenCalledWith('/');
+    });
+  });
+
+  describe('user', () => {
+    it('should return userinfo', () => {
+      const req = createRequest();
+      const userinfo = { username: 'test-user' };
+      req.user = {
+        userinfo,
+      };
+      expect(controller.user(req)).toBe(userinfo);
     });
   });
 

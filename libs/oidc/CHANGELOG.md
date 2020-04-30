@@ -4,17 +4,22 @@
 
 <!-- TOC depthFrom:2 depthTo:3 -->
 
-- [Changelog](#changelog)
-  - [0.2.1 (2020-04-30)](#021-2020-04-30)
-    - [Bug fixes](#bug-fixes)
-  - [0.2.0 (2020-04-23)](#020-2020-04-23)
-    - [Features](#features)
-      - [Before](#before)
-      - [Now](#now)
-  - [0.1.2 (2020-04-23)](#012-2020-04-23)
-    - [Bug fixes](#bug-fixes-1)
+- [0.3.0 (2020-04-30)](#030-2020-04-30)
+  - [Features](#features)
+- [0.2.1 (2020-04-30)](#021-2020-04-30)
+  - [Bug fixes](#bug-fixes)
+- [0.2.0 (2020-04-23)](#020-2020-04-23)
+  - [Features](#features-1)
+- [0.1.2 (2020-04-23)](#012-2020-04-23)
+  - [Bug fixes](#bug-fixes-1)
 
 <!-- /TOC -->
+
+## 0.3.0 (2020-04-30)
+
+### Features
+
+- New endpoint `/user` that returns user information
 
 ## 0.2.1 (2020-04-30)
 
