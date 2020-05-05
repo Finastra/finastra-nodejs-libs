@@ -20,13 +20,15 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "typings:gen": "ts-node generate-typings"
   },
   "dependencies": {
     "@golevelup/nestjs-modules": "^0.4.0",
     "@nestjs/common": "^6.10.14",
     "@nestjs/config": "^0.1.0",
     "@nestjs/core": "^6.10.14",
+    "@nestjs/graphql": "^7.3.5",
     "@nestjs/jwt": "^7.0.0",
     "@nestjs/mongoose": "^6.3.1",
     "@nestjs/passport": "^6.1.1",
@@ -35,9 +37,13 @@
     "@types/express-session": "^1.15.16",
     "@types/mongoose": "^5.7.0",
     "@types/passport": "^1.0.2",
+    "apollo-server-express": "^2.12.0",
+    "axios": "^0.19.2",
     "connect-mongo": "^3.2.0",
     "csurf": "^1.11.0",
     "express-session": "^1.17.0",
+    "graphql": "^15.0.0",
+    "graphql-tools": "^5.0.0",
     "helmet": "^3.21.2",
     "http-proxy": "^1.18.0",
     "mongoose": "^5.8.11",
@@ -102,7 +108,9 @@
       "@ffdc/nestjs-oidc/(.*)": "<rootDir>/libs/oidc/src/$1",
       "@ffdc/nestjs-oidc": "<rootDir>/libs/oidc/src",
       "@ffdc/nestjs-proxy/(.*)": "<rootDir>/libs/proxy/src/$1",
-      "@ffdc/nestjs-proxy": "<rootDir>/libs/proxy/src"
+      "@ffdc/nestjs-proxy": "<rootDir>/libs/proxy/src",
+      "ffdc/corporate-accounts/(.*)": "<rootDir>/libs/corporate-accounts/src/$1",
+      "ffdc/corporate-accounts": "<rootDir>/libs/corporate-accounts/src"
     }
   }
 }

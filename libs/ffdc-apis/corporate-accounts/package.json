@@ -1,0 +1,17 @@
+{
+  "name": "@ffdc/api_corporate-accounts",
+  "version": "0.1.0",
+  "contributors": [
+    "David Boclé <david.bocle@finastra.com>",
+    "Francine Ong <francine.ong@finastra.com>"
+  ],
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@nestjs/jwt": "^7.0.0",
+    "@nestjs/passport": "^7.0.0",
+    "openid-client": "^3.14.2",
+    "passport": "^0.4.1",
+    "passport-jwt": "^4.0.0"
+  }
+}

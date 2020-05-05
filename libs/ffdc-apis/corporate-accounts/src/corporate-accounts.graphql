@@ -1,0 +1,99 @@
+type Query {
+  getAccounts(balance: Boolean, limit: Int, offset: Int): [AccountBasic]
+  getAccountsBalances(
+    details: Boolean
+    accountType: AccountType
+    limit: Int
+    offset: Int
+    equivalentCurrency: String
+  ): [AccountwBalance]
+  account(id: ID!): AccountDetail
+  accountBalance(id: ID!): AccountBalance
+}
+
+interface Account {
+  id: String!
+  currency: String! # Currency code using ISO4217
+  type: AccountType!
+}
+
+type AccountBasic implements Account {
+  id: String!
+  currency: String!
+  type: AccountType!
+  number: String!
+  accountContext: AccountContext!
+  balances: AccountBalance
+}
+
+type AccountBalance implements Account {
+  id: String!
+  currency: String!
+  type: AccountType!
+  ledgerBalance: String!
+  availableBalance: String!
+  balanceAsOn: String!
+}
+
+type AccountwBalance implements Account {
+  id: String!
+  currency: String!
+  type: AccountType!
+  ledgerBalance: String!
+  availableBalance: String!
+  availableBalanceEquivalent: String!
+  balanceAsOn: String!
+  equivalentCurrency: String!
+  details: AccountDetail
+}
+
+type AccountDetail implements Account {
+  id: String!
+  type: AccountType!
+  number: String!
+  currency: String!
+  format: AccountFormat!
+  country: String # ISO2 alpha code
+  status: AccountStatus!
+  cutomerReference: String
+  interestRate: Float
+  debitInterestRate: Float
+  creditInterestRate: Float
+  principalAmount: Float
+  maturityAmount: Float
+  accountStartDate: String
+  accountEndDate: String
+  bankShortName: String
+  overDraftLimit: Float
+}
+
+enum AccountType {
+  CURRENT
+  DEPOSIT
+  SAVINGS
+  LOAN
+  TERMDEPOSIT
+  CREDITCARD
+  OTHER
+}
+
+enum AccountFormat {
+  BBAN
+  IBAN
+  UPIC
+  DMST
+  OTHER
+}
+
+enum AccountStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum AccountContext {
+  ViewAccount
+  INT
+  TPT
+  DOM
+  MT103
+}

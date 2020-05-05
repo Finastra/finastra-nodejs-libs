@@ -29,6 +29,15 @@
         ],
         "deleteOutDir": true
       }
+    },
+    "corporate-accounts": {
+      "type": "library",
+      "root": "libs/ffdc-apis/corporate-accounts",
+      "entryFile": "index",
+      "sourceRoot": "libs/ffdc-apis/corporate-accounts/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/ffdc-apis/corporate-accounts/tsconfig.lib.json"
+      }
     }
   },
   "compilerOptions": {

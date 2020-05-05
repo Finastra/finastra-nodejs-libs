@@ -4,6 +4,8 @@ import { CatsModule } from './cats/cats.module';
 import { OidcModule } from '@ffdc/nestjs-oidc';
 import { ProxyModule } from '@ffdc/nestjs-proxy';
 import { ProxyConfigService } from './proxy-config.service';
+import { GraphQLModule } from '@nestjs/graphql';
+import { CorporateAccountsModule } from '@ffdc/api_corporate-accounts';
 
 @Module({
   imports: [
@@ -30,6 +32,19 @@ import { ProxyConfigService } from './proxy-config.service';
     ProxyModule.forRootAsync(ProxyModule, {
       useClass: ProxyConfigService,
       imports: [ConfigModule.forRoot()],
+    }),
+    CorporateAccountsModule,
+    GraphQLModule.forRoot({
+      typePaths: ['./**/*.graphql'],
+      include: [CorporateAccountsModule],
+      playground:
+        process.env.NODE_ENV === 'production'
+          ? false
+          : {
+              settings: {
+                'request.credentials': 'include',
+              },
+            },
     }),
   ],
   controllers: [],
