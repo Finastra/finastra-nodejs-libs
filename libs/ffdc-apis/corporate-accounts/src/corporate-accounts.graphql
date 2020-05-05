@@ -1,14 +1,21 @@
 type Query {
-  getAccounts(balance: Boolean, limit: Int, offset: Int): [AccountBasic]
+  getAccounts(balance: Boolean, limit: Int, offset: Int): AccountBasicRes
   getAccountsBalances(
     details: Boolean
     accountType: AccountType
     limit: Int
     offset: Int
     equivalentCurrency: String
-  ): [AccountwBalance]
+  ): AccountwBalanceRes
   account(id: ID!): AccountDetail
   accountBalance(id: ID!): AccountBalance
+  accountStatement(
+    id: ID!
+    fromDate: String!
+    toDate: String!
+    limit: Int
+    offset: Int
+  ): AccountStatementRes
 }
 
 interface Account {
@@ -24,6 +31,11 @@ type AccountBasic implements Account {
   number: String!
   accountContext: AccountContext!
   balances: AccountBalance
+}
+
+type AccountBasicRes {
+  items: [AccountBasic]
+  _meta: FFDCMeta
 }
 
 type AccountBalance implements Account {
@@ -45,6 +57,11 @@ type AccountwBalance implements Account {
   balanceAsOn: String!
   equivalentCurrency: String!
   details: AccountDetail
+}
+
+type AccountwBalanceRes {
+  items: [AccountwBalance]
+  _meta: FFDCMeta
 }
 
 type AccountDetail implements Account {
@@ -96,4 +113,33 @@ enum AccountContext {
   TPT
   DOM
   MT103
+}
+
+type AccountStatement {
+  postingDate: String
+  valueDate: String
+  currency: String!
+  amount: Float!
+  transactionType: TransactionType!
+  balance: Float!
+  backOfficeReference: String
+  ref1: String
+  ref2: String
+}
+
+type AccountStatementRes {
+  items: [AccountStatement]
+  _meta: FFDCMeta
+}
+
+enum TransactionType {
+  CREDIT
+  DEBIT
+}
+
+type FFDCMeta {
+  limit: Int
+  pageCount: Int
+  itemCount: Int
+  page: Int
 }

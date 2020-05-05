@@ -37,6 +37,11 @@ export enum AccountContext {
     MT103 = "MT103"
 }
 
+export enum TransactionType {
+    CREDIT = "CREDIT",
+    DEBIT = "DEBIT"
+}
+
 export interface Account {
     id: string;
     currency: string;
@@ -44,13 +49,15 @@ export interface Account {
 }
 
 export abstract class IQuery {
-    abstract getAccounts(balance?: boolean, limit?: number, offset?: number): AccountBasic[] | Promise<AccountBasic[]>;
+    abstract getAccounts(balance?: boolean, limit?: number, offset?: number): AccountBasicRes | Promise<AccountBasicRes>;
 
-    abstract getAccountsBalances(details?: boolean, accountType?: AccountType, limit?: number, offset?: number, equivalentCurrency?: string): AccountwBalance[] | Promise<AccountwBalance[]>;
+    abstract getAccountsBalances(details?: boolean, accountType?: AccountType, limit?: number, offset?: number, equivalentCurrency?: string): AccountwBalanceRes | Promise<AccountwBalanceRes>;
 
     abstract account(id: string): AccountDetail | Promise<AccountDetail>;
 
     abstract accountBalance(id: string): AccountBalance | Promise<AccountBalance>;
+
+    abstract accountStatement(id: string, fromDate: string, toDate: string, limit?: number, offset?: number): AccountStatementRes | Promise<AccountStatementRes>;
 }
 
 export class AccountBasic implements Account {
@@ -60,6 +67,11 @@ export class AccountBasic implements Account {
     number: string;
     accountContext: AccountContext;
     balances?: AccountBalance;
+}
+
+export class AccountBasicRes {
+    items?: AccountBasic[];
+    _meta?: FFDCMeta;
 }
 
 export class AccountBalance implements Account {
@@ -83,6 +95,11 @@ export class AccountwBalance implements Account {
     details?: AccountDetail;
 }
 
+export class AccountwBalanceRes {
+    items?: AccountwBalance[];
+    _meta?: FFDCMeta;
+}
+
 export class AccountDetail implements Account {
     id: string;
     type: AccountType;
@@ -101,4 +118,28 @@ export class AccountDetail implements Account {
     accountEndDate?: string;
     bankShortName?: string;
     overDraftLimit?: number;
+}
+
+export class AccountStatement {
+    postingDate?: string;
+    valueDate?: string;
+    currency: string;
+    amount: number;
+    transactionType: TransactionType;
+    balance: number;
+    backOfficeReference?: string;
+    ref1?: string;
+    ref2?: string;
+}
+
+export class AccountStatementRes {
+    items?: AccountStatement[];
+    _meta?: FFDCMeta;
+}
+
+export class FFDCMeta {
+    limit?: number;
+    pageCount?: number;
+    itemCount?: number;
+    page?: number;
 }

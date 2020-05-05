@@ -51,4 +51,24 @@ export class CorporateAccountResolver {
   async accountBalance(@GqlUser() user: any, @Args('id') id: string) {
     return this.accountsService.getAccountBalance(user, id);
   }
+
+  @Query()
+  @Public()
+  async accountStatement(
+    @GqlUser() user: any,
+    @Args('id') id: string,
+    @Args('fromDate') fromDate: string,
+    @Args('toDate') toDate: string,
+    @Args('limit') limit: number,
+    @Args('offset') offset: number,
+  ) {
+    return this.accountsService.getAccountStatement(
+      user,
+      id,
+      fromDate,
+      toDate,
+      limit,
+      offset,
+    );
+  }
 }

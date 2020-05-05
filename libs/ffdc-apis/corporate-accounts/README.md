@@ -8,13 +8,18 @@ Here are some helpers for the [Accounts & Balances APIs](https://developer.fusio
 
 ```graphql
 query {
-  getAccounts(limit: 10, offset: 0) {
-    id
-    number
-    type
-    currency
-    balances {
-      availableBalance
+  getAccounts(balance: true, limit: 10) {
+    items {
+      id
+      number
+      type
+      currency
+      balances {
+        availableBalance
+      }
+    }
+    _meta {
+      itemCount
     }
   }
 }
@@ -29,16 +34,21 @@ query {
     equivalentCurrency: "EUR"
     details: true
   ) {
-    id
-    type
-    currency
-    availableBalance
-    availableBalanceEquivalent
-    equivalentCurrency
-    details {
-      number
-      country
-      bankShortName
+    items {
+      id
+      type
+      currency
+      availableBalance
+      availableBalanceEquivalent
+      equivalentCurrency
+      details {
+        number
+        country
+        bankShortName
+      }
+    }
+    _meta {
+      itemCount
     }
   }
 }
@@ -68,9 +78,32 @@ query($accountId: ID!) {
 }
 ```
 
+### Get specific account statement
+
+```graphql
+query($accountId: ID!) {
+  accountStatement(
+    id: $accountId
+    fromDate: "2018-01-03"
+    toDate: "2020-03-05"
+  ) {
+    items {
+      currency
+      balance
+      amount
+      postingDate
+      valueDate
+      transactionType
+    }
+    _meta {
+      itemCount
+    }
+  }
+}
+```
+
 ## TODO:
 
-- Account statements
 - Unit tests
 - Documentation
 - non graphQL usage
