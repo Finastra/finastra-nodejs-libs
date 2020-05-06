@@ -4,5 +4,5 @@ export const defaultModuleOptions = {
   authParams: {
     clockTolerance: 10,
   },
-  userInfoMethod: 'ffdc',
+  userInfoMethod: 'token',
 };
