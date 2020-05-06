@@ -1,8 +1,6 @@
-import { Injectable, Request as NestRequest, UseGuards } from '@nestjs/common';
-import { Resolver, Query, Context, Args } from '@nestjs/graphql';
-import { Public } from '@ffdc/nestjs-oidc';
+import { Resolver, Query, Args } from '@nestjs/graphql';
 import { CorporateAccountsService } from './corporate-accounts.service';
-import { GqlUser } from './decorators';
+import { CurrentUser } from './decorators';
 import { AccountType } from './graphql';
 
 @Resolver('CorporateAccount')
@@ -10,9 +8,8 @@ export class CorporateAccountResolver {
   constructor(private readonly accountsService: CorporateAccountsService) {}
 
   @Query()
-  @Public()
   async getAccounts(
-    @GqlUser() user: any,
+    @CurrentUser() user: any,
     @Args('balance') balance: boolean,
     @Args('limit') limit = 10,
     @Args('offset') offset = 0,
@@ -21,9 +18,8 @@ export class CorporateAccountResolver {
   }
 
   @Query()
-  @Public()
   async getAccountsBalances(
-    @GqlUser() user: any,
+    @CurrentUser() user: any,
     @Args('details') details: boolean,
     @Args('accountType') accountType: AccountType,
     @Args('limit') limit = 10,
@@ -41,21 +37,18 @@ export class CorporateAccountResolver {
   }
 
   @Query()
-  @Public()
-  async account(@GqlUser() user: any, @Args('id') id: string) {
+  async account(@CurrentUser() user: any, @Args('id') id: string) {
     return this.accountsService.getAccountDetail(user, id);
   }
 
   @Query()
-  @Public()
-  async accountBalance(@GqlUser() user: any, @Args('id') id: string) {
+  async accountBalance(@CurrentUser() user: any, @Args('id') id: string) {
     return this.accountsService.getAccountBalance(user, id);
   }
 
   @Query()
-  @Public()
   async accountStatement(
-    @GqlUser() user: any,
+    @CurrentUser() user: any,
     @Args('id') id: string,
     @Args('fromDate') fromDate: string,
     @Args('toDate') toDate: string,

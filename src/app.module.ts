@@ -3,48 +3,31 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CatsModule } from './cats/cats.module';
 import { OidcModule } from '@ffdc/nestjs-oidc';
 import { ProxyModule } from '@ffdc/nestjs-proxy';
-import { ProxyConfigService } from './proxy-config.service';
 import { GraphQLModule } from '@nestjs/graphql';
 import { CorporateAccountsModule } from '@ffdc/api_corporate-accounts';
 
+import { ProxyConfigService } from './configs/proxy-config.service';
+import { GqlConfigService } from './configs/graphql-config.service';
+import { OidcConfigService } from './configs/oidc-config.service';
+
 @Module({
   imports: [
+    CatsModule,
+    CorporateAccountsModule,
     ConfigModule.forRoot({
+      isGlobal: true,
       ignoreEnvFile: process.env.NODE_ENV === 'production',
     }),
     OidcModule.registerAsync({
-      imports: [ConfigModule.forRoot()],
-      useFactory: async (configService: ConfigService) => ({
-        issuer: configService.get('OIDC_ISSUER'),
-        clientMetadata: {
-          client_id: configService.get('OIDC_CLIENT_ID'),
-          client_secret: configService.get('OIDC_CLIENT_SECRET'),
-        },
-        authParams: {
-          scopes: configService.get('OIDC_SCOPES'),
-          resource: configService.get('OIDC_RESOURCE'),
-        },
-        origin: configService.get('ORIGIN'),
-      }),
-      inject: [ConfigService],
+      imports: [ConfigModule],
+      useClass: OidcConfigService,
     }),
-    CatsModule,
     ProxyModule.forRootAsync(ProxyModule, {
       useClass: ProxyConfigService,
-      imports: [ConfigModule.forRoot()],
+      imports: [ConfigModule],
     }),
-    CorporateAccountsModule,
-    GraphQLModule.forRoot({
-      typePaths: ['./**/*.graphql'],
-      include: [CorporateAccountsModule],
-      playground:
-        process.env.NODE_ENV === 'production'
-          ? false
-          : {
-              settings: {
-                'request.credentials': 'include',
-              },
-            },
+    GraphQLModule.forRootAsync({
+      useClass: GqlConfigService,
     }),
   ],
   controllers: [],

@@ -106,5 +106,4 @@ query($accountId: ID!) {
 
 - Unit tests
 - Documentation
-- non graphQL usage
-- enable ffdc tenant switching ?
+  - non graphQL usage

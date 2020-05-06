@@ -12,7 +12,6 @@ function generateTypings(lib) {
   definitionsFactory.generate({
     typePaths: [`./libs/ffdc-apis/${lib}/**/*.graphql`],
     path: join(process.cwd(), `libs/ffdc-apis/${lib}/src/graphql.ts`),
-    outputAs: 'class',
     watch: true,
   });
 }

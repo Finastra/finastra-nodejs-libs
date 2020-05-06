@@ -8,6 +8,7 @@ import { TOKEN_STORE } from '../oidc.constants';
 import { ExtractJwt } from 'passport-jwt';
 import { JWT, JWKS } from 'jose';
 import { Reflector } from '@nestjs/core';
+import { GqlExecutionContext } from '@nestjs/graphql';
 
 @Injectable()
 export class TokenGuard implements CanActivate {
@@ -16,7 +17,7 @@ export class TokenGuard implements CanActivate {
     private readonly reflector: Reflector,
   ) {}
   async canActivate(context: ExecutionContext) {
-    const request = context.switchToHttp().getRequest();
+    let request = context.switchToHttp().getRequest();
     const isPublic = this.reflector.get<boolean>(
       'isPublic',
       context.getHandler(),
@@ -30,6 +31,9 @@ export class TokenGuard implements CanActivate {
       const valid = JWT.verify(jwt, tokenStore);
       return !!valid;
     } catch (err) {
+      if (context['contextType'] === 'graphql') {
+        request = GqlExecutionContext.create(context).getContext().req;
+      }
       return request.isAuthenticated();
     }
   }

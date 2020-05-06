@@ -48,19 +48,15 @@ export interface Account {
     type: AccountType;
 }
 
-export abstract class IQuery {
-    abstract getAccounts(balance?: boolean, limit?: number, offset?: number): AccountBasicRes | Promise<AccountBasicRes>;
-
-    abstract getAccountsBalances(details?: boolean, accountType?: AccountType, limit?: number, offset?: number, equivalentCurrency?: string): AccountwBalanceRes | Promise<AccountwBalanceRes>;
-
-    abstract account(id: string): AccountDetail | Promise<AccountDetail>;
-
-    abstract accountBalance(id: string): AccountBalance | Promise<AccountBalance>;
-
-    abstract accountStatement(id: string, fromDate: string, toDate: string, limit?: number, offset?: number): AccountStatementRes | Promise<AccountStatementRes>;
+export interface IQuery {
+    getAccounts(balance?: boolean, limit?: number, offset?: number): AccountBasicRes | Promise<AccountBasicRes>;
+    getAccountsBalances(details?: boolean, accountType?: AccountType, limit?: number, offset?: number, equivalentCurrency?: string): AccountwBalanceRes | Promise<AccountwBalanceRes>;
+    account(id: string): AccountDetail | Promise<AccountDetail>;
+    accountBalance(id: string): AccountBalance | Promise<AccountBalance>;
+    accountStatement(id: string, fromDate: string, toDate: string, limit?: number, offset?: number): AccountStatementRes | Promise<AccountStatementRes>;
 }
 
-export class AccountBasic implements Account {
+export interface AccountBasic extends Account {
     id: string;
     currency: string;
     type: AccountType;
@@ -69,12 +65,12 @@ export class AccountBasic implements Account {
     balances?: AccountBalance;
 }
 
-export class AccountBasicRes {
+export interface AccountBasicRes {
     items?: AccountBasic[];
     _meta?: FFDCMeta;
 }
 
-export class AccountBalance implements Account {
+export interface AccountBalance extends Account {
     id: string;
     currency: string;
     type: AccountType;
@@ -83,7 +79,7 @@ export class AccountBalance implements Account {
     balanceAsOn: string;
 }
 
-export class AccountwBalance implements Account {
+export interface AccountwBalance extends Account {
     id: string;
     currency: string;
     type: AccountType;
@@ -95,12 +91,12 @@ export class AccountwBalance implements Account {
     details?: AccountDetail;
 }
 
-export class AccountwBalanceRes {
+export interface AccountwBalanceRes {
     items?: AccountwBalance[];
     _meta?: FFDCMeta;
 }
 
-export class AccountDetail implements Account {
+export interface AccountDetail extends Account {
     id: string;
     type: AccountType;
     number: string;
@@ -120,7 +116,7 @@ export class AccountDetail implements Account {
     overDraftLimit?: number;
 }
 
-export class AccountStatement {
+export interface AccountStatement {
     postingDate?: string;
     valueDate?: string;
     currency: string;
@@ -132,12 +128,12 @@ export class AccountStatement {
     ref2?: string;
 }
 
-export class AccountStatementRes {
+export interface AccountStatementRes {
     items?: AccountStatement[];
     _meta?: FFDCMeta;
 }
 
-export class FFDCMeta {
+export interface FFDCMeta {
     limit?: number;
     pageCount?: number;
     itemCount?: number;
