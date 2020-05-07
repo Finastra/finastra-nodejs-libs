@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         node-version: [12.x]
-        package: [oidc, proxy]
+        package: [oidc, proxy, ffdc-apis/corporate-accounts]
 
     steps:
       # Setup
@@ -45,5 +45,5 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v1.0.0
         with:
-          name: "${{ matrix.package }}"
-          path: "./dist/libs/${{ matrix.package }}"
+          name: '${{ matrix.package }}'
+          path: './dist/libs/${{ matrix.package }}'

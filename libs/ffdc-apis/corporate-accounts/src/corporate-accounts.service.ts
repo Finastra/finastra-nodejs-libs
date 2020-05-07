@@ -6,10 +6,11 @@ import {
   AccountDetail,
   AccountType,
   AccountStatement,
-} from './graphql';
+  FFDCItems,
+  User,
+} from './interfaces';
 import axios from 'axios';
 import { CORPORATE_ACCOUNTS_API } from './constants';
-import { FFDCItems, User } from './interfaces';
 
 @Injectable()
 export class CorporateAccountsService {

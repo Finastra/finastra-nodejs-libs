@@ -4,21 +4,26 @@
 
 <!-- TOC depthFrom:2 depthTo:3 -->
 
-- [Changelog](#changelog)
-  - [0.3.1 (2020-05-06)](#031-2020-05-06)
-    - [Bug fixes](#bug-fixes)
-  - [0.3.0 (2020-04-30)](#030-2020-04-30)
-    - [Features](#features)
-  - [0.2.1 (2020-04-30)](#021-2020-04-30)
-    - [Bug fixes](#bug-fixes-1)
-  - [0.2.0 (2020-04-23)](#020-2020-04-23)
-    - [Features](#features-1)
-      - [Before](#before)
-      - [Now](#now)
-  - [0.1.2 (2020-04-23)](#012-2020-04-23)
-    - [Bug fixes](#bug-fixes-2)
+- [0.4.0 (2020-05-06)](#040-2020-05-06)
+  - [Features](#features)
+- [0.3.1 (2020-05-06)](#031-2020-05-06)
+  - [Bug fixes](#bug-fixes)
+- [0.3.0 (2020-04-30)](#030-2020-04-30)
+  - [Features](#features-1)
+- [0.2.1 (2020-04-30)](#021-2020-04-30)
+  - [Bug fixes](#bug-fixes-1)
+- [0.2.0 (2020-04-23)](#020-2020-04-23)
+  - [Features](#features-2)
+- [0.1.2 (2020-04-23)](#012-2020-04-23)
+  - [Bug fixes](#bug-fixes-2)
 
 <!-- /TOC -->
+
+## 0.4.0 (2020-05-06)
+
+### Features
+
+- `TokenGuard` now handles graphQL requests
 
 ## 0.3.1 (2020-05-06)
 
