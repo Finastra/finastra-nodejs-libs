@@ -1,14 +1,6 @@
-import {
-  Resolver,
-  Query,
-  Args,
-  ResolveField,
-  Parent,
-  Context,
-  GqlExecutionContext,
-} from '@nestjs/graphql';
+import { Resolver, Args, ResolveField, Parent, Context } from '@nestjs/graphql';
 import { CorporateAccountsService } from '../corporate-accounts.service';
-import { CurrentUser, getArgsFromQuery } from '../decorators';
+import { CurrentUser } from '../decorators';
 import { FieldsArgs } from '../decorators/fields-args.decorator';
 
 @Resolver('AccountwBalance')

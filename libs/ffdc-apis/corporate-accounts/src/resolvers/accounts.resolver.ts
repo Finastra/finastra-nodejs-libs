@@ -1,4 +1,4 @@
-import { Resolver, Query, Args, ResolveField, Parent } from '@nestjs/graphql';
+import { Resolver, Query, Args } from '@nestjs/graphql';
 import { CorporateAccountsService } from '../corporate-accounts.service';
 import { CurrentUser } from '../decorators';
 
