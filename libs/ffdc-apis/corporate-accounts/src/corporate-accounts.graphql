@@ -1,14 +1,27 @@
 type Query {
-  getAccounts(balance: Boolean, limit: Int, offset: Int): AccountBasicRes
-  getAccountsBalances(
+  accounts(
+    limit: Int
+    offset: Int
+    fromDate: String
+    toDate: String
+    statementLimit: Int
+    statementOffset: Int
+  ): AccountBasicRes
+
+  accountsBalance(
     details: Boolean
     accountType: AccountType
     limit: Int
     offset: Int
+    fromDate: String
+    toDate: String
     equivalentCurrency: String
   ): AccountwBalanceRes
+
   account(id: ID!): AccountDetail
+
   accountBalance(id: ID!): AccountBalance
+
   accountStatement(
     id: ID!
     fromDate: String!
@@ -31,6 +44,7 @@ type AccountBasic implements Account {
   number: String!
   accountContext: AccountContext!
   balances: AccountBalance
+  statement: AccountStatementRes
 }
 
 type AccountBasicRes {
@@ -57,6 +71,7 @@ type AccountwBalance implements Account {
   balanceAsOn: String!
   equivalentCurrency: String!
   details: AccountDetail
+  statement: AccountStatementRes
 }
 
 type AccountwBalanceRes {

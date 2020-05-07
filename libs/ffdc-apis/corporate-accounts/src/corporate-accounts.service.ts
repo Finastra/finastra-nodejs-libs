@@ -14,32 +14,15 @@ import { CORPORATE_ACCOUNTS_API } from './constants';
 
 @Injectable()
 export class CorporateAccountsService {
-  async getAccounts(
-    user: User,
-    balance: boolean,
-    limit: number,
-    offset: number,
-  ) {
+  async getAccounts(user: User, limit: number, offset: number) {
     const accountContext = 'ViewAccount';
     const url = `?accountContext=${accountContext}&limit=${limit}&offset=${offset}`;
     const res = await this.get<FFDCItems<AccountBasic[]>>(url, user);
-    const accounts = res.data;
-
-    accounts.items = await Promise.all(
-      accounts.items.map(async account => {
-        if (balance) {
-          account.balances = await this.getAccountBalance(user, account.id);
-        }
-        return account;
-      }),
-    );
-
-    return accounts;
+    return res.data;
   }
 
   async getAccountsDetails(
     user: User,
-    details: boolean,
     accountType: AccountType,
     limit: number,
     offset: number,
@@ -52,17 +35,12 @@ export class CorporateAccountsService {
     const res = await this.get<FFDCItems<AccountwBalance[]>>(url, user);
     const accounts = res.data;
 
-    accounts.items = await Promise.all(
-      accounts.items.map(async account => {
-        if (details) {
-          account.details = await this.getAccountDetail(user, account.id);
-        }
-        return this.sanitizeProperties<AccountwBalance>(account, [
-          'availableBalance',
-          'availableBalanceEquivalent',
-        ]);
-      }),
-    );
+    accounts.items = accounts.items.map(account => {
+      return this.sanitizeProperties<AccountwBalance>(account, [
+        'availableBalance',
+        'availableBalanceEquivalent',
+      ]);
+    });
 
     return accounts;
   }

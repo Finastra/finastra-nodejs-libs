@@ -49,8 +49,8 @@ export interface Account {
 }
 
 export interface IQuery {
-    getAccounts(balance?: boolean, limit?: number, offset?: number): AccountBasicRes | Promise<AccountBasicRes>;
-    getAccountsBalances(details?: boolean, accountType?: AccountType, limit?: number, offset?: number, equivalentCurrency?: string): AccountwBalanceRes | Promise<AccountwBalanceRes>;
+    accounts(limit?: number, offset?: number, fromDate?: string, toDate?: string, statementLimit?: number, statementOffset?: number): AccountBasicRes | Promise<AccountBasicRes>;
+    accountsBalance(details?: boolean, accountType?: AccountType, limit?: number, offset?: number, fromDate?: string, toDate?: string, equivalentCurrency?: string): AccountwBalanceRes | Promise<AccountwBalanceRes>;
     account(id: string): AccountDetail | Promise<AccountDetail>;
     accountBalance(id: string): AccountBalance | Promise<AccountBalance>;
     accountStatement(id: string, fromDate: string, toDate: string, limit?: number, offset?: number): AccountStatementRes | Promise<AccountStatementRes>;
@@ -63,6 +63,7 @@ export interface AccountBasic extends Account {
     number: string;
     accountContext: AccountContext;
     balances?: AccountBalance;
+    statement?: AccountStatementRes;
 }
 
 export interface AccountBasicRes {
@@ -89,6 +90,7 @@ export interface AccountwBalance extends Account {
     balanceAsOn: string;
     equivalentCurrency: string;
     details?: AccountDetail;
+    statement?: AccountStatementRes;
 }
 
 export interface AccountwBalanceRes {
