@@ -42,8 +42,9 @@ jobs:
       # Build
       - name: Build Package
         run: npm run build -- ${{ matrix.package }}
-      - run: |
-          ref="${packagePath////-}"
+      - name: Artifact name formatting
+        run: |
+          artifactName="${packagePath////-}"
           echo $artifactName
           echo "::set-env name=artifactName::$artifactName"
         env:
