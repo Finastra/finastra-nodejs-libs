@@ -45,7 +45,7 @@ jobs:
       - run: |
           ref="${artifactName////-}"
           echo $artifactName
-          echo "::set-env name=ref::$artifactName"
+          echo "::set-env name=artifactName::$artifactName"
         env:
           artifactName: ${{ matrix.package }}
       - name: Upload Artifact
