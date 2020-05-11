@@ -16,13 +16,12 @@ export class AccountwBalanceResolver {
   @ResolveField()
   async statement(
     @CurrentUser() user: any,
-    @Parent() accounts,
+    @Parent() account,
     @FieldsArgs('accounts') args: any, // @Args should work, this is a workaround for the time being
     @Args('fromDate') fromDate: string,
     @Args('toDate') toDate: string,
     @Args('statementLimit') statementLimit: number,
     @Args('statementOffset') statementOffset: number,
-    @Context() ctx: any,
   ) {
     if (!fromDate) {
       fromDate = args.fromDate;
@@ -33,11 +32,11 @@ export class AccountwBalanceResolver {
     if (!statementLimit) {
       statementLimit = args.statementLimit || 10;
     }
-    if (!statementOffset) {
+    if (!statementOffset && statementOffset !== 0) {
       statementOffset = args.statementOffset || 0;
     }
 
-    const { id } = accounts;
+    const { id } = account;
     return this.accountsService.getAccountStatement(
       user,
       id,

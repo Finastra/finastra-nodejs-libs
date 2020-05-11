@@ -3,6 +3,7 @@ import { createMock } from '@golevelup/nestjs-testing';
 import { TokenGuard } from './token.guard';
 import { Reflector } from '@nestjs/core';
 import { JWT, JWK, JWKS } from 'jose';
+import { GqlExecutionContext } from '@nestjs/graphql';
 
 describe('OIDCGuard', () => {
   let guard: TokenGuard;
@@ -61,6 +62,24 @@ describe('OIDCGuard', () => {
       headers: {},
       isAuthenticated: () => false,
     });
+
+    expect(await guard.canActivate(context)).toBe(false);
+  });
+
+  it('should handle graphQL context', async () => {
+    jest.spyOn(guard['reflector'], 'get').mockReturnValue(false);
+    const context = createMock<ExecutionContext>();
+    context['contextType'] = 'graphql';
+
+    jest.spyOn(GqlExecutionContext, 'create').mockReturnValue(
+      createMock<GqlExecutionContext>({
+        getContext: () => ({
+          req: {
+            isAuthenticated: () => false,
+          },
+        }),
+      }),
+    );
 
     expect(await guard.canActivate(context)).toBe(false);
   });

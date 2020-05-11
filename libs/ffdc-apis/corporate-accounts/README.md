@@ -176,7 +176,3 @@ query($accountId: ID!) {
   }
 }
 ```
-
-## TODO:
-
-- Unit tests

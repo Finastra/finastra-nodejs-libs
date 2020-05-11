@@ -9,7 +9,6 @@ export class CorporateAccountResolver {
   @Query()
   async accounts(
     @CurrentUser() user: any,
-    @Args('bla') bla: string,
     @Args('limit') limit = 10,
     @Args('offset') offset = 0,
   ) {

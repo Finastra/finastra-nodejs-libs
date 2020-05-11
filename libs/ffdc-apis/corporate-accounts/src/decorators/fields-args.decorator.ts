@@ -9,9 +9,12 @@ export const FieldsArgs = createParamDecorator(
   },
 );
 
-export function getArgsFromQuery(query: string, resolver: string) {
+export function getArgsFromQuery(
+  query: string,
+  resolver: string,
+): { [key: string]: string } {
   const matches = new RegExp(`${resolver}\((.*)\)`, 'g').exec(query);
-  if (!matches) return [];
+  if (!matches) return {};
 
   const argsArray = matches[1].replace(/[\(\)\{\s"]/g, '').split(/[:,]/);
   const args = {};

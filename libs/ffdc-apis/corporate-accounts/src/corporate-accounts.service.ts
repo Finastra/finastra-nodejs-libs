@@ -73,7 +73,7 @@ export class CorporateAccountsService {
     let url = `/${id}/statement?fromDate=${fromDate}&toDate=${toDate}`;
 
     if (limit) url += `&limit=${limit}`;
-    if (offset) url += `&offset=${offset}`;
+    if (offset || offset === 0) url += `&offset=${offset}`;
 
     const res = await this.get<FFDCItems<AccountStatement[]>>(url, user);
     const statement = res.data;
