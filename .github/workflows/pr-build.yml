@@ -42,8 +42,14 @@ jobs:
       # Build
       - name: Build Package
         run: npm run build -- ${{ matrix.package }}
+      - run: |
+          ref="${artifactName////-}"
+          echo $artifactName
+          echo "::set-env name=ref::$artifactName"
+        env:
+          artifactName: ${{ matrix.package }}
       - name: Upload Artifact
         uses: actions/upload-artifact@v1.0.0
         with:
-          name: '${{ matrix.package }}'
-          path: './dist/libs/${{ matrix.package }}'
+          name: "${{ artifactName }}"
+          path: "./dist/libs/${{ matrix.package }}"
