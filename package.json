@@ -20,24 +20,30 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "typings:gen": "ts-node generate-typings"
   },
   "dependencies": {
     "@golevelup/nestjs-modules": "^0.4.0",
-    "@nestjs/common": "^6.10.14",
+    "@nestjs/common": "^7.0.0",
     "@nestjs/config": "^0.1.0",
-    "@nestjs/core": "^6.10.14",
+    "@nestjs/core": "^7.0.0",
+    "@nestjs/graphql": "^7.3.5",
     "@nestjs/jwt": "^7.0.0",
     "@nestjs/mongoose": "^6.3.1",
     "@nestjs/passport": "^6.1.1",
-    "@nestjs/platform-express": "^6.10.14",
+    "@nestjs/platform-express": "^7.0.0",
     "@nestjs/serve-static": "^1.0.2",
     "@types/express-session": "^1.15.16",
     "@types/mongoose": "^5.7.0",
     "@types/passport": "^1.0.2",
+    "apollo-server-express": "^2.12.0",
+    "axios": "^0.19.2",
     "connect-mongo": "^3.2.0",
     "csurf": "^1.11.0",
     "express-session": "^1.17.0",
+    "graphql": "^15.0.0",
+    "graphql-tools": "^5.0.0",
     "helmet": "^3.21.2",
     "http-proxy": "^1.18.0",
     "mongoose": "^5.8.11",
@@ -50,9 +56,9 @@
   },
   "devDependencies": {
     "@golevelup/nestjs-testing": "^0.1.2",
-    "@nestjs/cli": "^6.13.2",
-    "@nestjs/schematics": "^6.8.1",
-    "@nestjs/testing": "^6.10.14",
+    "@nestjs/cli": "^7.0.0",
+    "@nestjs/schematics": "^7.0.0",
+    "@nestjs/testing": "^7.0.0",
     "@types/express": "^4.17.2",
     "@types/jest": "^24.0.25",
     "@types/node": "^13.1.6",
@@ -102,7 +108,9 @@
       "@ffdc/nestjs-oidc/(.*)": "<rootDir>/libs/oidc/src/$1",
       "@ffdc/nestjs-oidc": "<rootDir>/libs/oidc/src",
       "@ffdc/nestjs-proxy/(.*)": "<rootDir>/libs/proxy/src/$1",
-      "@ffdc/nestjs-proxy": "<rootDir>/libs/proxy/src"
+      "@ffdc/nestjs-proxy": "<rootDir>/libs/proxy/src",
+      "ffdc/corporate-accounts/(.*)": "<rootDir>/libs/corporate-accounts/src/$1",
+      "ffdc/corporate-accounts": "<rootDir>/libs/corporate-accounts/src"
     }
   }
 }

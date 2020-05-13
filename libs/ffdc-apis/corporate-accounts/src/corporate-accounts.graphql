@@ -1,0 +1,160 @@
+type Query {
+  accounts(
+    limit: Int
+    offset: Int
+    fromDate: String
+    toDate: String
+    statementLimit: Int
+    statementOffset: Int
+  ): AccountBasicRes
+
+  accountsBalance(
+    details: Boolean
+    accountType: AccountType
+    limit: Int
+    offset: Int
+    fromDate: String
+    toDate: String
+    equivalentCurrency: String
+  ): AccountwBalanceRes
+
+  account(id: ID!): AccountDetail
+
+  accountBalance(id: ID!): AccountBalance
+
+  accountStatement(
+    id: ID!
+    fromDate: String!
+    toDate: String!
+    limit: Int
+    offset: Int
+  ): AccountStatementRes
+}
+
+interface Account {
+  id: String!
+  currency: String! # Currency code using ISO4217
+  type: AccountType!
+}
+
+type AccountBasic implements Account {
+  id: String!
+  currency: String!
+  type: AccountType!
+  number: String!
+  accountContext: AccountContext!
+  balances: AccountBalance
+  statement: AccountStatementRes
+}
+
+type AccountBasicRes {
+  items: [AccountBasic]
+  _meta: FFDCMeta
+}
+
+type AccountBalance implements Account {
+  id: String!
+  currency: String!
+  type: AccountType!
+  ledgerBalance: String!
+  availableBalance: String!
+  balanceAsOn: String!
+}
+
+type AccountwBalance implements Account {
+  id: String!
+  currency: String!
+  type: AccountType!
+  ledgerBalance: String!
+  availableBalance: String!
+  availableBalanceEquivalent: String!
+  balanceAsOn: String!
+  equivalentCurrency: String!
+  details: AccountDetail
+  statement: AccountStatementRes
+}
+
+type AccountwBalanceRes {
+  items: [AccountwBalance]
+  _meta: FFDCMeta
+}
+
+type AccountDetail implements Account {
+  id: String!
+  type: AccountType!
+  number: String!
+  currency: String!
+  format: AccountFormat!
+  country: String # ISO2 alpha code
+  status: AccountStatus!
+  cutomerReference: String
+  interestRate: Float
+  debitInterestRate: Float
+  creditInterestRate: Float
+  principalAmount: Float
+  maturityAmount: Float
+  accountStartDate: String
+  accountEndDate: String
+  bankShortName: String
+  overDraftLimit: Float
+}
+
+enum AccountType {
+  CURRENT
+  DEPOSIT
+  SAVINGS
+  LOAN
+  TERMDEPOSIT
+  CREDITCARD
+  OTHER
+}
+
+enum AccountFormat {
+  BBAN
+  IBAN
+  UPIC
+  DMST
+  OTHER
+}
+
+enum AccountStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum AccountContext {
+  ViewAccount
+  INT
+  TPT
+  DOM
+  MT103
+}
+
+type AccountStatement {
+  postingDate: String
+  valueDate: String
+  currency: String!
+  amount: Float!
+  transactionType: TransactionType!
+  balance: Float!
+  backOfficeReference: String
+  ref1: String
+  ref2: String
+}
+
+type AccountStatementRes {
+  items: [AccountStatement]
+  _meta: FFDCMeta
+}
+
+enum TransactionType {
+  CREDIT
+  DEBIT
+}
+
+type FFDCMeta {
+  limit: Int
+  pageCount: Int
+  itemCount: Int
+  page: Int
+}
