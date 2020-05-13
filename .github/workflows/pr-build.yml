@@ -43,12 +43,15 @@ jobs:
       - name: Artifact name formatting
         run: |
           artifactName="${packagePath////-}"
-          echo $artifactName
+          libName="${packagePath##*/}"
+          echo "Artifact name : ${artifactName}"
+          echo "Library name : ${libName}"
           echo "::set-env name=artifactName::$artifactName"
+          echo "::set-env name=libName::$libName"
         env:
           packagePath: ${{ matrix.package }}
       - name: Build Package
-        run: npm run build -- ${{ env.artifactName }}
+        run: npm run build -- ${{ env.libName }}
       - name: Upload Artifact
         uses: actions/upload-artifact@v1.0.0
         with:
