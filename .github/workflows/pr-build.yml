@@ -40,8 +40,6 @@ jobs:
           fail_ci_if_error: true
 
       # Build
-      - name: Build Package
-        run: npm run build -- ${{ matrix.package }}
       - name: Artifact name formatting
         run: |
           artifactName="${packagePath////-}"
@@ -49,8 +47,10 @@ jobs:
           echo "::set-env name=artifactName::$artifactName"
         env:
           packagePath: ${{ matrix.package }}
+      - name: Build Package
+        run: npm run build -- ${{ env.artifactName }}
       - name: Upload Artifact
         uses: actions/upload-artifact@v1.0.0
         with:
-          name: "${{ env.artifactName }}"
-          path: "./dist/libs/${{ matrix.package }}"
+          name: '${{ env.artifactName }}'
+          path: './dist/libs/${{ matrix.package }}'
