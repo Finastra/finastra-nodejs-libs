@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         node-version: [12.x]
-        package: [oidc, proxy]
+        package: [oidc, proxy, ffdc-apis/corporate-accounts]
 
     steps:
       # Setup
@@ -35,11 +35,18 @@ jobs:
       # Build
       - name: Build Package
         run: npm run build -- ${{ matrix.package }}
+      - name: Artifact name formatting
+        run: |
+          artifactName="${packagePath////-}"
+          echo $artifactName
+          echo "::set-env name=artifactName::$artifactName"
+        env:
+          packagePath: ${{ matrix.package }}
       - name: Upload Artifact
         uses: actions/upload-artifact@v1.0.0
         with:
-          name: '${{ matrix.package }}'
-          path: './dist/libs/${{ matrix.package }}'
+          name: "${{ env.artifactName }}"
+          path: "./dist/libs/${{ matrix.package }}"
 
       # Publish
       - name: Publish package
