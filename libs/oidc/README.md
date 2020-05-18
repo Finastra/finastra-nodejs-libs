@@ -1,5 +1,15 @@
 # OIDC Auth module
 
+NestJS module to enable OAuth 2 & OIDC login to your application.\
+It exposes 4 endpoints :
+
+- login
+- login/callback
+- logout
+- user
+
+And also a `TokenGuard`
+
 ## Use it
 
 `app.module.ts`

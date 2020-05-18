@@ -4,6 +4,8 @@
 
 <!-- TOC depthFrom:2 depthTo:3 -->
 
+- [0.4.1 (2020-05-19)](#041-2020-05-19)
+  - [Documentation](#documentation)
 - [0.4.0 (2020-05-06)](#040-2020-05-06)
   - [Features](#features)
 - [0.3.1 (2020-05-06)](#031-2020-05-06)
@@ -18,6 +20,12 @@
   - [Bug fixes](#bug-fixes-2)
 
 <!-- /TOC -->
+
+## 0.4.1 (2020-05-19)
+
+### Documentation
+
+- Add a global description
 
 ## 0.4.0 (2020-05-06)
 

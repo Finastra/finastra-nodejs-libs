@@ -1,5 +1,8 @@
 # Proxy module
 
+NestJS module to decorate and proxy calls.\
+It exposes a `/proxy` endpoint.
+
 ## Use it
 
 You can import the module like so :
