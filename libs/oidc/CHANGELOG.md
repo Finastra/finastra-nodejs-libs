@@ -48,6 +48,10 @@ OidcModule.forRootAsync({
 
 If using a class, `createOidcOptions` was changed to a more generic `createModuleConfig`.
 
+### Bug fixes
+
+- Fix returned error for unauthenticated requests, return `401 Unauthorized` instead of `403 Forbidden`
+
 ### Documentation
 
 - Add a global description
