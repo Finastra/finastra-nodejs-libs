@@ -16,6 +16,8 @@ type Query {
     fromDate: String
     toDate: String
     equivalentCurrency: String
+    statementLimit: Int
+    statementOffset: Int
   ): AccountwBalanceRes
 
   account(id: ID!): AccountDetail
