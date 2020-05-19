@@ -11,7 +11,7 @@ describe('ProxyModule', () => {
 
     beforeEach(async () => {
       module = await Test.createTestingModule({
-        imports: [ProxyModule.forRoot(ProxyModule, {})],
+        imports: [ProxyModule.forRoot({})],
       }).compile();
       proxy = module.get<Server>(HTTP_PROXY);
     });
@@ -91,6 +91,48 @@ describe('ProxyModule', () => {
           expect(spy).toHaveBeenCalled();
         });
       });
+    });
+  });
+
+  describe('register async', () => {
+    let module: TestingModule;
+
+    beforeEach(async () => {
+      module = await Test.createTestingModule({
+        imports: [
+          ProxyModule.forRootAsync({
+            useFactory: async () => ({}),
+          }),
+        ],
+      }).compile();
+    });
+
+    it('should be defined', () => {
+      expect(module).toBeDefined();
+    });
+  });
+
+  describe('register async', () => {
+    let module: TestingModule;
+
+    class ProxyModuleConfig {
+      createModuleConfig() {
+        return {};
+      }
+    }
+
+    beforeEach(async () => {
+      module = await Test.createTestingModule({
+        imports: [
+          ProxyModule.forRootAsync({
+            useClass: ProxyModuleConfig,
+          }),
+        ],
+      }).compile();
+    });
+
+    it('should be defined', () => {
+      expect(module).toBeDefined();
     });
   });
 });

@@ -1,5 +1,8 @@
 # Proxy module
 
+NestJS module to decorate and proxy calls.\
+It exposes a `/proxy` endpoint.
+
 ## Use it
 
 You can import the module like so :
@@ -7,7 +10,7 @@ You can import the module like so :
 `app.module.ts`
 
 ```typescript
-ProxyModule.forRoot(ProxyModule, {
+ProxyModule.forRoot({
     config: {},
     services: [
       {
@@ -24,9 +27,9 @@ ProxyModule.forRoot(ProxyModule, {
 `app.module.ts`
 
 ```typescript
-ProxyModule.forRootAsync(ProxyModule, {
+ProxyModule.forRootAsync({
     useClass: ProxyConfigService,
-    imports: [ConfigModule.forRoot()],
+    imports: [ConfigModule],
 }),
 ```
 

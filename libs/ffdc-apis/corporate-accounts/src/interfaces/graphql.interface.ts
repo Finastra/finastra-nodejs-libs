@@ -50,7 +50,7 @@ export interface Account {
 
 export interface IQuery {
     accounts(limit?: number, offset?: number, fromDate?: string, toDate?: string, statementLimit?: number, statementOffset?: number): AccountBasicRes | Promise<AccountBasicRes>;
-    accountsBalance(details?: boolean, accountType?: AccountType, limit?: number, offset?: number, fromDate?: string, toDate?: string, equivalentCurrency?: string): AccountwBalanceRes | Promise<AccountwBalanceRes>;
+    accountsBalance(details?: boolean, accountType?: AccountType, limit?: number, offset?: number, fromDate?: string, toDate?: string, equivalentCurrency?: string, statementLimit?: number, statementOffset?: number): AccountwBalanceRes | Promise<AccountwBalanceRes>;
     account(id: string): AccountDetail | Promise<AccountDetail>;
     accountBalance(id: string): AccountBalance | Promise<AccountBalance>;
     accountStatement(id: string, fromDate: string, toDate: string, limit?: number, offset?: number): AccountStatementRes | Promise<AccountStatementRes>;

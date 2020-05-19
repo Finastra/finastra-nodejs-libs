@@ -45,7 +45,7 @@ const OidcHelperFactory = {
   providers: [OidcHelperFactory, OidcStrategyFactory, SessionSerializer],
 })
 export class OidcModule {
-  static register(options: OidcModuleOptions): DynamicModule {
+  static forRoot(options: OidcModuleOptions): DynamicModule {
     options = mergeDefaults(options);
     return {
       module: OidcModule,
@@ -58,7 +58,7 @@ export class OidcModule {
     };
   }
 
-  static registerAsync(options: OidcModuleAsyncOptions): DynamicModule {
+  static forRootAsync(options: OidcModuleAsyncOptions): DynamicModule {
     return {
       module: OidcModule,
       imports: options.imports,
@@ -95,7 +95,7 @@ export class OidcModule {
     return {
       provide: OIDC_MODULE_OPTIONS,
       useFactory: async (optionsFactory: OidcOptionsFactory) =>
-        mergeDefaults(await optionsFactory.createOidcOptions()),
+        mergeDefaults(await optionsFactory.createModuleConfig()),
       inject: [options.useExisting || options.useClass],
     };
   }
