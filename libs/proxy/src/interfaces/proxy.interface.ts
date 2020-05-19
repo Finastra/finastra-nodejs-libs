@@ -1,5 +1,5 @@
 import { Server } from 'http-proxy';
-import { ModuleConfigFactory } from '@golevelup/nestjs-modules';
+import { ModuleMetadata, Type } from '@nestjs/common/interfaces';
 
 export interface Service {
   id: string;
@@ -12,4 +12,16 @@ export interface ProxyModuleOptions {
   services?: Service[];
 }
 
-export type ProxyModuleOptionsFactory = ModuleConfigFactory<ProxyModuleOptions>;
+export interface ProxyModuleOptionsFactory {
+  createModuleConfig(): Promise<ProxyModuleOptions> | ProxyModuleOptions;
+}
+
+export interface ProxyModuleAsyncOptions
+  extends Pick<ModuleMetadata, 'imports'> {
+  useExisting?: Type<ProxyModuleOptionsFactory>;
+  useClass?: Type<ProxyModuleOptionsFactory>;
+  useFactory?: (
+    ...args: any[]
+  ) => Promise<ProxyModuleOptions> | ProxyModuleOptions;
+  inject?: any[];
+}

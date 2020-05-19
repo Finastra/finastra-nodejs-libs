@@ -24,7 +24,6 @@
     "typings:gen": "ts-node generate-typings"
   },
   "dependencies": {
-    "@golevelup/nestjs-modules": "^0.4.0",
     "@nestjs/common": "^7.0.0",
     "@nestjs/config": "^0.1.0",
     "@nestjs/core": "^7.0.0",

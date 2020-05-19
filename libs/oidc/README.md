@@ -19,8 +19,7 @@ import { OidcModule } from '@ffdc/nestjs-oidc';
 
 @Module({
   imports: [
-    OidcModule.registerAsync({
-      imports: [ConfigModule.forRoot()],
+    OidcModule.forRootAsync({
       useFactory: async (configService: ConfigService) => ({
         issuer: configService.get('OIDC_ISSUER'),
         clientMetadata: {
@@ -33,6 +32,7 @@ import { OidcModule } from '@ffdc/nestjs-oidc';
         origin: configService.get('ORIGIN'),
       }),
       inject: [ConfigService],
+      imports: [ConfigModule],
     }),
   ],
   controllers: [],

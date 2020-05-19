@@ -12,7 +12,7 @@ export interface OidcModuleOptions {
 }
 
 export interface OidcOptionsFactory {
-  createOidcOptions(): Promise<OidcModuleOptions> | OidcModuleOptions;
+  createModuleConfig(): Promise<OidcModuleOptions> | OidcModuleOptions;
 }
 
 export interface OidcModuleAsyncOptions

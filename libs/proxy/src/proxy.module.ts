@@ -1,5 +1,4 @@
-import { Module, Logger } from '@nestjs/common';
-import { createConfigurableDynamicRootModule } from '@golevelup/nestjs-modules';
+import { Module, Logger, DynamicModule, Provider } from '@nestjs/common';
 import { createProxyServer } from 'http-proxy';
 import * as queryString from 'querystring';
 import { concatPath } from './utils';
@@ -10,7 +9,11 @@ import {
   PROXY_MODULE_OPTIONS,
   HTTP_PROXY,
 } from './proxy.constants';
-import { ProxyModuleOptions } from './interfaces';
+import {
+  ProxyModuleOptions,
+  ProxyModuleAsyncOptions,
+  ProxyModuleOptionsFactory,
+} from './interfaces';
 
 const proxyFactory = {
   provide: HTTP_PROXY,
@@ -59,7 +62,57 @@ const proxyFactory = {
   providers: [ProxyService, proxyFactory],
   controllers: [ProxyController],
 })
-export class ProxyModule extends createConfigurableDynamicRootModule<
-  ProxyModule,
-  ProxyModuleOptions
->(PROXY_MODULE_OPTIONS) {}
+export class ProxyModule {
+  static forRoot(options: ProxyModuleOptions): DynamicModule {
+    return {
+      module: ProxyModule,
+      providers: [
+        {
+          provide: PROXY_MODULE_OPTIONS,
+          useValue: options,
+        },
+      ],
+    };
+  }
+
+  static forRootAsync(options: ProxyModuleAsyncOptions): DynamicModule {
+    return {
+      module: ProxyModule,
+      imports: options.imports,
+      providers: [...this.createAsyncProviders(options)],
+    };
+  }
+
+  private static createAsyncProviders(
+    options: ProxyModuleAsyncOptions,
+  ): Provider[] {
+    if (options.useExisting || options.useFactory) {
+      return [this.createAsyncOptionsProvider(options)];
+    }
+    return [
+      this.createAsyncOptionsProvider(options),
+      {
+        provide: options.useClass,
+        useClass: options.useClass,
+      },
+    ];
+  }
+
+  private static createAsyncOptionsProvider(
+    options: ProxyModuleAsyncOptions,
+  ): Provider {
+    if (options.useFactory) {
+      return {
+        provide: PROXY_MODULE_OPTIONS,
+        useFactory: async (...args: any[]) => await options.useFactory(...args),
+        inject: options.inject || [],
+      };
+    }
+    return {
+      provide: PROXY_MODULE_OPTIONS,
+      useFactory: async (optionsFactory: ProxyModuleOptionsFactory) =>
+        await optionsFactory.createModuleConfig(),
+      inject: [options.useExisting || options.useClass],
+    };
+  }
+}
