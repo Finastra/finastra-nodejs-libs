@@ -3,6 +3,7 @@ import {
   Injectable,
   CanActivate,
   Inject,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { TOKEN_STORE } from '../oidc.constants';
 import { ExtractJwt } from 'passport-jwt';
@@ -34,7 +35,11 @@ export class TokenGuard implements CanActivate {
       if (context['contextType'] === 'graphql') {
         request = GqlExecutionContext.create(context).getContext().req;
       }
-      return request.isAuthenticated();
+      if (request.isAuthenticated()) {
+        return true;
+      } else {
+        throw new UnauthorizedException();
+      }
     }
   }
 }

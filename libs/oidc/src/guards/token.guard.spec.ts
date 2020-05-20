@@ -1,4 +1,4 @@
-import { ExecutionContext } from '@nestjs/common';
+import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { createMock } from '@golevelup/nestjs-testing';
 import { TokenGuard } from './token.guard';
 import { Reflector } from '@nestjs/core';
@@ -54,7 +54,7 @@ describe('OIDCGuard', () => {
     expect(await guard.canActivate(context)).toBeTruthy();
   });
 
-  it('should return false without auth', async () => {
+  it('should throw unauthorized error without auth', async () => {
     jest.spyOn(guard['reflector'], 'get').mockReturnValue(false);
     const context = createMock<ExecutionContext>();
 
@@ -63,7 +63,9 @@ describe('OIDCGuard', () => {
       isAuthenticated: () => false,
     });
 
-    expect(await guard.canActivate(context)).toBe(false);
+    await expect(guard.canActivate(context)).rejects.toThrow(
+      UnauthorizedException,
+    );
   });
 
   it('should handle graphQL context', async () => {
@@ -81,6 +83,20 @@ describe('OIDCGuard', () => {
       }),
     );
 
-    expect(await guard.canActivate(context)).toBe(false);
+    await expect(guard.canActivate(context)).rejects.toThrow(
+      UnauthorizedException,
+    );
+
+    jest.spyOn(GqlExecutionContext, 'create').mockReturnValue(
+      createMock<GqlExecutionContext>({
+        getContext: () => ({
+          req: {
+            isAuthenticated: () => true,
+          },
+        }),
+      }),
+    );
+
+    expect(await guard.canActivate(context)).toBe(true);
   });
 });

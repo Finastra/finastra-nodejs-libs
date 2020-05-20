@@ -1,5 +1,15 @@
 # OIDC Auth module
 
+NestJS module to enable OAuth 2 & OIDC login to your application.\
+It exposes 4 endpoints :
+
+- login
+- login/callback
+- logout
+- user
+
+And also a `TokenGuard`
+
 ## Use it
 
 `app.module.ts`
@@ -9,8 +19,7 @@ import { OidcModule } from '@ffdc/nestjs-oidc';
 
 @Module({
   imports: [
-    OidcModule.registerAsync({
-      imports: [ConfigModule.forRoot()],
+    OidcModule.forRootAsync({
       useFactory: async (configService: ConfigService) => ({
         issuer: configService.get('OIDC_ISSUER'),
         clientMetadata: {
@@ -23,6 +32,7 @@ import { OidcModule } from '@ffdc/nestjs-oidc';
         origin: configService.get('ORIGIN'),
       }),
       inject: [ConfigService],
+      imports: [ConfigModule],
     }),
   ],
   controllers: [],

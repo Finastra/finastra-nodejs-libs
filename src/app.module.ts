@@ -18,11 +18,11 @@ import { OidcConfigService } from './configs/oidc-config.service';
       isGlobal: true,
       ignoreEnvFile: process.env.NODE_ENV === 'production',
     }),
-    OidcModule.registerAsync({
-      imports: [ConfigModule],
+    OidcModule.forRootAsync({
       useClass: OidcConfigService,
+      imports: [ConfigModule],
     }),
-    ProxyModule.forRootAsync(ProxyModule, {
+    ProxyModule.forRootAsync({
       useClass: ProxyConfigService,
       imports: [ConfigModule],
     }),

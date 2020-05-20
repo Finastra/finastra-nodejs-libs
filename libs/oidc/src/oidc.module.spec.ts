@@ -29,7 +29,7 @@ describe('OidcModule', () => {
         .spyOn(Issuer, 'discover')
         .mockImplementation(() => Promise.resolve(IssuerMock));
       module = await Test.createTestingModule({
-        imports: [OidcModule.register(MOCK_OIDC_MODULE_OPTIONS)],
+        imports: [OidcModule.forRoot(MOCK_OIDC_MODULE_OPTIONS)],
       }).compile();
     });
 
@@ -49,7 +49,7 @@ describe('OidcModule', () => {
         .mockImplementation(() => Promise.resolve(IssuerMock));
       module = await Test.createTestingModule({
         imports: [
-          OidcModule.registerAsync({
+          OidcModule.forRootAsync({
             useFactory: async () => MOCK_OIDC_MODULE_OPTIONS,
           }),
         ],
@@ -65,7 +65,7 @@ describe('OidcModule', () => {
     let module: TestingModule;
 
     class oidcModuleOptions {
-      createOidcOptions() {
+      createModuleConfig() {
         return MOCK_OIDC_MODULE_OPTIONS;
       }
     }
@@ -78,7 +78,7 @@ describe('OidcModule', () => {
         .mockImplementation(() => Promise.resolve(IssuerMock));
       module = await Test.createTestingModule({
         imports: [
-          OidcModule.registerAsync({
+          OidcModule.forRootAsync({
             useClass: oidcModuleOptions,
           }),
         ],

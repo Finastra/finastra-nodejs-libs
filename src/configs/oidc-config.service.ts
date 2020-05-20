@@ -6,7 +6,7 @@ import { ConfigService } from '@nestjs/config';
 export class OidcConfigService implements OidcOptionsFactory {
   constructor(private configService: ConfigService) {}
 
-  createOidcOptions(): OidcModuleOptions {
+  createModuleConfig(): OidcModuleOptions {
     return {
       issuer: this.configService.get('OIDC_ISSUER'),
       clientMetadata: {
