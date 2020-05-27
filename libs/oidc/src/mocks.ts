@@ -16,7 +16,7 @@ export const MOCK_OIDC_MODULE_OPTIONS: OidcModuleOptions = {
     client_secret: '456',
   },
   authParams: {
-    scopes: 'oidc profile',
+    scope: 'oidc profile',
   },
   origin: 'bla',
 };

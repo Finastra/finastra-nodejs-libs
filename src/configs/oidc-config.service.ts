@@ -14,10 +14,14 @@ export class OidcConfigService implements OidcOptionsFactory {
         client_secret: this.configService.get('OIDC_CLIENT_SECRET'),
       },
       authParams: {
-        scopes: this.configService.get('OIDC_SCOPES'),
+        scope: this.configService.get('OIDC_SCOPE'),
         resource: this.configService.get('OIDC_RESOURCE'),
+        nonce: 'true',
       },
       origin: this.configService.get('ORIGIN'),
+      defaultHttpOptions: {
+        timeout: 20000,
+      },
     };
   }
 }

@@ -11,7 +11,8 @@ import {
 } from './interfaces';
 import { OIDC_MODULE_OPTIONS } from './oidc.constants';
 import { mergeDefaults, OidcHelpers } from './utils';
-import { Issuer } from 'openid-client';
+import { Issuer, custom } from 'openid-client';
+import { v4 as uuid } from 'uuid';
 
 const OidcStrategyFactory = {
   provide: 'OidcStrategy',
@@ -25,11 +26,15 @@ const OidcStrategyFactory = {
 const OidcHelperFactory = {
   provide: 'OidcHelpers',
   useFactory: async (options: OidcModuleOptions) => {
+    if (options.defaultHttpOptions) {
+      custom.setHttpOptionsDefaults(options.defaultHttpOptions);
+    }
     const issuer = options.issuer;
     const TrustIssuer = await Issuer.discover(issuer);
     const client = new TrustIssuer.Client(options.clientMetadata);
     const tokenStore = await TrustIssuer.keystore();
     options.authParams.redirect_uri = `${options.origin}/login/callback`;
+    options.authParams.nonce = options.authParams.nonce ? uuid() : null;
     const helpers = new OidcHelpers(tokenStore, client, options);
     return helpers;
   },
