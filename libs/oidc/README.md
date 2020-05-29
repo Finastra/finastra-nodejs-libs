@@ -27,9 +27,19 @@ import { OidcModule } from '@ffdc/nestjs-oidc';
           client_secret: configService.get('OIDC_CLIENT_SECRET'),
         },
         authParams: {
-          scopes: configService.get('OIDC_SCOPES'),
+          scope: configService.get('OIDC_SCOPE'),
         },
         origin: configService.get('ORIGIN'),
+        // Optional properties
+        defaultHttpOptions: {
+          timeout: 20000,
+        },
+        userInfoCallback: async userId => {
+          return {
+            username: userId,
+            customUserInfo: 'custom',
+          };
+        },
       }),
       inject: [ConfigService],
       imports: [ConfigModule],
@@ -42,6 +52,8 @@ export class AppModule {}
 ```
 
 > [clientMetadata](https://github.com/panva/node-openid-client/blob/master/docs/README.md#new-clientmetadata-jwks-options) and [authParams](https://github.com/panva/node-openid-client/blob/master/docs/README.md#clientauthorizationurlparameters) are coming from the openid-client library.
+> [defaultHttpOptions](https://github.com/panva/node-openid-client/blob/master/docs/README.md#customizing-http-requests) can be used to customize all options that openid-client sets for all requests.
+> `userInfoCallback` can be used to customize user information returned in user object on authentication.
 
 `main.ts`
 

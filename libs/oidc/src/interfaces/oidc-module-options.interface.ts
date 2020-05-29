@@ -1,5 +1,9 @@
 import { ModuleMetadata, Type } from '@nestjs/common/interfaces';
-import { AuthorizationParameters, ClientMetadata } from 'openid-client';
+import {
+  AuthorizationParameters,
+  ClientMetadata,
+  HttpOptions,
+} from 'openid-client';
 
 export interface OidcModuleOptions {
   issuer: string;
@@ -9,6 +13,8 @@ export interface OidcModuleOptions {
   redirectUriLogout?: string;
   usePKCE?: boolean;
   userInfoMethod?: UserInfoMethod;
+  defaultHttpOptions?: HttpOptions;
+  userInfoCallback?: any;
 }
 
 export interface OidcOptionsFactory {

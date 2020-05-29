@@ -2,25 +2,43 @@
 
 **Table of Contents**
 
-<!-- TOC depthFrom:2 depthTo:3 -->
+<!-- TOC -->autoauto- [Changelog](#changelog)auto    - [0.6.0 (2020-05-27)](#060-2020-05-27)auto        - [Features](#features)auto        - [Bug fixes](#bug-fixes)auto    - [0.5.0 (2020-05-19)](#050-2020-05-19)auto        - [Features](#features-1)auto        - [Bug fixes](#bug-fixes-1)auto        - [Documentation](#documentation)auto    - [0.4.0 (2020-05-06)](#040-2020-05-06)auto        - [Features](#features-2)auto    - [0.3.1 (2020-05-06)](#031-2020-05-06)auto        - [Bug fixes](#bug-fixes-2)auto    - [0.3.0 (2020-04-30)](#030-2020-04-30)auto        - [Features](#features-3)auto    - [0.2.1 (2020-04-30)](#021-2020-04-30)auto        - [Bug fixes](#bug-fixes-3)auto    - [0.2.0 (2020-04-23)](#020-2020-04-23)auto        - [Features](#features-4)auto            - [Before](#before)auto            - [Now](#now)auto    - [0.1.2 (2020-04-23)](#012-2020-04-23)auto        - [Bug fixes](#bug-fixes-4)autoauto<!-- /TOC -->
 
-- [0.5.0 (2020-05-19)](#050-2020-05-19)
-  - [Features](#features)
-  - [Documentation](#documentation)
-- [0.4.0 (2020-05-06)](#040-2020-05-06)
-  - [Features](#features-1)
-- [0.3.1 (2020-05-06)](#031-2020-05-06)
-  - [Bug fixes](#bug-fixes)
-- [0.3.0 (2020-04-30)](#030-2020-04-30)
-  - [Features](#features-2)
-- [0.2.1 (2020-04-30)](#021-2020-04-30)
-  - [Bug fixes](#bug-fixes-1)
-- [0.2.0 (2020-04-23)](#020-2020-04-23)
-  - [Features](#features-3)
-- [0.1.2 (2020-04-23)](#012-2020-04-23)
-  - [Bug fixes](#bug-fixes-2)
+## 0.6.0 (2020-05-27)
 
-<!-- /TOC -->
+### Features
+
+- It's possible to customize the options for all HTTP requests adding `defaultHttpOptions` in `OidcModuleOptions`.
+- A `nonce` value is generated if `nonce` parameter is equals to `'true'` in `authParams`.
+- `userInfoCallback` allows to customize the userInfo method and add more information in user object. To use it:
+
+```ts
+OidcModule.forRootAsync({
+  useFactory: async (configService: ConfigService) => ({
+    issuer: configService.get('OIDC_ISSUER'),
+    clientMetadata: {
+      client_id: configService.get('OIDC_CLIENT_ID'),
+      client_secret: configService.get('OIDC_CLIENT_SECRET'),
+    },
+    authParams: {
+      scopes: configService.get('OIDC_SCOPES'),
+    },
+    origin: configService.get('ORIGIN'),
+    userInfoCallback: async userId => {
+      return {
+        username: userId,
+        customUserInfo: 'custom',
+      };
+    },
+  }),
+  inject: [ConfigService],
+  imports: [ConfigModule],
+});
+```
+
+### Doc fixes
+
+- Replace `scopes` parameter to `scope` in documentation.
 
 ## 0.5.0 (2020-05-19)
 

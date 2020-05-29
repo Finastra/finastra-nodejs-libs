@@ -1,11 +1,12 @@
 import { UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy, TokenSet } from 'openid-client';
+import { Strategy, TokenSet, Issuer } from 'openid-client';
 import { JwtService } from '@nestjs/jwt';
 import { UserInfoMethod } from '../interfaces/oidc-module-options.interface';
 import { OidcHelpers } from '../utils';
 
 export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
+  userInfoCallback: any;
   constructor(
     private jwtService: JwtService,
     private oidcHelpers: OidcHelpers,
@@ -16,13 +17,21 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
       passReqToCallback: false,
       usePKCE: oidcHelpers.config.usePKCE,
     });
+    this.userInfoCallback = oidcHelpers.config.userInfoCallback;
   }
 
   async validate(tokenset: TokenSet): Promise<any> {
-    const userinfo =
+    let userinfo =
       this.oidcHelpers.config.userInfoMethod === UserInfoMethod.token
         ? this.userInfo(tokenset)
         : this.userInfoRemote(tokenset);
+
+    if (this.userInfoCallback) {
+      userinfo = {
+        ...(await userinfo),
+        ...(await this.userInfoCallback((await userinfo).username)),
+      };
+    }
 
     const id_token = tokenset.id_token;
     const access_token = tokenset.access_token;
@@ -48,7 +57,6 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
     const identity: any = this.jwtService.decode(tokenset.id_token);
     return {
       username: identity.username || identity.name,
-      groups: identity.groups,
     };
   }
 }
