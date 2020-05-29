@@ -4,8 +4,6 @@ import { Strategy, TokenSet, Issuer } from 'openid-client';
 import { JwtService } from '@nestjs/jwt';
 import { UserInfoMethod } from '../interfaces/oidc-module-options.interface';
 import { OidcHelpers } from '../utils';
-import axios from 'axios';
-import { stringify } from 'querystring';
 
 export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
   userInfoCallback: any;
@@ -23,10 +21,17 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
   }
 
   async validate(tokenset: TokenSet): Promise<any> {
-    const userinfo =
+    let userinfo =
       this.oidcHelpers.config.userInfoMethod === UserInfoMethod.token
-        ? await this.userInfo(tokenset)
+        ? this.userInfo(tokenset)
         : this.userInfoRemote(tokenset);
+
+    if (this.userInfoCallback) {
+      userinfo = {
+        ...(await userinfo),
+        ...(await this.userInfoCallback((await userinfo).username)),
+      };
+    }
 
     const id_token = tokenset.id_token;
     const access_token = tokenset.access_token;
@@ -48,15 +53,10 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
     }
   }
 
-  private async userInfo(tokenset: TokenSet) {
+  private userInfo(tokenset: TokenSet) {
     const identity: any = this.jwtService.decode(tokenset.id_token);
-    if (!this.userInfoCallback) {
-      return {
-        username: identity.username || identity.name,
-        groups: identity.groups,
-      };
-    } else {
-      return this.userInfoCallback(identity.username);
-    }
+    return {
+      username: identity.username || identity.name,
+    };
   }
 }
