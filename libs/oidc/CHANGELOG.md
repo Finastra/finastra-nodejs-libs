@@ -10,6 +10,31 @@
 
 - It's possible to customize the options for all HTTP requests adding `defaultHttpOptions` in `OidcModuleOptions`.
 - A `nonce` value is generated if `nonce` parameter is equals to `'true'` in `authParams`.
+- `userInfoCallback` allows to customize the userInfo method and add more information in user object. To use it:
+
+```ts
+OidcModule.forRootAsync({
+  useFactory: async (configService: ConfigService) => ({
+    issuer: configService.get('OIDC_ISSUER'),
+    clientMetadata: {
+      client_id: configService.get('OIDC_CLIENT_ID'),
+      client_secret: configService.get('OIDC_CLIENT_SECRET'),
+    },
+    authParams: {
+      scopes: configService.get('OIDC_SCOPES'),
+    },
+    origin: configService.get('ORIGIN'),
+    userInfoCallback: async userId => {
+      return {
+        username: userId,
+        customUserInfo: 'custom',
+      };
+    },
+  }),
+  inject: [ConfigService],
+  imports: [ConfigModule],
+});
+```
 
 ### Doc fixes
 

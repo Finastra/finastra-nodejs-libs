@@ -14,6 +14,7 @@ export interface OidcModuleOptions {
   usePKCE?: boolean;
   userInfoMethod?: UserInfoMethod;
   defaultHttpOptions?: HttpOptions;
+  userInfoCallback?: any;
 }
 
 export interface OidcOptionsFactory {

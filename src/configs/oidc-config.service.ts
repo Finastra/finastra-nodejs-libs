@@ -22,6 +22,25 @@ export class OidcConfigService implements OidcOptionsFactory {
       defaultHttpOptions: {
         timeout: 20000,
       },
+      userInfoCallback: async (userId, idpInfos) => {
+        switch (userId) {
+          case 'ffdcuser1':
+            return {
+              username: userId,
+              groups: [this.configService.get('ADMIN_GROUP_ID')],
+            };
+          case 'ffdcuser2':
+            return {
+              username: userId,
+              groups: [this.configService.get('EMPLOYEE_GROUP_ID')],
+            };
+          case 'ffdcuser3':
+            return {
+              username: userId,
+              groups: [this.configService.get('CUSTOMER_GROUP_ID')],
+            };
+        }
+      },
     };
   }
 }
