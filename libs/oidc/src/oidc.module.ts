@@ -34,7 +34,8 @@ const OidcHelperFactory = {
     const client = new TrustIssuer.Client(options.clientMetadata);
     const tokenStore = await TrustIssuer.keystore();
     options.authParams.redirect_uri = `${options.origin}/login/callback`;
-    options.authParams.nonce = options.authParams.nonce ? uuid() : null;
+    options.authParams.nonce =
+      options.authParams.nonce === 'true' ? uuid() : options.authParams.nonce;
     const helpers = new OidcHelpers(tokenStore, client, options);
     return helpers;
   },

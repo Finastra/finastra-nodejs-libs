@@ -9,11 +9,11 @@
 ### Features
 
 - It's possible to customize the options for all HTTP requests adding `defaultHttpOptions` in `OidcModuleOptions`.
-- A `nonce` value is generated if `nonce` parameter exists in `authParams`.
+- A `nonce` value is generated if `nonce` parameter is equals to `'true'` in `authParams`.
 
-### Bug fixes
+### Doc fixes
 
-- Replace `scopes` parameter and `OIDC_SCOPES` respectively to `scope` and `OIDC_SCOPE` to fit oidc documentation.
+- Replace `scopes` parameter to `scope` in documentation.
 
 ## 0.5.0 (2020-05-19)
 
