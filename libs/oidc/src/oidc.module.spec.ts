@@ -93,4 +93,39 @@ describe('OidcModule', () => {
       expect(module).toBeDefined();
     });
   });
+
+  describe('simulate error fetching issuer', () => {
+    let module: TestingModule;
+    let mockExit;
+
+    class oidcModuleOptions {
+      createModuleConfig() {
+        return MOCK_OIDC_MODULE_OPTIONS;
+      }
+    }
+
+    beforeEach(async () => {
+      const IssuerMock = MOCK_ISSUER_INSTANCE;
+      IssuerMock.keystore = jest.fn();
+      jest.spyOn(Issuer, 'discover').mockImplementation(() => Promise.reject());
+
+      mockExit = jest
+        .spyOn(process, 'exit')
+        .mockImplementation((code?: number): never => {
+          return undefined as never;
+        });
+
+      module = await Test.createTestingModule({
+        imports: [
+          OidcModule.forRootAsync({
+            useClass: oidcModuleOptions,
+          }),
+        ],
+      }).compile();
+    });
+
+    it('should terminate process', () => {
+      expect(mockExit).toHaveBeenCalled();
+    });
+  });
 });
