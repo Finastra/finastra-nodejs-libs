@@ -20,7 +20,7 @@ export class OidcConfigService implements OidcOptionsFactory {
       },
       origin: this.configService.get('ORIGIN'),
       defaultHttpOptions: {
-        timeout: 1, //20000,
+        timeout: 20000,
       },
     };
   }
