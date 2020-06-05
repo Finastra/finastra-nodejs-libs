@@ -10,6 +10,86 @@
 
 Put user object in request and call `userInfoCallback` once the token is validated for Bearer authentication on http request.
 
+The way to use `TokenGuard` has changed:
+
+#### How to set a global guard BEFORE
+
+`main.ts`
+
+```typescript
+const issuer = app.get(ConfigService).get('OIDC_ISSUER');
+const tokenStore = await getTokenStore(issuer);
+const reflector = app.get(Reflector);
+app.useGlobalGuards(new TokenGuard(tokenStore, reflector));
+```
+
+#### How to set a global guard NOW
+
+`main.ts`
+
+```typescript
+app.useGlobalGuards(await getTokenGuard(app));
+```
+
+#### How to set a controller-scoped guard BEFORE
+
+`*.module.ts`
+
+```typescript
+import { getTokenStore, TOKEN_STORE } from '@ffdc/nestjs-oidc';
+
+const TokenStoreFactory = {
+  provide: TOKEN_STORE,
+  useFactory: async (configService: ConfigService) => {
+    const issuer = configService.get('OIDC_ISSUER');
+    return await getTokenStore(issuer);
+  },
+  inject: [ConfigService],
+};
+
+@Module({
+  imports: [ConfigModule.forRoot()],
+  providers: [TokenStoreFactory],
+  ...
+})
+```
+
+#### How to set a controller-scoped guard NOW
+
+`*.module.ts`
+
+```typescript
+import { ConfigService, ConfigModule } from '@nestjs/config';
+import {
+  TOKEN_STORE,
+  getTokenStore,
+  OIDC_MODULE_OPTIONS,
+} from '@ffdc/nestjs-oidc';
+
+const TokenStoreFactory = {
+  provide: TOKEN_STORE,
+  useFactory: async (configService: ConfigService) => {
+    const issuer = configService.get('OIDC_ISSUER');
+    return await getTokenStore(issuer);
+  },
+  inject: [ConfigService],
+};
+
+const OidcConfigFactory = {
+  provide: OIDC_MODULE_OPTIONS,
+  useFactory: async (configService: ConfigService) => {
+    return //RETURN OIDC CONFIG HERE
+  },
+  inject: [ConfigService],
+};
+
+@Module({
+  imports: [ConfigModule.forRoot()],
+  providers: [TokenStoreFactory, OidcConfigFactory],
+  ...
+})
+```
+
 ## 0.6.1 (2020-06-03)
 
 ### Bugfixes

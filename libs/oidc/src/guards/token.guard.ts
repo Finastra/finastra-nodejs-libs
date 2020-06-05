@@ -5,7 +5,7 @@ import {
   Inject,
   UnauthorizedException,
 } from '@nestjs/common';
-import { TOKEN_STORE } from '../oidc.constants';
+import { TOKEN_STORE, OIDC_MODULE_OPTIONS } from '../oidc.constants';
 import { ExtractJwt } from 'passport-jwt';
 import { JWT, JWKS } from 'jose';
 import { Reflector } from '@nestjs/core';
@@ -17,7 +17,7 @@ export class TokenGuard implements CanActivate {
   constructor(
     @Inject(TOKEN_STORE) private tokenStore: JWKS.KeyStore,
     private readonly reflector: Reflector,
-    private oidcOptions: OidcModuleOptions,
+    @Inject(OIDC_MODULE_OPTIONS) private oidcOptions: OidcModuleOptions,
   ) {}
   async canActivate(context: ExecutionContext) {
     let request = context.switchToHttp().getRequest();

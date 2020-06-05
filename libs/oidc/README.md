@@ -72,13 +72,12 @@ You can either use it globally, or scoped per controller or route.
 
 #### Globally
 
-`maint.ts`
+`main.ts`
 
 ```typescript
-const issuer = app.get(ConfigService).get('OIDC_ISSUER');
-const tokenStore = await getTokenStore(issuer);
-const reflector = app.get(Reflector);
-app.useGlobalGuards(new TokenGuard(tokenStore, reflector));
+import { getTokenGuard } from '@ffdc/nestjs-oidc';
+
+app.useGlobalGuards(await getTokenGuard(app));
 ```
 
 #### Controller or route based
@@ -91,7 +90,12 @@ The example below is using the configService to retrieve the issuer and pass the
 `*.module.ts`
 
 ```typescript
-import { getTokenStore, TOKEN_STORE } from '@uxd-finastra/oidc';
+import { ConfigService, ConfigModule } from '@nestjs/config';
+import {
+  TOKEN_STORE,
+  getTokenStore,
+  OIDC_MODULE_OPTIONS,
+} from '@ffdc/nestjs-oidc';
 
 const TokenStoreFactory = {
   provide: TOKEN_STORE,
@@ -102,9 +106,38 @@ const TokenStoreFactory = {
   inject: [ConfigService],
 };
 
+const OidcConfigFactory = {
+  provide: OIDC_MODULE_OPTIONS,
+  useFactory: async (configService: ConfigService) => {
+    return {
+      //YOUR OIDC CONFIG HERE
+      issuer: configService.get('OIDC_ISSUER'),
+      clientMetadata: {
+        client_id: configService.get('OIDC_CLIENT_ID'),
+        client_secret: configService.get('OIDC_CLIENT_SECRET'),
+      },
+      authParams: {
+        scope: configService.get('OIDC_SCOPE'),
+      },
+      origin: configService.get('ORIGIN'),
+      // Optional properties
+      defaultHttpOptions: {
+        timeout: 20000,
+      },
+      userInfoCallback: async userId => {
+        return {
+          username: userId,
+          customUserInfo: 'custom',
+        };
+      }
+    };
+  },
+  inject: [ConfigService],
+};
+
 @Module({
   imports: [ConfigModule.forRoot()],
-  providers: [TokenStoreFactory],
+  providers: [TokenStoreFactory, OidcConfigFactory],
   ...
 })
 ```
