@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { CatsModule } from './cats/cats.module';
 import { OidcModule } from '@ffdc/nestjs-oidc';
 import { ProxyModule } from '@ffdc/nestjs-proxy';

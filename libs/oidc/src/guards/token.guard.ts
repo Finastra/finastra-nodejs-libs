@@ -10,12 +10,14 @@ import { ExtractJwt } from 'passport-jwt';
 import { JWT, JWKS } from 'jose';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
+import { OidcModuleOptions } from '../interfaces';
 
 @Injectable()
 export class TokenGuard implements CanActivate {
   constructor(
     @Inject(TOKEN_STORE) private tokenStore: JWKS.KeyStore,
     private readonly reflector: Reflector,
+    private oidcOptions: OidcModuleOptions,
   ) {}
   async canActivate(context: ExecutionContext) {
     let request = context.switchToHttp().getRequest();
@@ -30,6 +32,12 @@ export class TokenGuard implements CanActivate {
       const jwt = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
       const tokenStore = this.tokenStore;
       const valid = JWT.verify(jwt, tokenStore);
+      request.user = valid;
+      if (this.oidcOptions.userInfoCallback) {
+        request.user.userinfo = await this.oidcOptions.userInfoCallback(
+          request.user.username,
+        );
+      }
       return !!valid;
     } catch (err) {
       if (context['contextType'] === 'graphql') {
