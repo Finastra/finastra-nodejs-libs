@@ -75,9 +75,14 @@ You can either use it globally, or scoped per controller or route.
 `main.ts`
 
 ```typescript
-import { getTokenGuard } from '@ffdc/nestjs-oidc';
 
-app.useGlobalGuards(await getTokenGuard(app));
+const oidcConfig = {
+  //YOUR OIDC CONFIG HERE
+};
+const issuer = app.get(ConfigService).get('OIDC_ISSUER');
+const tokenStore = await getTokenStore(issuer);
+const reflector = app.get(Reflector);
+app.useGlobalGuards(new TokenGuard(tokenStore, reflector, oidcConfig));
 ```
 
 #### Controller or route based

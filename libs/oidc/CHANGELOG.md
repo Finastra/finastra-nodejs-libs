@@ -10,7 +10,7 @@
 
 Put user object in request and call `userInfoCallback` once the token is validated for Bearer authentication on http request.
 
-The way to use `TokenGuard` has changed:
+Using `TokenGuard` requests OIDC config in parameters:
 
 #### How to set a global guard BEFORE
 
@@ -28,7 +28,13 @@ app.useGlobalGuards(new TokenGuard(tokenStore, reflector));
 `main.ts`
 
 ```typescript
-app.useGlobalGuards(await getTokenGuard(app));
+const oidcConfig = {
+  //YOUR OIDC CONFIG HERE
+};
+const issuer = app.get(ConfigService).get('OIDC_ISSUER');
+const tokenStore = await getTokenStore(issuer);
+const reflector = app.get(Reflector);
+app.useGlobalGuards(new TokenGuard(tokenStore, reflector, oidcConfig));
 ```
 
 #### How to set a controller-scoped guard BEFORE
