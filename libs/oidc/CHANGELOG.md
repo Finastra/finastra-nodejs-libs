@@ -2,7 +2,46 @@
 
 **Table of Contents**
 
-<!-- TOC -->autoauto- [Changelog](#changelog)auto    - [0.6.0 (2020-05-27)](#060-2020-05-27)auto        - [Features](#features)auto        - [Bug fixes](#bug-fixes)auto    - [0.5.0 (2020-05-19)](#050-2020-05-19)auto        - [Features](#features-1)auto        - [Bug fixes](#bug-fixes-1)auto        - [Documentation](#documentation)auto    - [0.4.0 (2020-05-06)](#040-2020-05-06)auto        - [Features](#features-2)auto    - [0.3.1 (2020-05-06)](#031-2020-05-06)auto        - [Bug fixes](#bug-fixes-2)auto    - [0.3.0 (2020-04-30)](#030-2020-04-30)auto        - [Features](#features-3)auto    - [0.2.1 (2020-04-30)](#021-2020-04-30)auto        - [Bug fixes](#bug-fixes-3)auto    - [0.2.0 (2020-04-23)](#020-2020-04-23)auto        - [Features](#features-4)auto            - [Before](#before)auto            - [Now](#now)auto    - [0.1.2 (2020-04-23)](#012-2020-04-23)auto        - [Bug fixes](#bug-fixes-4)autoauto<!-- /TOC -->
+<!-- TOC -->
+
+- [Changelog](#changelog)
+  - [0.6.1 (2020-06-03)](#061-2020-06-03)
+    - [Bugfixes](#bugfixes)
+  - [0.6.0 (2020-05-27)](#060-2020-05-27)
+    - [Features](#features)
+    - [Doc fixes](#doc-fixes)
+  - [0.5.0 (2020-05-19)](#050-2020-05-19)
+    - [Features](#features-1)
+    - [Bug fixes](#bug-fixes)
+    - [Documentation](#documentation)
+  - [0.4.0 (2020-05-06)](#040-2020-05-06)
+    - [Features](#features-2)
+  - [0.3.1 (2020-05-06)](#031-2020-05-06)
+    - [Bug fixes](#bug-fixes-1)
+  - [0.3.0 (2020-04-30)](#030-2020-04-30)
+    - [Features](#features-3)
+  - [0.2.1 (2020-04-30)](#021-2020-04-30)
+    - [Bug fixes](#bug-fixes-2)
+  - [0.2.0 (2020-04-23)](#020-2020-04-23)
+    - [Features](#features-4)
+      - [Before](#before)
+      - [Now](#now)
+  - [0.1.2 (2020-04-23)](#012-2020-04-23)
+    - [Bug fixes](#bug-fixes-3)
+
+<!-- /TOC -->
+
+## 0.6.1 (2020-06-03)
+
+### Bugfixes
+
+Previously, a wrongly configured issuer or one that didn't respond within configured timeout would result in a shady error, leaving the user clueless about what is the issue at hand.\
+Error handling was improved, with a link to the documentation and will terminate the application, as it is not usable :
+
+```
+[OidcModule] Error accessing the issuer/tokenStore. Check if the url is valid or increase the timeout in the defaultHttpOptions : https://github.com/fusionfabric/finastra-nodejs-libs/blob/develop/libs/oidc/README.md
+[OidcModule] Terminating application
+```
 
 ## 0.6.0 (2020-05-27)
 
