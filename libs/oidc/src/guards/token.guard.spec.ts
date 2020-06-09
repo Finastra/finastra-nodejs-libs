@@ -2,13 +2,11 @@ import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { createMock } from '@golevelup/nestjs-testing';
 import { TokenGuard } from './token.guard';
 import { Reflector } from '@nestjs/core';
-import { JWT, JWK, JWKS } from 'jose';
+import { JWT, JWK } from 'jose';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { MOCK_OIDC_MODULE_OPTIONS } from '../mocks';
 
 describe('OIDCGuard', () => {
   let guard: TokenGuard;
-  let guardWithUserInfoCallback: TokenGuard;
   let token: string;
 
   beforeEach(() => {
@@ -29,24 +27,7 @@ describe('OIDCGuard', () => {
         typ: 'JWT',
       },
     });
-    const tokenStore = new JWKS.KeyStore([key]);
-    guard = new TokenGuard(
-      tokenStore,
-      createMock<Reflector>(),
-      MOCK_OIDC_MODULE_OPTIONS,
-    );
-    guardWithUserInfoCallback = new TokenGuard(
-      tokenStore,
-      createMock<Reflector>(),
-      {
-        ...MOCK_OIDC_MODULE_OPTIONS,
-        userInfoCallback: username => {
-          return {
-            username,
-          };
-        },
-      },
-    );
+    guard = new TokenGuard(createMock<Reflector>());
   });
 
   it('should be defined', () => {
@@ -64,27 +45,13 @@ describe('OIDCGuard', () => {
     const context = createMock<ExecutionContext>();
 
     context.switchToHttp().getRequest.mockReturnValue({
-      headers: {
-        authorization: `Bearer ${token}`,
+      user: {
+        username: 'test',
       },
+      isAuthenticated: () => true,
     });
 
     expect(await guard.canActivate(context)).toBeTruthy();
-  });
-
-  it('should return true with auth for guard with userInfoCallback', async () => {
-    jest
-      .spyOn(guardWithUserInfoCallback['reflector'], 'get')
-      .mockReturnValue(false);
-    const context = createMock<ExecutionContext>();
-
-    context.switchToHttp().getRequest.mockReturnValue({
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
-    });
-
-    expect(await guardWithUserInfoCallback.canActivate(context)).toBeTruthy();
   });
 
   it('should throw unauthorized error without auth', async () => {
