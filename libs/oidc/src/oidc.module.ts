@@ -3,7 +3,7 @@ import { PassportModule } from '@nestjs/passport';
 import { OidcStrategy } from './strategies';
 import { SessionSerializer } from './utils/session.serializer';
 import { AuthController } from './controllers/auth.controller';
-import { JwtService, JwtModule } from '@nestjs/jwt';
+import { JwtModule } from '@nestjs/jwt';
 import {
   OidcModuleOptions,
   OidcModuleAsyncOptions,
@@ -19,11 +19,11 @@ const logger = new Logger('OidcModule');
 
 const OidcStrategyFactory = {
   provide: 'OidcStrategy',
-  useFactory: async (jwtService: JwtService, oidcHelpers: OidcHelpers) => {
-    const strategy = new OidcStrategy(jwtService, oidcHelpers);
+  useFactory: async (oidcHelpers: OidcHelpers) => {
+    const strategy = new OidcStrategy(oidcHelpers);
     return strategy;
   },
-  inject: [JwtService, OidcHelpers],
+  inject: [OidcHelpers],
 };
 
 const OidcHelperFactory = {
@@ -68,6 +68,7 @@ const OidcHelperFactory = {
   ],
   controllers: [AuthController],
   providers: [OidcHelperFactory, OidcStrategyFactory, SessionSerializer],
+  exports: [OidcHelperFactory],
 })
 export class OidcModule {
   static forRoot(options: OidcModuleOptions): DynamicModule {
