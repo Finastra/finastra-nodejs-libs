@@ -10,6 +10,7 @@ import {
   MOCK_CLIENT_INSTANCE,
   MOCK_ISSUER_INSTANCE,
 } from './mocks';
+import { MiddlewareConsumer } from '@nestjs/common';
 
 const keyStore = new JWKS.KeyStore([]);
 const MockOidcHelpers = new OidcHelpers(
@@ -126,6 +127,15 @@ describe('OidcModule', () => {
 
     it('should terminate process', () => {
       expect(mockExit).toHaveBeenCalled();
+    });
+  });
+
+  describe('configure middleware', () => {
+    it('should be able to configure', () => {
+      const module = new OidcModule();
+      const consumer = createMock<MiddlewareConsumer>();
+      module.configure(consumer);
+      expect(module).toBeTruthy();
     });
   });
 });
