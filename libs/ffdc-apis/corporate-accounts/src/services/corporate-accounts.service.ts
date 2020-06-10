@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import {
   AccountwBalance,
   AccountBasic,
@@ -8,17 +8,29 @@ import {
   AccountStatement,
   FFDCItems,
   User,
-} from './interfaces';
+} from '../interfaces';
 import axios from 'axios';
-import { CORPORATE_ACCOUNTS_API } from './constants';
+import { CORPORATE_ACCOUNTS_API } from '../constants';
+import { ConfigService } from '@nestjs/config';
+import { RequestService } from './request.service';
 
 @Injectable()
-export class CorporateAccountsService {
+export class CorporateAccountsService extends RequestService {
+  constructor(private configService: ConfigService) {
+    super(
+      `${configService.get(
+        'FFDC',
+        'https://api.fusionfabric.cloud',
+      )}/${CORPORATE_ACCOUNTS_API}`,
+      CorporateAccountsService.name,
+    );
+  }
+
   async getAccounts(user: User, limit: number, offset: number) {
     const accountContext = 'ViewAccount';
     const url = `?accountContext=${accountContext}&limit=${limit}&offset=${offset}`;
     const res = await this.get<FFDCItems<AccountBasic[]>>(url, user);
-    return res.data;
+    return res;
   }
 
   async getAccountsDetails(
@@ -32,8 +44,7 @@ export class CorporateAccountsService {
 
     if (equivalentCurrency) url += `&equivalentCurrency=${equivalentCurrency}`;
 
-    const res = await this.get<FFDCItems<AccountwBalance[]>>(url, user);
-    const accounts = res.data;
+    const accounts = await this.get<FFDCItems<AccountwBalance[]>>(url, user);
 
     accounts.items = accounts.items.map(account => {
       return this.sanitizeProperties<AccountwBalance>(account, [
@@ -47,8 +58,7 @@ export class CorporateAccountsService {
 
   async getAccountBalance(user: User, id: string): Promise<AccountBalance> {
     const url = `/${id}/balances`;
-    const res = await this.get<AccountBalance>(url, user);
-    const account = res.data;
+    const account = await this.get<AccountBalance>(url, user);
     return this.sanitizeProperties<AccountBalance>(account, [
       'availableBalance',
       'ledgerBalance',
@@ -57,8 +67,7 @@ export class CorporateAccountsService {
 
   async getAccountDetail(user: User, id: string): Promise<AccountDetail> {
     const url = `/${id}`;
-    const res = await this.get<AccountDetail>(url, user);
-    const account = res.data;
+    const account = await this.get<AccountDetail>(url, user);
     return account;
   }
 
@@ -75,8 +84,7 @@ export class CorporateAccountsService {
     if (limit) url += `&limit=${limit}`;
     if (offset || offset === 0) url += `&offset=${offset}`;
 
-    const res = await this.get<FFDCItems<AccountStatement[]>>(url, user);
-    const statement = res.data;
+    const statement = await this.get<FFDCItems<AccountStatement[]>>(url, user);
     statement.items = statement.items.map(transaction => {
       return this.sanitizeProperties<AccountStatement>(transaction, [
         'amount',
@@ -84,14 +92,6 @@ export class CorporateAccountsService {
       ]);
     });
     return statement;
-  }
-
-  private async get<T>(target: string, user: User) {
-    const url = CORPORATE_ACCOUNTS_API + target;
-    return await axios.request<T>({
-      url,
-      headers: this.getHeaders(user),
-    });
   }
 
   private sanitizeProperties<T>(object: Object, props: string[]) {
@@ -104,12 +104,5 @@ export class CorporateAccountsService {
 
   private sanitizeNumber(nb: string) {
     return nb.replace(/\,/g, '');
-  }
-
-  private getHeaders(user: User) {
-    const token = user.access_token;
-    return {
-      ...(token && { authorization: 'Bearer ' + token }),
-    };
   }
 }

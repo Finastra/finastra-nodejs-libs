@@ -1,19 +1,31 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CorporateAccountsService } from './corporate-accounts.service';
-import { request } from 'http';
 import axios from 'axios';
-import { AccountType } from './interfaces';
+import { AccountType } from '../interfaces';
+import { ConfigService } from '@nestjs/config';
 
 const user = {
   access_token: '123',
 };
+
+class mockConfigService {
+  get(role) {
+    return role;
+  }
+}
 
 describe('CorporateAccountsService', () => {
   let service: CorporateAccountsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [CorporateAccountsService],
+      providers: [
+        CorporateAccountsService,
+        {
+          provide: ConfigService,
+          useClass: mockConfigService,
+        },
+      ],
     }).compile();
 
     service = module.get<CorporateAccountsService>(CorporateAccountsService);

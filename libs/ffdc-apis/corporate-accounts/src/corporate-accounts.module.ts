@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { CorporateAccountsService } from './corporate-accounts.service';
+import { CorporateAccountsService } from './services';
 import {
   CorporateAccountResolver,
   AccountBasicResolver,
@@ -9,6 +9,7 @@ import {
   AccountBalanceResolver,
   AccountStatementResolver,
 } from './resolvers';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   providers: [
@@ -22,5 +23,6 @@ import {
     AccountStatementResolver,
   ],
   exports: [CorporateAccountsService],
+  imports: [ConfigModule],
 })
 export class CorporateAccountsModule {}
