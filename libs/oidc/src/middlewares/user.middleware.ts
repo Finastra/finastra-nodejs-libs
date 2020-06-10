@@ -17,7 +17,7 @@ export class UserMiddleware implements NestMiddleware {
       const decodedJwt = JWT.verify(jwt, tokenStore);
 
       req.user = decodedJwt;
-      req.user['userinfo'] = getUserInfo(jwt, this.oidcHelpers);
+      req.user['userinfo'] = await getUserInfo(jwt, this.oidcHelpers);
 
       next();
     } catch (err) {
