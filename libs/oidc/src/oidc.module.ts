@@ -23,6 +23,7 @@ import { Issuer, custom } from 'openid-client';
 import { v4 as uuid } from 'uuid';
 import { MOCK_CLIENT_INSTANCE } from './mocks';
 import { UserMiddleware } from './middlewares';
+import { TokenGuard } from './guards';
 
 const logger = new Logger('OidcModule');
 
@@ -76,7 +77,12 @@ const OidcHelperFactory = {
     JwtModule.register({}),
   ],
   controllers: [AuthController],
-  providers: [OidcHelperFactory, OidcStrategyFactory, SessionSerializer],
+  providers: [
+    OidcHelperFactory,
+    OidcStrategyFactory,
+    SessionSerializer,
+    TokenGuard,
+  ],
   exports: [OidcHelperFactory],
 })
 export class OidcModule implements NestModule {
