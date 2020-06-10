@@ -76,13 +76,8 @@ You can either use it globally, or scoped per controller or route.
 
 ```typescript
 
-const oidcConfig = {
-  //YOUR OIDC CONFIG HERE
-};
-const issuer = app.get(ConfigService).get('OIDC_ISSUER');
-const tokenStore = await getTokenStore(issuer);
 const reflector = app.get(Reflector);
-app.useGlobalGuards(new TokenGuard(tokenStore, reflector, oidcConfig));
+app.useGlobalGuards(new TokenGuard(reflector));
 ```
 
 #### Controller or route based
@@ -111,38 +106,9 @@ const TokenStoreFactory = {
   inject: [ConfigService],
 };
 
-const OidcConfigFactory = {
-  provide: OIDC_MODULE_OPTIONS,
-  useFactory: async (configService: ConfigService) => {
-    return {
-      //YOUR OIDC CONFIG HERE
-      issuer: configService.get('OIDC_ISSUER'),
-      clientMetadata: {
-        client_id: configService.get('OIDC_CLIENT_ID'),
-        client_secret: configService.get('OIDC_CLIENT_SECRET'),
-      },
-      authParams: {
-        scope: configService.get('OIDC_SCOPE'),
-      },
-      origin: configService.get('ORIGIN'),
-      // Optional properties
-      defaultHttpOptions: {
-        timeout: 20000,
-      },
-      userInfoCallback: async userId => {
-        return {
-          username: userId,
-          customUserInfo: 'custom',
-        };
-      }
-    };
-  },
-  inject: [ConfigService],
-};
-
 @Module({
   imports: [ConfigModule.forRoot()],
-  providers: [TokenStoreFactory, OidcConfigFactory],
+  providers: [TokenStoreFactory],
   ...
 })
 ```
