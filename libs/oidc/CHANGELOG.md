@@ -8,7 +8,8 @@
 
 ### Features
 
-Put user object in request and call `userInfoCallback` once the token is validated for Bearer authentication on http request.
+Previously, incoming requests weren't decorated with user information.
+An interceptor put `user` object in requests and calls `userInfoCallback` once the token is validated for Bearer authentication on http request.
 
 Using `TokenGuard` requests only reflector parameter now:
 
