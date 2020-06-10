@@ -28,8 +28,7 @@ app.useGlobalGuards(new TokenGuard(tokenStore, reflector));
 `main.ts`
 
 ```typescript
-const reflector = app.get(Reflector);
-app.useGlobalGuards(new TokenGuard(reflector));
+app.useGlobalGuards(app.get(TokenGuard));
 ```
 
 ## 0.6.1 (2020-06-03)

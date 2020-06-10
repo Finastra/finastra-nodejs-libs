@@ -76,8 +76,7 @@ You can either use it globally, or scoped per controller or route.
 
 ```typescript
 
-const reflector = app.get(Reflector);
-app.useGlobalGuards(new TokenGuard(reflector));
+app.useGlobalGuards(app.get(TokenGuard));
 ```
 
 #### Controller or route based
