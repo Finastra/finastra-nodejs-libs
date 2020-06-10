@@ -75,42 +75,10 @@ You can either use it globally, or scoped per controller or route.
 `main.ts`
 
 ```typescript
-
 app.useGlobalGuards(app.get(TokenGuard));
 ```
 
 #### Controller or route based
-
-Due to the limitations of the dependency injections of providers being bound to a module context.
-Because of this, you will need to create a factory to provide the `tokenStore` to the authGuard.
-
-The example below is using the configService to retrieve the issuer and pass the tokenStore as a factory :
-
-`*.module.ts`
-
-```typescript
-import { ConfigService, ConfigModule } from '@nestjs/config';
-import {
-  TOKEN_STORE,
-  getTokenStore,
-  OIDC_MODULE_OPTIONS,
-} from '@ffdc/nestjs-oidc';
-
-const TokenStoreFactory = {
-  provide: TOKEN_STORE,
-  useFactory: async (configService: ConfigService) => {
-    const issuer = configService.get('OIDC_ISSUER');
-    return await getTokenStore(issuer);
-  },
-  inject: [ConfigService],
-};
-
-@Module({
-  imports: [ConfigModule.forRoot()],
-  providers: [TokenStoreFactory],
-  ...
-})
-```
 
 `*.controller.ts`
 
