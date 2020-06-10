@@ -4,7 +4,6 @@ import { TokenSet } from 'openid-client';
 import { OidcHelpers } from '../utils';
 import { JWKS } from 'jose';
 import { MOCK_OIDC_MODULE_OPTIONS, MOCK_CLIENT_INSTANCE } from '../mocks';
-import { JwtService } from '@nestjs/jwt';
 import { UserInfoMethod } from '../interfaces';
 
 const keyStore = new JWKS.KeyStore([]);
@@ -15,11 +14,9 @@ const MockOidcHelpers = new OidcHelpers(
 );
 
 describe('OidcStrategy', () => {
-  let jwtService;
   let strategy;
   beforeEach(() => {
-    jwtService = createMock<JwtService>();
-    strategy = new OidcStrategy(jwtService, MockOidcHelpers);
+    strategy = new OidcStrategy(MockOidcHelpers);
   });
 
   it('should be defined', () => {
@@ -52,13 +49,11 @@ describe('OidcStrategy', () => {
 });
 
 describe('OidcStrategy with token userInfo method', () => {
-  let jwtService;
   let strategy;
   beforeEach(() => {
-    jwtService = createMock<JwtService>();
     let helpers = { ...MockOidcHelpers };
     helpers.config.userInfoMethod = UserInfoMethod.token;
-    strategy = new OidcStrategy(jwtService, helpers);
+    strategy = new OidcStrategy(helpers);
   });
 
   it('should be defined', () => {
@@ -66,52 +61,9 @@ describe('OidcStrategy with token userInfo method', () => {
   });
 
   describe('validate', () => {
-    it('should call decode token', async () => {
-      const spy = jest
-        .spyOn(jwtService, 'decode')
-        .mockReturnValue({ username: 'test-user' });
+    it('should return user', async () => {
       const result = await strategy.validate(createMock<TokenSet>());
       expect(result).toBeTruthy();
-      expect(spy).toHaveBeenCalled();
-    });
-
-    it('should return decode token', async () => {
-      const spy = jest
-        .spyOn(jwtService, 'decode')
-        .mockReturnValue({ name: 'User' });
-      const result = await strategy.validate(createMock<TokenSet>());
-      expect(result).toBeTruthy();
-      expect(spy).toHaveBeenCalled();
-    });
-  });
-
-  describe('OidcStrategy with token userInfo method and userInfoCallback ', () => {
-    let jwtService;
-    let helpers;
-    let strategy;
-    beforeEach(() => {
-      jwtService = createMock<JwtService>();
-      let helpers = { ...MockOidcHelpers };
-      helpers.config.userInfoMethod = UserInfoMethod.token;
-      helpers.config.userInfoCallback = userId => {
-        return {
-          username: userId,
-          groups: ['admin'],
-        };
-      };
-      strategy = new OidcStrategy(jwtService, helpers);
-    });
-
-    it('should be defined', () => {
-      expect(strategy).toBeDefined();
-    });
-    it('should return userInfo', async () => {
-      const spy = jest
-        .spyOn(jwtService, 'decode')
-        .mockReturnValue({ name: 'User' });
-      const result = await strategy.validate(createMock<TokenSet>());
-      expect(result).toBeTruthy();
-      expect(spy).toHaveBeenCalled();
     });
   });
 });

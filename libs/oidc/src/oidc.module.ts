@@ -1,9 +1,17 @@
-import { Module, DynamicModule, Provider, Logger } from '@nestjs/common';
+import {
+  Module,
+  DynamicModule,
+  Provider,
+  Logger,
+  NestModule,
+  MiddlewareConsumer,
+  RequestMethod,
+} from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { OidcStrategy } from './strategies';
 import { SessionSerializer } from './utils/session.serializer';
 import { AuthController } from './controllers/auth.controller';
-import { JwtService, JwtModule } from '@nestjs/jwt';
+import { JwtModule } from '@nestjs/jwt';
 import {
   OidcModuleOptions,
   OidcModuleAsyncOptions,
@@ -14,16 +22,18 @@ import { mergeDefaults, OidcHelpers } from './utils';
 import { Issuer, custom } from 'openid-client';
 import { v4 as uuid } from 'uuid';
 import { MOCK_CLIENT_INSTANCE } from './mocks';
+import { UserMiddleware } from './middlewares';
+import { TokenGuard } from './guards';
 
 const logger = new Logger('OidcModule');
 
 const OidcStrategyFactory = {
   provide: 'OidcStrategy',
-  useFactory: async (jwtService: JwtService, oidcHelpers: OidcHelpers) => {
-    const strategy = new OidcStrategy(jwtService, oidcHelpers);
+  useFactory: async (oidcHelpers: OidcHelpers) => {
+    const strategy = new OidcStrategy(oidcHelpers);
     return strategy;
   },
-  inject: [JwtService, OidcHelpers],
+  inject: [OidcHelpers],
 };
 
 const OidcHelperFactory = {
@@ -67,9 +77,21 @@ const OidcHelperFactory = {
     JwtModule.register({}),
   ],
   controllers: [AuthController],
-  providers: [OidcHelperFactory, OidcStrategyFactory, SessionSerializer],
+  providers: [
+    OidcHelperFactory,
+    OidcStrategyFactory,
+    SessionSerializer,
+    TokenGuard,
+  ],
+  exports: [OidcHelperFactory],
 })
-export class OidcModule {
+export class OidcModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(UserMiddleware)
+      .forRoutes({ path: '*', method: RequestMethod.ALL });
+  }
+
   static forRoot(options: OidcModuleOptions): DynamicModule {
     options = mergeDefaults(options);
     return {
