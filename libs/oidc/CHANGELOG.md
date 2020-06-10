@@ -5,12 +5,14 @@
 <!-- TOC -->
 
 - [Changelog](#changelog)
+  - [0.7.1 (2020-06-10)](#071-2020-06-10)
+    - [Bugfixes](#bugfixes)
   - [0.7.0 (2020-06-05)](#070-2020-06-05)
     - [Features](#features)
       - [How to set a global guard BEFORE](#how-to-set-a-global-guard-before)
       - [How to set a global guard NOW](#how-to-set-a-global-guard-now)
   - [0.6.1 (2020-06-03)](#061-2020-06-03)
-    - [Bugfixes](#bugfixes)
+    - [Bugfixes](#bugfixes-1)
   - [0.6.0 (2020-05-27)](#060-2020-05-27)
     - [Features](#features-1)
     - [Doc fixes](#doc-fixes)
@@ -34,6 +36,12 @@
     - [Bug fixes](#bug-fixes-3)
 
 <!-- /TOC -->
+
+## 0.7.1 (2020-06-10)
+
+### Bugfixes
+
+Userinfo were never resolved and appeared as a promise.
 
 ## 0.7.0 (2020-06-05)
 
