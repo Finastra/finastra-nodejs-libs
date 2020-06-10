@@ -3,16 +3,11 @@ import { CorporateAccountsService } from './corporate-accounts.service';
 import axios from 'axios';
 import { AccountType } from '../interfaces';
 import { ConfigService } from '@nestjs/config';
+import { CORP_ACCOUNTS_MODULE_OPTIONS } from '../constants';
 
 const user = {
   access_token: '123',
 };
-
-class mockConfigService {
-  get(role) {
-    return role;
-  }
-}
 
 describe('CorporateAccountsService', () => {
   let service: CorporateAccountsService;
@@ -22,8 +17,8 @@ describe('CorporateAccountsService', () => {
       providers: [
         CorporateAccountsService,
         {
-          provide: ConfigService,
-          useClass: mockConfigService,
+          provide: CORP_ACCOUNTS_MODULE_OPTIONS,
+          useValue: {},
         },
       ],
     }).compile();

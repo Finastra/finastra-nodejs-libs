@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Inject } from '@nestjs/common';
 import {
   AccountwBalance,
   AccountBasic,
@@ -8,20 +8,23 @@ import {
   AccountStatement,
   FFDCItems,
   User,
+  CorpAccountsModuleOptions,
 } from '../interfaces';
-import axios from 'axios';
-import { CORPORATE_ACCOUNTS_API } from '../constants';
-import { ConfigService } from '@nestjs/config';
+import {
+  CORPORATE_ACCOUNTS_API,
+  CORP_ACCOUNTS_MODULE_OPTIONS,
+} from '../constants';
 import { RequestService } from './request.service';
 
 @Injectable()
 export class CorporateAccountsService extends RequestService {
-  constructor(private configService: ConfigService) {
+  constructor(
+    @Inject(CORP_ACCOUNTS_MODULE_OPTIONS)
+    private moduleOptions: CorpAccountsModuleOptions,
+  ) {
     super(
-      `${configService.get(
-        'FFDC',
-        'https://api.fusionfabric.cloud',
-      )}/${CORPORATE_ACCOUNTS_API}`,
+      `${moduleOptions.ffdcApi ||
+        'https://api.fusionfabric.cloud'}/${CORPORATE_ACCOUNTS_API}`,
       CorporateAccountsService.name,
     );
   }

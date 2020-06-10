@@ -18,7 +18,7 @@ import { OidcConfigService } from './configs/oidc-config.service';
 @Module({
   imports: [
     CatsModule,
-    CorporateAccountsModule,
+    CorporateAccountsModule.forRoot({}),
     ConfigModule.forRoot({
       isGlobal: true,
       ignoreEnvFile: process.env.NODE_ENV === 'production',
