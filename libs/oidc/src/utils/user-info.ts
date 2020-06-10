@@ -1,22 +1,22 @@
-import { UnauthorizedException } from '@nestjs/common';
+import { UnauthorizedException, Logger } from '@nestjs/common';
 import { UserInfoMethod } from '../interfaces';
 import { OidcHelpers } from './oidc-helpers.util';
 import { JWT } from 'jose';
+
+const logger = new Logger('UserInfo');
 
 export async function getUserInfo(
   accessToken: string,
   oidcHelpers: OidcHelpers,
 ) {
-  let userInfoData =
-    oidcHelpers.config.userInfoMethod === UserInfoMethod.token
-      ? userInfo(accessToken)
-      : userInfoRemote(accessToken, oidcHelpers);
+  let userInfoData = await (oidcHelpers.config.userInfoMethod ===
+  UserInfoMethod.token
+    ? userInfo(accessToken)
+    : userInfoRemote(accessToken, oidcHelpers));
   if (oidcHelpers.config.userInfoCallback) {
     userInfoData = {
-      ...(await userInfoData),
-      ...(await oidcHelpers.config.userInfoCallback(
-        (await userInfoData).username,
-      )),
+      ...userInfoData,
+      ...oidcHelpers.config.userInfoCallback(userInfoData.username),
     };
   }
 
@@ -27,13 +27,15 @@ async function userInfoRemote(accessToken: string, oidcHelpers: OidcHelpers) {
   try {
     return await oidcHelpers.client.userinfo(accessToken);
   } catch (err) {
-    throw new UnauthorizedException();
+    const msg = `Error accessing user information`;
+    logger.error(msg);
+    return userInfo(accessToken, 'sub');
   }
 }
 
-function userInfo(accessToken: string) {
+function userInfo(accessToken: string, usernameParameter?: string) {
   const identity: any = JWT.decode(accessToken);
   return {
-    username: identity.username || identity.name,
+    username: identity[usernameParameter] || identity.username || identity.name,
   };
 }

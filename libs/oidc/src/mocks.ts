@@ -1,4 +1,4 @@
-import { OidcModuleOptions } from './interfaces';
+import { OidcModuleOptions, UserInfoMethod } from './interfaces';
 import { Issuer } from 'openid-client';
 
 export const MOCK_ISSUER = 'http://issuer.io';
@@ -19,4 +19,5 @@ export const MOCK_OIDC_MODULE_OPTIONS: OidcModuleOptions = {
     scope: 'oidc profile',
   },
   origin: 'bla',
+  userInfoMethod: UserInfoMethod.token,
 };
