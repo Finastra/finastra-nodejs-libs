@@ -7,18 +7,18 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UserMiddleware implements NestMiddleware {
-  constructor(
-    private oidcHelpers: OidcHelpers,
-    private configService: ConfigService,
-  ) {}
+  constructor(private oidcHelpers: OidcHelpers) {}
   async use(req: Request, res: Response, next: Function) {
     try {
-      const issuer = this.configService.get('OIDC_ISSUER');
-      const tokenStore = await getTokenStore(issuer);
       const jwt = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
+      if (!jwt) throw 'No Jwt';
+
+      const tokenStore = this.oidcHelpers.tokenStore;
       const decodedJwt = JWT.verify(jwt, tokenStore);
+
       req.user = decodedJwt;
       req.user['userinfo'] = getUserInfo(jwt, this.oidcHelpers);
+
       next();
     } catch (err) {
       next();

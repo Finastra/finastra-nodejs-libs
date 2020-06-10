@@ -1,4 +1,12 @@
-import { Module, DynamicModule, Provider, Logger } from '@nestjs/common';
+import {
+  Module,
+  DynamicModule,
+  Provider,
+  Logger,
+  NestModule,
+  MiddlewareConsumer,
+  RequestMethod,
+} from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { OidcStrategy } from './strategies';
 import { SessionSerializer } from './utils/session.serializer';
@@ -14,6 +22,7 @@ import { mergeDefaults, OidcHelpers } from './utils';
 import { Issuer, custom } from 'openid-client';
 import { v4 as uuid } from 'uuid';
 import { MOCK_CLIENT_INSTANCE } from './mocks';
+import { UserMiddleware } from './middlewares';
 
 const logger = new Logger('OidcModule');
 
@@ -70,7 +79,13 @@ const OidcHelperFactory = {
   providers: [OidcHelperFactory, OidcStrategyFactory, SessionSerializer],
   exports: [OidcHelperFactory],
 })
-export class OidcModule {
+export class OidcModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(UserMiddleware)
+      .forRoutes({ path: '*', method: RequestMethod.ALL });
+  }
+
   static forRoot(options: OidcModuleOptions): DynamicModule {
     options = mergeDefaults(options);
     return {
