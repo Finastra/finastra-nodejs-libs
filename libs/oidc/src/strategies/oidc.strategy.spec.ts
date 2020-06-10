@@ -4,7 +4,6 @@ import { TokenSet } from 'openid-client';
 import { OidcHelpers } from '../utils';
 import { JWKS } from 'jose';
 import { MOCK_OIDC_MODULE_OPTIONS, MOCK_CLIENT_INSTANCE } from '../mocks';
-import { UserInfoMethod } from '../interfaces';
 
 const keyStore = new JWKS.KeyStore([]);
 const MockOidcHelpers = new OidcHelpers(
@@ -32,38 +31,6 @@ describe('OidcStrategy', () => {
       const result = await strategy.validate(createMock<TokenSet>());
       expect(result).toBeTruthy();
       expect(spy).toHaveBeenCalled();
-    });
-
-    it('should catch errors', async () => {
-      const spy = (jest.spyOn(
-        MockOidcHelpers.client,
-        'userinfo' as never,
-      ) as any).mockImplementation(() => {
-        throw new Error();
-      });
-      const result = await strategy.validate(createMock<TokenSet>());
-      expect(result).toBeTruthy();
-      expect(spy).toHaveBeenCalled();
-    });
-  });
-});
-
-describe('OidcStrategy with token userInfo method', () => {
-  let strategy;
-  beforeEach(() => {
-    let helpers = { ...MockOidcHelpers };
-    helpers.config.userInfoMethod = UserInfoMethod.token;
-    strategy = new OidcStrategy(helpers);
-  });
-
-  it('should be defined', () => {
-    expect(strategy).toBeDefined();
-  });
-
-  describe('validate', () => {
-    it('should return user', async () => {
-      const result = await strategy.validate(createMock<TokenSet>());
-      expect(result).toBeTruthy();
     });
   });
 });

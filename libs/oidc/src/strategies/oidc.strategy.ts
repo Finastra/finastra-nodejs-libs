@@ -15,7 +15,7 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
   }
 
   async validate(tokenset: TokenSet): Promise<any> {
-    let userinfo = getUserInfo(tokenset.access_token, this.oidcHelpers);
+    let userinfo = await getUserInfo(tokenset.access_token, this.oidcHelpers);
 
     const id_token = tokenset.id_token;
     const access_token = tokenset.access_token;
