@@ -16,7 +16,7 @@ export async function getUserInfo(
   if (oidcHelpers.config.userInfoCallback) {
     userInfoData = {
       ...userInfoData,
-      ...oidcHelpers.config.userInfoCallback(userInfoData.username),
+      ...(await oidcHelpers.config.userInfoCallback(userInfoData.username)),
     };
   }
 
