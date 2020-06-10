@@ -72,42 +72,13 @@ You can either use it globally, or scoped per controller or route.
 
 #### Globally
 
-`maint.ts`
+`main.ts`
 
 ```typescript
-const issuer = app.get(ConfigService).get('OIDC_ISSUER');
-const tokenStore = await getTokenStore(issuer);
-const reflector = app.get(Reflector);
-app.useGlobalGuards(new TokenGuard(tokenStore, reflector));
+app.useGlobalGuards(app.get(TokenGuard));
 ```
 
 #### Controller or route based
-
-Due to the limitations of the dependency injections of providers being bound to a module context.
-Because of this, you will need to create a factory to provide the `tokenStore` to the authGuard.
-
-The example below is using the configService to retrieve the issuer and pass the tokenStore as a factory :
-
-`*.module.ts`
-
-```typescript
-import { getTokenStore, TOKEN_STORE } from '@uxd-finastra/oidc';
-
-const TokenStoreFactory = {
-  provide: TOKEN_STORE,
-  useFactory: async (configService: ConfigService) => {
-    const issuer = configService.get('OIDC_ISSUER');
-    return await getTokenStore(issuer);
-  },
-  inject: [ConfigService],
-};
-
-@Module({
-  imports: [ConfigModule.forRoot()],
-  providers: [TokenStoreFactory],
-  ...
-})
-```
 
 `*.controller.ts`
 

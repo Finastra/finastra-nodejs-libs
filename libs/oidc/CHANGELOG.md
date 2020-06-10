@@ -5,31 +5,63 @@
 <!-- TOC -->
 
 - [Changelog](#changelog)
+  - [0.7.0 (2020-06-05)](#070-2020-06-05)
+    - [Features](#features)
+      - [How to set a global guard BEFORE](#how-to-set-a-global-guard-before)
+      - [How to set a global guard NOW](#how-to-set-a-global-guard-now)
   - [0.6.1 (2020-06-03)](#061-2020-06-03)
     - [Bugfixes](#bugfixes)
   - [0.6.0 (2020-05-27)](#060-2020-05-27)
-    - [Features](#features)
+    - [Features](#features-1)
     - [Doc fixes](#doc-fixes)
   - [0.5.0 (2020-05-19)](#050-2020-05-19)
-    - [Features](#features-1)
+    - [Features](#features-2)
     - [Bug fixes](#bug-fixes)
     - [Documentation](#documentation)
   - [0.4.0 (2020-05-06)](#040-2020-05-06)
-    - [Features](#features-2)
+    - [Features](#features-3)
   - [0.3.1 (2020-05-06)](#031-2020-05-06)
     - [Bug fixes](#bug-fixes-1)
   - [0.3.0 (2020-04-30)](#030-2020-04-30)
-    - [Features](#features-3)
+    - [Features](#features-4)
   - [0.2.1 (2020-04-30)](#021-2020-04-30)
     - [Bug fixes](#bug-fixes-2)
   - [0.2.0 (2020-04-23)](#020-2020-04-23)
-    - [Features](#features-4)
+    - [Features](#features-5)
       - [Before](#before)
       - [Now](#now)
   - [0.1.2 (2020-04-23)](#012-2020-04-23)
     - [Bug fixes](#bug-fixes-3)
 
 <!-- /TOC -->
+
+## 0.7.0 (2020-06-05)
+
+### Features
+
+Previously, incoming requests weren't decorated with user information.
+An interceptor put `user` object in requests and calls `userInfoCallback` once the token is validated for Bearer authentication on http request.
+
+Using `TokenGuard` requests only reflector parameter now:
+
+#### How to set a global guard BEFORE
+
+`main.ts`
+
+```typescript
+const issuer = app.get(ConfigService).get('OIDC_ISSUER');
+const tokenStore = await getTokenStore(issuer);
+const reflector = app.get(Reflector);
+app.useGlobalGuards(new TokenGuard(tokenStore, reflector));
+```
+
+#### How to set a global guard NOW
+
+`main.ts`
+
+```typescript
+app.useGlobalGuards(app.get(TokenGuard));
+```
 
 ## 0.6.1 (2020-06-03)
 

@@ -1,15 +1,11 @@
 import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { TokenGuard, setupSession, getTokenStore } from '@ffdc/nestjs-oidc';
-import { ConfigService } from '@nestjs/config';
+import { setupSession, TokenGuard } from '@ffdc/nestjs-oidc';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const issuer = app.get(ConfigService).get('OIDC_ISSUER');
-  const tokenStore = await getTokenStore(issuer);
-  const reflector = app.get(Reflector);
-  app.useGlobalGuards(new TokenGuard(tokenStore, reflector));
+  app.useGlobalGuards(app.get(TokenGuard));
 
   setupSession(app);
 
