@@ -45,6 +45,8 @@
 
 Fix for userinfo applied to incoming requests and not only for login flow.
 
+If `userInfoMethod` is configured to `endpoint` and the call fails, the `sub` parameter is defined as user's `username`.
+
 ## 0.7.1 (2020-06-10)
 
 ### Bugfixes

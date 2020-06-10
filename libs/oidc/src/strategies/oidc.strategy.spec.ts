@@ -24,13 +24,15 @@ describe('OidcStrategy', () => {
 
   describe('validate', () => {
     it('should return true', async () => {
-      const spy = (jest.spyOn(
-        MockOidcHelpers.client,
-        'userinfo' as never,
-      ) as any).mockReturnValue(true);
+      const utils = require('../utils');
+      utils.getUserInfo = jest.fn().mockImplementation(() => {
+        return {
+          username: 'John Doe',
+          groups: [],
+        };
+      });
       const result = await strategy.validate(createMock<TokenSet>());
       expect(result).toBeTruthy();
-      expect(spy).toHaveBeenCalled();
     });
   });
 });
