@@ -37,7 +37,7 @@ describe('User Middleware', () => {
     expect(next).toHaveBeenCalled();
   });
 
-  it('should add user in request', () => {
+  it('should add user in request', async () => {
     const req = createMock<Request>();
     const res = createMock<Response>();
     const next = jest.fn();
@@ -48,7 +48,7 @@ describe('User Middleware', () => {
     const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c`;
     req.headers.authorization = `Bearer ${token}`;
 
-    middleware.use(req, res, next);
+    await middleware.use(req, res, next);
     expect(next).toHaveBeenCalled();
     expect(req.user['userinfo']).toBeTruthy();
   });

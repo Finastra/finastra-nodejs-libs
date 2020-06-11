@@ -53,4 +53,16 @@ describe('getUserInfo', () => {
       groups: ['admin'],
     });
   });
+
+  it('should put sub in username if user info endpoint call failed', async () => {
+    let helpers = { ...MOCK_OIDC_HELPERS };
+    helpers.config.userInfoMethod = UserInfoMethod.endpoint;
+    helpers.config.userInfoCallback = null;
+    helpers.client.userinfo = () => {
+      return new Promise((resolve, reject) => reject('no user info'));
+    };
+    expect(await getUserInfo(MOCK_ACCESS_TOKEN, helpers)).toEqual({
+      username: '1234567890',
+    });
+  });
 });
