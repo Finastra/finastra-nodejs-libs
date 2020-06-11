@@ -2,7 +2,7 @@ import * as session from 'express-session';
 import * as passport from 'passport';
 import { v4 as uiid } from 'uuid';
 
-export function setupSession(app) {
+export function setupSession(app, name) {
   app.use(
     session({
       secret: process.env.SESSION_SECRET || uiid(), // to sign session id
@@ -14,6 +14,7 @@ export function setupSession(app) {
         httpOnly: true, // so that cookie can't be accessed via client-side script
         secure: false,
       },
+      name,
     }),
   );
   app.use(passport.initialize());
