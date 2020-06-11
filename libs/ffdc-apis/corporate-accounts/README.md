@@ -51,7 +51,7 @@ import { GqlConfigService } from './configs/graphql-config.service';
 
 @Module({
   imports: [
-    CorporateAccountsModule,
+    CorporateAccountsModule.forRoot({}),
     GraphQLModule.forRootAsync({
       useClass: GqlConfigService,
     }),

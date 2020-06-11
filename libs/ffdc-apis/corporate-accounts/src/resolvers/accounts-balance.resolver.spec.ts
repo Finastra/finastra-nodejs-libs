@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CorporateAccountsService } from '../corporate-accounts.service';
+import { CorporateAccountsService } from '../services';
 import { createMock } from '@golevelup/nestjs-testing';
 import { AccountsBalanceResolver } from './accounts-balance.resolver';
 import { AccountType } from '../interfaces';

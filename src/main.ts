@@ -7,7 +7,7 @@ async function bootstrap() {
 
   app.useGlobalGuards(app.get(TokenGuard));
 
-  setupSession(app);
+  setupSession(app, 'test-app');
 
   await app.listen(process.env.PORT || 3000);
 }

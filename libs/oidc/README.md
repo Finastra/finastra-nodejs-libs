@@ -60,7 +60,7 @@ export class AppModule {}
 ```typescript
 import { setupSession } from '@ffdc/nestjs-oidc';
 
-setupSession(app);
+setupSession(app, 'name-of-cookie');
 ```
 
 > By default, session secret will be looked for in the `SESSION_SECRET` environment variable. If not provided, a uuid will be generated instead
