@@ -28,18 +28,6 @@ export class RequestService {
     return this.request<T>(target, user, 'GET');
   }
 
-  async post<T>(target: string, user: User, body: any) {
-    return this.request<T>(target, user, 'POST', body);
-  }
-
-  async put<T>(target: string, user: User, body: any) {
-    return this.request<T>(target, user, 'PUT', body);
-  }
-
-  async delete<T>(target: string, user: User) {
-    return this.request<T>(target, user, 'DELETE');
-  }
-
   private getHeaders(user: User) {
     const token = user.access_token;
     return {
