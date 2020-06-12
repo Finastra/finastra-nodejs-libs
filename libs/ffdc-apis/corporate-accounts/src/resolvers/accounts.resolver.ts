@@ -1,5 +1,5 @@
 import { Resolver, Query, Args } from '@nestjs/graphql';
-import { CorporateAccountsService } from '../corporate-accounts.service';
+import { CorporateAccountsService } from '../services';
 import { CurrentUser } from '../decorators';
 
 @Resolver('AccountBasicRes')

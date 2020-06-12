@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AccountBalanceResolver } from './account-balance.resolver';
-import { CorporateAccountsService } from '../corporate-accounts.service';
+import { CorporateAccountsService } from '../services';
 import { createMock } from '@golevelup/nestjs-testing';
 
 describe('AccountBalanceResolver', () => {

@@ -1,5 +1,5 @@
 import { Resolver, Args, ResolveField, Parent, Context } from '@nestjs/graphql';
-import { CorporateAccountsService } from '../corporate-accounts.service';
+import { CorporateAccountsService } from '../services';
 import { CurrentUser } from '../decorators';
 import { FieldsArgs } from '../decorators/fields-args.decorator';
 
