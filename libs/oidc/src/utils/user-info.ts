@@ -1,13 +1,13 @@
 import { UnauthorizedException, Logger } from '@nestjs/common';
 import { UserInfoMethod } from '../interfaces';
-import { OidcHelpers } from './oidc-helpers.util';
+import { OidcStrategyOptions } from './oidc-helpers.util';
 import { JWT } from 'jose';
 
 const logger = new Logger('UserInfo');
 
 export async function getUserInfo(
   accessToken: string,
-  oidcHelpers: OidcHelpers,
+  oidcHelpers: OidcStrategyOptions,
 ) {
   let userInfoData = await (oidcHelpers.config.userInfoMethod ===
   UserInfoMethod.token
@@ -23,7 +23,10 @@ export async function getUserInfo(
   return userInfoData;
 }
 
-async function userInfoRemote(accessToken: string, oidcHelpers: OidcHelpers) {
+async function userInfoRemote(
+  accessToken: string,
+  oidcHelpers: OidcStrategyOptions,
+) {
   try {
     return await oidcHelpers.client.userinfo(accessToken);
   } catch (err) {

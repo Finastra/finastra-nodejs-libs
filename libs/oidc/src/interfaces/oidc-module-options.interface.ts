@@ -5,16 +5,25 @@ import {
   HttpOptions,
 } from 'openid-client';
 
-export interface OidcModuleOptions {
+export interface IdentityProvider {
+  id: string;
+  path?: string;
   issuer: string;
   clientMetadata: ClientMetadata;
   authParams: AuthorizationParameters;
-  origin: string;
+  userInfoCallback?: any;
   redirectUriLogout?: string;
   usePKCE?: boolean;
   userInfoMethod?: UserInfoMethod;
+}
+
+export interface OidcModuleOptions {
+  identityProviders: IdentityProvider[];
+  //issuer: string;
+  //clientMetadata: ClientMetadata;
+  //authParams: AuthorizationParameters;
+  origin: string;
   defaultHttpOptions?: HttpOptions;
-  userInfoCallback?: any;
 }
 
 export interface OidcOptionsFactory {

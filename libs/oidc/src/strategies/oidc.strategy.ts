@@ -1,10 +1,10 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, TokenSet } from 'openid-client';
-import { OidcHelpers, getUserInfo } from '../utils';
+import { OidcStrategyOptions, getUserInfo, OidcHelpers } from '../utils';
 
 export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
   userInfoCallback: any;
-  constructor(private oidcHelpers: OidcHelpers) {
+  constructor(private oidcHelpers: OidcStrategyOptions) {
     super({
       client: oidcHelpers.client,
       params: oidcHelpers.config.authParams,
@@ -27,5 +27,15 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
       userinfo,
     };
     return user;
+  }
+}
+
+export class OidcStrategies {
+  tenants: any = {};
+
+  constructor(private oidcHelpers: OidcHelpers) {
+    oidcHelpers.idps.forEach(idp => {
+      this.tenants[idp.config.id] = new OidcStrategy(idp);
+    });
   }
 }
