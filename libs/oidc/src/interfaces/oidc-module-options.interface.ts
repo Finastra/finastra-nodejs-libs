@@ -14,7 +14,7 @@ export interface OidcModuleOptions {
   usePKCE?: boolean;
   userInfoMethod?: UserInfoMethod;
   defaultHttpOptions?: HttpOptions;
-  externalIdps?: IdentityProviderOptions[];
+  externalIdps?: { [idpName: string]: IdentityProviderOptions };
   userInfoCallback?: any;
 }
 

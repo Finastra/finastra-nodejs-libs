@@ -32,14 +32,14 @@ describe('OidcStrategy', () => {
           groups: [],
         };
       });
-      jest.spyOn(strategy, 'authenticateExternalIdps').mockReturnValue([]);
+      jest.spyOn(strategy, 'authenticateExternalIdps').mockReturnValue({});
       const result = await strategy.validate(createMock<TokenSet>());
       expect(result).toBeTruthy();
     });
   });
 
   describe('authenticateExternalIdps', () => {
-    it('should return tokens array', async () => {
+    it('should return tokens', async () => {
       jest.spyOn(Issuer, 'discover').mockReturnValue(
         Promise.resolve({
           keystore: () => {},
@@ -57,8 +57,15 @@ describe('OidcStrategy', () => {
       );
       const result = await strategy.authenticateExternalIdps();
       let res = {};
-      res[MOCK_OIDC_MODULE_OPTIONS.externalIdps[0].issuer] = 'access_token';
+      res[MOCK_OIDC_MODULE_OPTIONS.externalIdps.idpTest.issuer] =
+        'access_token';
       expect(result).toStrictEqual(res);
+    });
+
+    it('should return empty tokens', async () => {
+      jest.spyOn(Issuer, 'discover').mockReturnValue(Promise.reject());
+      const result = await strategy.authenticateExternalIdps();
+      expect(result).toBeUndefined();
     });
   });
 });

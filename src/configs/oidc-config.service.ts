@@ -23,18 +23,16 @@ export class OidcConfigService implements OidcOptionsFactory {
       defaultHttpOptions: {
         timeout: 20000,
       },
-      externalIdps: [
-        {
-          clientId: this.configService.get('OIDC_AAD_CLIENT_ID'),
-          clientSecret: this.configService.get('OIDC_AAD_CLIENT_SECRET'),
-          issuer: this.configService.get('OIDC_AAD_ISSUER'),
-          scope: this.configService.get('OIDC_SCOPE'),
-        },
-      ],
+      // externalIdps: {
+      //   azure: {
+      //     clientId: this.configService.get('OIDC_AAD_CLIENT_ID'),
+      //     clientSecret: this.configService.get('OIDC_AAD_CLIENT_SECRET'),
+      //     issuer: this.configService.get('OIDC_AAD_ISSUER'),
+      //     scope: this.configService.get('OIDC_SCOPE'),
+      //   },
+      // },
       // userInfoCallback: async (userId, idpInfos) => {
-      //   const accessToken = idpInfos.find(
-      //     idp => idp.issuer === this.configService.get('OIDC_AAD_ISSUER'),
-      //   ).accessToken;
+      //   const accessToken = idpInfos['azure'].accessToken;
       //   const groups = (
       //     await axios.request({
       //       method: 'get',
