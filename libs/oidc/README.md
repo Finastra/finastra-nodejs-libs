@@ -34,7 +34,8 @@ import { OidcModule } from '@ffdc/nestjs-oidc';
         defaultHttpOptions: {
           timeout: 20000,
         },
-        userInfoCallback: async userId => {
+        externalIdps: {},
+        userInfoCallback: async (userId, idpInfos) => {
           return {
             username: userId,
             customUserInfo: 'custom',
@@ -51,9 +52,45 @@ import { OidcModule } from '@ffdc/nestjs-oidc';
 export class AppModule {}
 ```
 
-> [clientMetadata](https://github.com/panva/node-openid-client/blob/master/docs/README.md#new-clientmetadata-jwks-options) and [authParams](https://github.com/panva/node-openid-client/blob/master/docs/README.md#clientauthorizationurlparameters) are coming from the openid-client library.
-> [defaultHttpOptions](https://github.com/panva/node-openid-client/blob/master/docs/README.md#customizing-http-requests) can be used to customize all options that openid-client sets for all requests.
+> [clientMetadata](https://github.com/panva/node-openid-client/blob/master/docs/README.md#new-clientmetadata-jwks-options) and [authParams](https://github.com/panva/node-openid-client/blob/master/docs/README.md#clientauthorizationurlparameters) are coming from the openid-client library. \
+> [defaultHttpOptions](https://github.com/panva/node-openid-client/blob/master/docs/README.md#customizing-http-requests) can be used to customize all options that openid-client sets for all requests. \
+> `externalIdps` is an object where keys are a label for the IDP and the value format is described [here](src\interfaces\oidc-module-options.interface.ts). \
+> During authentication, the application will authenticate to those identity providers and the identity providers information are then forwarded in `userInfoCallback`. So that, you're able to call any API with a valid token. \
 > `userInfoCallback` can be used to customize user information returned in user object on authentication.
+
+### Example with externalIdps
+
+In this example, I want to authenticate to an external IDP to be able to request an API to get my user groups. \
+Here is the sample of config to add:
+
+```typescript
+{
+  externalIdps: {
+    azure: {
+      clientId: this.configService.get('OIDC_AAD_CLIENT_ID'),
+      clientSecret: this.configService.get('OIDC_AAD_CLIENT_SECRET'),
+      issuer: this.configService.get('OIDC_AAD_ISSUER'),
+      scope: this.configService.get('OIDC_SCOPE'),
+    },
+  },
+  userInfoCallback: async (userId, idpInfos) => {
+    const accessToken = idpInfos['azure'].accessToken;
+    const groups = (
+      await axios.request({
+        method: 'get',
+        url: `URL/${userId}/memberOf`,
+        headers: {
+          authorization: `Bearer ${accessToken}`,
+        },
+      })
+    ).data.value.map(group => group.id);
+    return {
+      id: userId,
+      groups,
+    };
+  },
+}
+```
 
 `main.ts`
 
