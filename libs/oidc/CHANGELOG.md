@@ -5,6 +5,8 @@
 <!-- TOC -->
 
 - [Changelog](#changelog)
+  - [0.8.0 (2020-06-22)](#080-2020-06-22)
+    - [Features](#features)
   - [0.7.4 (2020-06-11)](#074-2020-06-11)
     - [Bugfixes](#bugfixes)
   - [0.7.3 (2020-06-10)](#073-2020-06-10)
@@ -14,34 +16,41 @@
   - [0.7.1 (2020-06-10)](#071-2020-06-10)
     - [Bugfixes](#bugfixes-3)
   - [0.7.0 (2020-06-05)](#070-2020-06-05)
-    - [Features](#features)
+    - [Features](#features-1)
       - [How to set a global guard BEFORE](#how-to-set-a-global-guard-before)
       - [How to set a global guard NOW](#how-to-set-a-global-guard-now)
   - [0.6.1 (2020-06-03)](#061-2020-06-03)
     - [Bugfixes](#bugfixes-4)
   - [0.6.0 (2020-05-27)](#060-2020-05-27)
-    - [Features](#features-1)
+    - [Features](#features-2)
     - [Doc fixes](#doc-fixes)
   - [0.5.0 (2020-05-19)](#050-2020-05-19)
-    - [Features](#features-2)
+    - [Features](#features-3)
     - [Bug fixes](#bug-fixes)
     - [Documentation](#documentation)
   - [0.4.0 (2020-05-06)](#040-2020-05-06)
-    - [Features](#features-3)
+    - [Features](#features-4)
   - [0.3.1 (2020-05-06)](#031-2020-05-06)
     - [Bug fixes](#bug-fixes-1)
   - [0.3.0 (2020-04-30)](#030-2020-04-30)
-    - [Features](#features-4)
+    - [Features](#features-5)
   - [0.2.1 (2020-04-30)](#021-2020-04-30)
     - [Bug fixes](#bug-fixes-2)
   - [0.2.0 (2020-04-23)](#020-2020-04-23)
-    - [Features](#features-5)
+    - [Features](#features-6)
       - [Before](#before)
       - [Now](#now)
   - [0.1.2 (2020-04-23)](#012-2020-04-23)
     - [Bug fixes](#bug-fixes-3)
 
 <!-- /TOC -->
+
+## 0.8.0 (2020-06-22)
+
+### Features
+
+It is possible to authenticate and get token from other IDPs during authentication and forward those information in second parameter of `userInfoCallback` function.
+Check `externalIdps` in documentation for more details.
 
 ## 0.7.4 (2020-06-11)
 

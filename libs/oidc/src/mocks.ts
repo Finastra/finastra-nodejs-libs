@@ -20,4 +20,12 @@ export const MOCK_OIDC_MODULE_OPTIONS: OidcModuleOptions = {
   },
   origin: 'bla',
   userInfoMethod: UserInfoMethod.token,
+  externalIdps: {
+    idpTest: {
+      clientId: 'clientId',
+      clientSecret: 'clientSecret',
+      issuer: 'http://issuer',
+      scope: 'openid',
+    },
+  },
 };

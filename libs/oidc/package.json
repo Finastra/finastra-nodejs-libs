@@ -1,6 +1,6 @@
 {
   "name": "@ffdc/nestjs-oidc",
-  "version": "0.7.4",
+  "version": "0.8.0",
   "contributors": [
     "David Boclé <david.bocle@finastra.com>",
     "Francine Ong <francine.ong@finastra.com>"

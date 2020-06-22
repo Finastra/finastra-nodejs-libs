@@ -14,6 +14,7 @@ export interface OidcModuleOptions {
   usePKCE?: boolean;
   userInfoMethod?: UserInfoMethod;
   defaultHttpOptions?: HttpOptions;
+  externalIdps?: { [idpName: string]: IdentityProviderOptions };
   userInfoCallback?: any;
 }
 
@@ -34,4 +35,12 @@ export interface OidcModuleAsyncOptions
 export enum UserInfoMethod {
   token = 'token',
   endpoint = 'endpoint',
+}
+
+export interface IdentityProviderOptions {
+  clientId: string;
+  clientSecret: string;
+  issuer: string;
+  scope: string;
+  accessToken?: string;
 }
