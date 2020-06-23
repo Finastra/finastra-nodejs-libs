@@ -64,36 +64,39 @@ describe('User Middleware', () => {
   });
 
   describe('no external idp', () => {
-    // const MockOidcHelpersWithoutExtIdp = new OidcHelpers(
-    //   keyStore,
-    //   MOCK_CLIENT_INSTANCE,
-    //   MOCK_OIDC_MODULE_OPTIONS,
-    // );
-    // delete MockOidcHelpersWithoutExtIdp.config.externalIdps;
-    // beforeEach(async () => {
-    //   const module: TestingModule = await Test.createTestingModule({
-    //     providers: [
-    //       UserMiddleware,
-    //       {
-    //         provide: OidcHelpers,
-    //         useValue: MockOidcHelpersWithoutExtIdp,
-    //       },
-    //     ],
-    //   }).compile();
-    //   middleware = module.get<UserMiddleware>(UserMiddleware);
-    // });
-    // it('should add user in request', async () => {
-    //   const req = createMock<Request>();
-    //   const res = createMock<Response>();
-    //   const next = jest.fn();
-    //   jest.spyOn(JWT, 'verify').mockReturnValue({
-    //     username: 'John Doe',
-    //   } as any);
-    //   const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c`;
-    //   req.headers.authorization = `Bearer ${token}`;
-    //   await middleware.use(req, res, next);
-    //   expect(req.user['userinfo']).toBeTruthy();
-    //   expect(next).toHaveBeenCalled();
-    // });
+    const moduleOptions = { ...MOCK_OIDC_MODULE_OPTIONS };
+    delete moduleOptions.externalIdps;
+    const MockOidcHelpersWithoutExtIdp = new OidcHelpers(
+      keyStore,
+      MOCK_CLIENT_INSTANCE,
+      moduleOptions,
+    );
+
+    beforeEach(async () => {
+      const module: TestingModule = await Test.createTestingModule({
+        providers: [
+          UserMiddleware,
+          {
+            provide: OidcHelpers,
+            useValue: MockOidcHelpersWithoutExtIdp,
+          },
+        ],
+      }).compile();
+      middleware = module.get<UserMiddleware>(UserMiddleware);
+    });
+
+    it('should add user in request', async () => {
+      const req = createMock<Request>();
+      const res = createMock<Response>();
+      const next = jest.fn();
+      jest.spyOn(JWT, 'verify').mockReturnValue({
+        username: 'John Doe',
+      } as any);
+      const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c`;
+      req.headers.authorization = `Bearer ${token}`;
+      await middleware.use(req, res, next);
+      expect(req.user['userinfo']).toBeTruthy();
+      expect(next).toHaveBeenCalled();
+    });
   });
 });
