@@ -1,4 +1,4 @@
-import { UnauthorizedException, Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { UserInfoMethod } from '../interfaces';
 import { OidcHelpers } from './oidc-helpers.util';
 import { JWT } from 'jose';

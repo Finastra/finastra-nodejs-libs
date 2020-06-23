@@ -1,10 +1,9 @@
 import { createMock } from '@golevelup/nestjs-testing';
 import { OidcStrategy } from './oidc.strategy';
-import { TokenSet, Issuer } from 'openid-client';
+import { TokenSet } from 'openid-client';
 import { OidcHelpers } from '../utils';
 import { JWKS } from 'jose';
 import { MOCK_OIDC_MODULE_OPTIONS, MOCK_CLIENT_INSTANCE } from '../mocks';
-import axios from 'axios';
 
 const utils = require('../utils');
 const keyStore = new JWKS.KeyStore([]);
@@ -32,40 +31,9 @@ describe('OidcStrategy', () => {
           groups: [],
         };
       });
-      jest.spyOn(strategy, 'authenticateExternalIdps').mockReturnValue({});
+      utils.authenticateExternalIdps = jest.fn().mockReturnValue({});
       const result = await strategy.validate(createMock<TokenSet>());
       expect(result).toBeTruthy();
-    });
-  });
-
-  describe('authenticateExternalIdps', () => {
-    it('should return tokens', async () => {
-      jest.spyOn(Issuer, 'discover').mockReturnValue(
-        Promise.resolve({
-          keystore: () => {},
-          metadata: {
-            token_endpoint: 'http://token_endpoint',
-          },
-        } as any),
-      );
-      jest.spyOn(axios, 'request').mockReturnValue(
-        Promise.resolve({
-          data: {
-            access_token: 'access_token',
-          },
-        }),
-      );
-      const result = await strategy.authenticateExternalIdps();
-      let res = {};
-      res[MOCK_OIDC_MODULE_OPTIONS.externalIdps.idpTest.issuer] =
-        'access_token';
-      expect(result).toStrictEqual(res);
-    });
-
-    it('should return empty tokens', async () => {
-      jest.spyOn(Issuer, 'discover').mockReturnValue(Promise.reject());
-      const result = await strategy.authenticateExternalIdps();
-      expect(result).toBeUndefined();
     });
   });
 });
