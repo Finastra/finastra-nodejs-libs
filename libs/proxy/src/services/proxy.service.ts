@@ -82,9 +82,18 @@ export class ProxyService {
       ...(options && options.headers),
     }; // To deep extend headers
 
-    this.proxy.web(req, res, requestOptions, function(err) {
+    this.proxy.web(req, res, requestOptions, err => {
       if (err.code === 'ECONNRESET') return;
-      throw new Error(err);
+
+      this.logger.error(
+        `Error ${err.code} while proxying ${req.method} ${req.url}`,
+      );
+
+      res.writeHead(500, {
+        'Content-Type': 'text/plain',
+      });
+
+      res.end('An error occurred while proxying the request');
     });
   }
 }
