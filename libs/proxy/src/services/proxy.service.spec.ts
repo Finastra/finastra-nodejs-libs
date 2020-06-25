@@ -117,7 +117,7 @@ describe('ProxyService', () => {
       );
     });
 
-    it('should throw an error if error comes from proxy', done => {
+    it('should send a 500 if error comes from proxy', done => {
       const req = createMock<Request>();
       const res = createMock<Response>();
 
@@ -128,9 +128,10 @@ describe('ProxyService', () => {
       proxy.web = jest
         .fn()
         .mockImplementation(async (req, res, options, callback) => {
-          expect(() => {
-            callback({ code: '' });
-          }).toThrow();
+          callback({ code: '' });
+          expect(res.writeHead).toHaveBeenCalledWith(500, {
+            'Content-Type': 'text/plain',
+          });
           done();
         });
       service.proxyRequest(req, res);
