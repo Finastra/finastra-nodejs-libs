@@ -159,4 +159,14 @@ describe('AuthController', () => {
       controller.logout(req, res);
     });
   });
+
+  describe('loggedout', () => {
+    it('should call sendFile', () => {
+      const res = createResponse();
+      res.sendFile = jest.fn();
+      const spy = jest.spyOn(res, 'sendFile');
+      controller.loggedout(res);
+      expect(spy).toHaveBeenCalled();
+    });
+  });
 });
