@@ -10,7 +10,7 @@ import { Response } from 'express';
 
 import { OIDCGuard } from '../guards/oidc.guard';
 import { Issuer } from 'openid-client';
-import { OIDC_MODULE_OPTIONS } from '../oidc.constants';
+import { OIDC_MODULE_OPTIONS, SESSION_STATE_COOKIE } from '../oidc.constants';
 import { OidcModuleOptions } from '../interfaces/oidc-module-options.interface';
 import { Public } from '../decorators/public.decorator';
 import { join } from 'path';
@@ -57,6 +57,10 @@ export class AuthController {
           }`,
         );
       } else {
+        // Save logged out state for 15 min
+        res.cookie(SESSION_STATE_COOKIE, 'logged out', {
+          maxAge: 15 * 1000 * 60,
+        });
         res.redirect('/loggedout');
       }
     });

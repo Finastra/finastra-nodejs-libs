@@ -53,7 +53,9 @@
 
 ### Features
 
-Display a `logged out` page for IDPs that do not handle `end_session_endpoint`.
+- For IDPs that do not handle `end_session_endpoint` :
+  - Displays a `logged out` page
+  - Simulates a logout by prompting again the login after logout (thanks to a `SESSION_STATE` cookie)
 
 ## 0.8.1 (2020-06-23)
 
