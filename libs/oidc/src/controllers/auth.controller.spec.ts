@@ -100,7 +100,7 @@ describe('AuthController', () => {
       (req.session as any) = {
         destroy: jest.fn().mockImplementation(callback => {
           callback().then(() => {
-            expect(spyResponse).toHaveBeenCalledWith('/');
+            expect(spyResponse).toHaveBeenCalledWith('/loggedout');
             done();
           });
         }),

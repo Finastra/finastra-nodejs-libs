@@ -13,6 +13,7 @@ import { Issuer } from 'openid-client';
 import { OIDC_MODULE_OPTIONS } from '../oidc.constants';
 import { OidcModuleOptions } from '../interfaces/oidc-module-options.interface';
 import { Public } from '../decorators/public.decorator';
+import { join } from 'path';
 
 @Controller()
 export class AuthController {
@@ -56,8 +57,14 @@ export class AuthController {
           }`,
         );
       } else {
-        res.redirect('/');
+        res.redirect('/loggedout');
       }
     });
+  }
+
+  @Public()
+  @Get('/loggedout')
+  loggedout(@Res() res: Response) {
+    res.sendFile(join(__dirname, '../assets/loggedout.html'));
   }
 }
