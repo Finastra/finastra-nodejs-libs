@@ -9,7 +9,6 @@ type Query {
   ): AccountBasicRes
 
   accountsBalance(
-    details: Boolean
     accountType: AccountType
     limit: Int
     offset: Int
