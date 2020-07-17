@@ -21,7 +21,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "copy:assets:oidc": "cpx -v \"libs/oidc/src/assets/*\" dist/libs/oidc/src/assets",
+    "copy:assets:oidc": "cpx -v \"libs/oidc/src/assets/*\" dist/libs/oidc/src/assets && cpx -v \"libs/oidc/src/assets/*\" dist/libs/oidc/assets",
     "predev": "npm run copy:assets:oidc",
     "postbuild": "npm run copy:assets:oidc",
     "postbuild:oidc": "npm run copy:assets:oidc",
