@@ -51,6 +51,7 @@ const OidcHelperFactory = {
       options.authParams.nonce =
         options.authParams.nonce === 'true' ? uuid() : options.authParams.nonce;
       const helpers = new OidcHelpers(tokenStore, client, options);
+      helpers.init();
       return helpers;
     } catch (err) {
       const docUrl =

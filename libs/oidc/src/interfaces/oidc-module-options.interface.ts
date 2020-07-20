@@ -43,4 +43,7 @@ export interface IdentityProviderOptions {
   issuer: string;
   scope: string;
   accessToken?: string;
+  refreshToken?: string;
+  tokenEndpoint?: string;
+  expiresAt?: number;
 }

@@ -1,5 +1,5 @@
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy, TokenSet } from 'openid-client';
+import { Strategy, TokenSet, Client } from 'openid-client';
 import { OidcHelpers, getUserInfo, authenticateExternalIdps } from '../utils';
 
 export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
@@ -19,14 +19,22 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
     let userinfo = await getUserInfo(tokenset.access_token, this.oidcHelpers);
 
     const id_token = tokenset.id_token;
-    const access_token = tokenset.access_token;
-    const refresh_token = tokenset.refresh_token;
+    const master = {
+      accessToken: tokenset.access_token,
+      refreshToken: tokenset.refresh_token,
+      tokenEndpoint: this.oidcHelpers.TrustIssuer.metadata.token_endpoint,
+      expiresAt:
+        tokenset.expires_at || tokenset.expires_in
+          ? Date.now() / 1000 + Number(tokenset.expires_in)
+          : null,
+    };
     const user = {
       id_token,
-      access_token,
-      refresh_token,
       userinfo,
-      externalIdps,
+      authTokens: {
+        master,
+        ...externalIdps,
+      },
     };
     return user;
   }
