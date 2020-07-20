@@ -7,17 +7,12 @@ import { stringify } from 'querystring';
 
 @Injectable()
 export class OidcHelpers {
-  TrustIssuer: Issuer<Client>;
-
   constructor(
     public tokenStore: JWKS.KeyStore,
     public client: Client,
     public config: OidcModuleOptions,
+    public TrustIssuer: Issuer<Client>,
   ) {}
-
-  async init() {
-    this.TrustIssuer = await Issuer.discover(this.config.issuer);
-  }
 }
 
 export async function getTokenStore(issuer: string) {

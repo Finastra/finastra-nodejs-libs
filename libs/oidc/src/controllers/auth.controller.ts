@@ -55,8 +55,8 @@ export class AuthController {
     const id_token = req.user ? req.user.id_token : undefined;
     req.logout();
     req.session.destroy(async (error: any) => {
-      const TrustIssuer = await Issuer.discover(this.options.issuer);
-      const end_session_endpoint = TrustIssuer.metadata.end_session_endpoint;
+      const end_session_endpoint = this.oidcHelpers.TrustIssuer.metadata
+        .end_session_endpoint;
       if (end_session_endpoint) {
         res.redirect(
           `${end_session_endpoint}?post_logout_redirect_uri=${
