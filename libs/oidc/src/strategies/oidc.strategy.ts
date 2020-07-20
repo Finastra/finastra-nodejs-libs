@@ -19,14 +19,15 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
     let userinfo = await getUserInfo(tokenset.access_token, this.oidcHelpers);
 
     const id_token = tokenset.id_token;
+    const expiresAt =
+      tokenset.expires_at || tokenset.expires_in
+        ? Date.now() / 1000 + Number(tokenset.expires_in)
+        : null;
     const master = {
       accessToken: tokenset.access_token,
       refreshToken: tokenset.refresh_token,
       tokenEndpoint: this.oidcHelpers.TrustIssuer.metadata.token_endpoint,
-      expiresAt:
-        tokenset.expires_at || tokenset.expires_in
-          ? Date.now() / 1000 + Number(tokenset.expires_in)
-          : null,
+      expiresAt,
     };
     const user = {
       id_token,
