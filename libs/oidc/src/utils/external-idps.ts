@@ -10,6 +10,7 @@ const logger = new Logger('ExternalIdps');
 export async function authenticateExternalIdps(oidcHelpers: OidcHelpers) {
   const tokens = {};
   const externalIdps = oidcHelpers.config.externalIdps;
+  if (!externalIdps) return;
   const promises = Object.keys(externalIdps).map(async idpName => {
     tokens[idpName] = await clientCredentialsAuth(externalIdps[idpName]);
   });
