@@ -55,9 +55,7 @@ describe('User Middleware', () => {
       req.headers.authorization = `Bearer ${token}`;
 
       await middleware.use(req, res, next);
-      expect(req.user['externalIdps']).toBe(
-        MockOidcHelpers.config.externalIdps,
-      );
+      expect(req.user['authTokens']).toBe(MockOidcHelpers.config.externalIdps);
       expect(req.user['userinfo']).toBeTruthy();
       expect(next).toHaveBeenCalled();
     });

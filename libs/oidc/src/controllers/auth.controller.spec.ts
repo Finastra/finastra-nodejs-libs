@@ -1,10 +1,19 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
-import { MOCK_OIDC_MODULE_OPTIONS } from '../mocks';
 import { OIDC_MODULE_OPTIONS } from '../oidc.constants';
 import { createResponse, createRequest } from 'node-mocks-http';
 import { Issuer } from 'openid-client';
 import { OidcModuleOptions } from '../interfaces';
+import { JWKS } from 'jose';
+import { MOCK_OIDC_MODULE_OPTIONS, MOCK_CLIENT_INSTANCE } from '../mocks';
+import { OidcHelpers } from '../utils';
+
+const keyStore = new JWKS.KeyStore([]);
+const MockOidcHelpers = new OidcHelpers(
+  keyStore,
+  MOCK_CLIENT_INSTANCE,
+  MOCK_OIDC_MODULE_OPTIONS,
+);
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -17,6 +26,10 @@ describe('AuthController', () => {
         {
           provide: OIDC_MODULE_OPTIONS,
           useValue: MOCK_OIDC_MODULE_OPTIONS,
+        },
+        {
+          provide: OidcHelpers,
+          useValue: MockOidcHelpers,
         },
       ],
     }).compile();
