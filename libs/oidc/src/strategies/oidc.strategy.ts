@@ -33,8 +33,8 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
       userinfo,
       authTokens: {
         master,
-        ...externalIdps,
       },
+      ...externalIdps,
     };
     return user;
   }

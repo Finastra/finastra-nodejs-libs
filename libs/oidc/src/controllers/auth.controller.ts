@@ -103,30 +103,18 @@ export class AuthController {
     if (valid) {
       if (refresh && authTokensToRefresh.length) {
         const promises = authTokensToRefresh.map(async authName => {
-          if (
-            this.options.externalIdps &&
-            this.options.externalIdps[authName]
-          ) {
-            return {
-              name: authName,
-              authInfo: await clientCredentialsAuth(authTokens[authName]),
-            };
-          } else {
-            return await refreshToken(
-              authName,
-              authTokens[authName],
-              this.oidcHelpers,
-              this.options,
-            );
-          }
+          return await refreshToken(
+            authName,
+            authTokens[authName],
+            this.oidcHelpers,
+            this.options,
+          );
         });
         return await Promise.all(promises)
-          .then(
-            (data: { name: string; authInfo: IdentityProviderOptions }[]) => {
-              updateUserAuthToken(data, req);
-              res.sendStatus(200);
-            },
-          )
+          .then(data => {
+            updateUserAuthToken(data, req);
+            res.sendStatus(200);
+          })
           .catch(err => {
             res.status(401).send(err);
           });
@@ -138,5 +126,26 @@ export class AuthController {
         .status(401)
         .send('Your session has expired. \n\nPlease log in again');
     }
+  }
+
+  @Get('/refresh-token')
+  refreshTokens(@Request() req, @Res() res) {
+    const { authTokens } = req.user;
+    const promises = Object.keys(authTokens).map(authName =>
+      refreshToken(
+        authName,
+        authTokens[authName],
+        this.oidcHelpers,
+        this.options,
+      ),
+    );
+    return Promise.all(promises)
+      .then(data => {
+        updateUserAuthToken(data, req);
+        res.sendStatus(200);
+      })
+      .catch(err => {
+        res.status(401).send(err);
+      });
   }
 }

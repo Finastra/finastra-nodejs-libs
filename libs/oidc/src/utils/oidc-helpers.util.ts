@@ -76,7 +76,7 @@ export async function refreshToken(
 }
 
 export function updateUserAuthToken(
-  data: { name: string; authInfo: IdentityProviderOptions }[],
+  data: { name: string; authInfo: Partial<IdentityProviderOptions> }[],
   req,
 ) {
   for (const item of data) {
