@@ -17,7 +17,7 @@ export class UserMiddleware implements NestMiddleware {
 
       req.user = decodedJwt;
       if (this.oidcHelpers.config.externalIdps) {
-        req.user['externalIdps'] = await authenticateExternalIdps(
+        req.user['authTokens'] = await authenticateExternalIdps(
           this.oidcHelpers,
         );
       }
