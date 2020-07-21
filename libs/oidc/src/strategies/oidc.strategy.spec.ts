@@ -50,14 +50,12 @@ describe('OidcStrategy', () => {
       });
 
       const tokenset = createMock<TokenSet>();
-      tokenset.expires_in = 1;
+      tokenset.expires_in = null;
 
       utils.authenticateExternalIdps = jest.fn().mockReturnValue({});
       const result = await strategy.validate(tokenset);
       expect(result).toBeTruthy();
-      expect(
-        result.authTokens.master.expiresAt > Date.now() / 1000,
-      ).toBeTruthy();
+      expect(result.authTokens.master.expiresAt).toBeNull();
     });
 
     it('should contain an expiration when given a token with expires_at', async () => {
