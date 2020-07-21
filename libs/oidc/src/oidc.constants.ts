@@ -4,6 +4,7 @@ export const defaultModuleOptions = {
   authParams: {
     clockTolerance: 10,
   },
+  idleTime: 30,
   userInfoMethod: 'token',
 };
 export const SESSION_STATE_COOKIE = 'SESSION_STATE';
