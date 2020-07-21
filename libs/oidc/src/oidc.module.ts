@@ -50,7 +50,7 @@ const OidcHelperFactory = {
       options.authParams.redirect_uri = `${options.origin}/login/callback`;
       options.authParams.nonce =
         options.authParams.nonce === 'true' ? uuid() : options.authParams.nonce;
-      const helpers = new OidcHelpers(tokenStore, client, options);
+      const helpers = new OidcHelpers(tokenStore, client, options, TrustIssuer);
       return helpers;
     } catch (err) {
       const docUrl =

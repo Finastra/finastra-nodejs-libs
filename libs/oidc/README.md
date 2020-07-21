@@ -1,12 +1,14 @@
 # OIDC Auth module
 
 NestJS module to enable OAuth 2 & OIDC login to your application.\
-It exposes 4 endpoints :
+It exposes following endpoints :
 
 - login
 - login/callback
 - logout
 - user
+- check-token : Returns `200` if the token is valid, else returns `401`. \ To request token refresh if the token is about to expire (expiration datetime is in less than `idleTime` seconds), add `refresh` query parameter: `/check-token?refresh=true`
+- refresh-token
 
 And also a `TokenGuard`
 
@@ -41,6 +43,7 @@ import { OidcModule } from '@ffdc/nestjs-oidc';
             customUserInfo: 'custom',
           };
         },
+        idleTime: 30, // in seconds
       }),
       inject: [ConfigService],
       imports: [ConfigModule],
@@ -57,6 +60,7 @@ export class AppModule {}
 > `externalIdps` is an object where keys are a label for the IDP and the value format is described [here](src\interfaces\oidc-module-options.interface.ts). \
 > During authentication, the application will authenticate to those identity providers and the identity providers information are then forwarded in `userInfoCallback`. So that, you're able to call any API with a valid token. \
 > `userInfoCallback` can be used to customize user information returned in user object on authentication.
+> `idleTime` : If the token expiration date on `/check-token?refresh=true` call is in less than `idleTime` seconds, the token is refreshed. Default value: 30 seconds.
 
 ### Example with externalIdps
 

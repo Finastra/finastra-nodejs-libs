@@ -3,7 +3,11 @@ import { UserMiddleware } from './user.middleware';
 import { OidcHelpers } from '../utils';
 import { createMock } from '@golevelup/nestjs-testing';
 import { Request, Response } from 'express';
-import { MOCK_CLIENT_INSTANCE, MOCK_OIDC_MODULE_OPTIONS } from '../mocks';
+import {
+  MOCK_CLIENT_INSTANCE,
+  MOCK_OIDC_MODULE_OPTIONS,
+  MOCK_TRUST_ISSUER,
+} from '../mocks';
 import { TestingModule, Test } from '@nestjs/testing';
 const utils = require('../utils');
 
@@ -14,6 +18,7 @@ describe('User Middleware', () => {
     keyStore,
     MOCK_CLIENT_INSTANCE,
     MOCK_OIDC_MODULE_OPTIONS,
+    MOCK_TRUST_ISSUER,
   );
 
   describe('config with external idp', () => {
@@ -55,9 +60,7 @@ describe('User Middleware', () => {
       req.headers.authorization = `Bearer ${token}`;
 
       await middleware.use(req, res, next);
-      expect(req.user['externalIdps']).toBe(
-        MockOidcHelpers.config.externalIdps,
-      );
+      expect(req.user['authTokens']).toBe(MockOidcHelpers.config.externalIdps);
       expect(req.user['userinfo']).toBeTruthy();
       expect(next).toHaveBeenCalled();
     });
@@ -70,6 +73,7 @@ describe('User Middleware', () => {
       keyStore,
       MOCK_CLIENT_INSTANCE,
       moduleOptions,
+      MOCK_TRUST_ISSUER,
     );
 
     beforeEach(async () => {

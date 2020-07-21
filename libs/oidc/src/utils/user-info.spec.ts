@@ -1,6 +1,10 @@
 import { getUserInfo } from './user-info';
 import { JWKS } from 'jose';
-import { MOCK_OIDC_MODULE_OPTIONS, MOCK_CLIENT_INSTANCE } from '../mocks';
+import {
+  MOCK_OIDC_MODULE_OPTIONS,
+  MOCK_CLIENT_INSTANCE,
+  MOCK_TRUST_ISSUER,
+} from '../mocks';
 import { UserInfoMethod } from '../interfaces';
 import { OidcHelpers } from './oidc-helpers.util';
 
@@ -9,6 +13,7 @@ const MOCK_OIDC_HELPERS = new OidcHelpers(
   keyStore,
   MOCK_CLIENT_INSTANCE,
   MOCK_OIDC_MODULE_OPTIONS,
+  MOCK_TRUST_ISSUER,
 );
 
 const MOCK_ACCESS_TOKEN =

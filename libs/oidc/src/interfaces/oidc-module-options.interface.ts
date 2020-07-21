@@ -10,6 +10,7 @@ export interface OidcModuleOptions {
   clientMetadata: ClientMetadata;
   authParams: AuthorizationParameters;
   origin: string;
+  idleTime?: number;
   redirectUriLogout?: string;
   usePKCE?: boolean;
   userInfoMethod?: UserInfoMethod;
@@ -43,4 +44,7 @@ export interface IdentityProviderOptions {
   issuer: string;
   scope: string;
   accessToken?: string;
+  refreshToken?: string;
+  tokenEndpoint?: string;
+  expiresAt?: number;
 }
