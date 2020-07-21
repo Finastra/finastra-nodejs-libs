@@ -20,9 +20,10 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
 
     const id_token = tokenset.id_token;
     const expiresAt =
-      tokenset.expires_at || tokenset.expires_in
+      Number(tokenset.expires_at) ||
+      (tokenset.expires_in
         ? Date.now() / 1000 + Number(tokenset.expires_in)
-        : null;
+        : null);
     const master = {
       accessToken: tokenset.access_token,
       refreshToken: tokenset.refresh_token,

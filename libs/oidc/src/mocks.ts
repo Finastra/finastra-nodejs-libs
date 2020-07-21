@@ -24,6 +24,9 @@ export const MOCK_OIDC_MODULE_OPTIONS: OidcModuleOptions = {
   authParams: {
     scope: 'oidc profile',
   },
+  defaultHttpOptions: {
+    timeout: 0,
+  },
   origin: 'bla',
   userInfoMethod: UserInfoMethod.token,
   externalIdps: {

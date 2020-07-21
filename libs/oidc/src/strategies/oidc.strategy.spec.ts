@@ -68,8 +68,23 @@ describe('OidcStrategy', () => {
         };
       });
       const tokenset = createMock<TokenSet>();
-      tokenset.expires_in = 1;
       tokenset.expires_at = 1;
+
+      utils.authenticateExternalIdps = jest.fn().mockReturnValue({});
+      const result = await strategy.validate(tokenset);
+      expect(result).toBeTruthy();
+      expect(result.authTokens.master.expiresAt).toBe(1);
+    });
+
+    it('should contain an expiration when given a token with expires_in', async () => {
+      utils.getUserInfo = jest.fn().mockImplementation(() => {
+        return {
+          username: 'John Doe',
+          groups: [],
+        };
+      });
+      const tokenset = createMock<TokenSet>();
+      tokenset.expires_in = 1;
 
       utils.authenticateExternalIdps = jest.fn().mockReturnValue({});
       const result = await strategy.validate(tokenset);

@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
 import { OIDC_MODULE_OPTIONS } from '../oidc.constants';
 import { createResponse, createRequest } from 'node-mocks-http';
-import { Issuer, Client } from 'openid-client';
 import { OidcModuleOptions } from '../interfaces';
 import { JWKS } from 'jose';
 import {
@@ -11,6 +10,7 @@ import {
   MOCK_TRUST_ISSUER,
 } from '../mocks';
 import { OidcHelpers } from '../utils';
+import axios from 'axios';
 
 const keyStore = new JWKS.KeyStore([]);
 const MockOidcHelpers = new OidcHelpers(
@@ -177,6 +177,277 @@ describe('AuthController', () => {
       const spy = jest.spyOn(res, 'sendFile');
       controller.loggedout(res);
       expect(spy).toHaveBeenCalled();
+    });
+  });
+
+  describe('checkTokens', () => {
+    it('should return 200 if token is valid', () => {
+      const req = createRequest();
+      req.user = {
+        authTokens: {},
+      };
+      const res = createResponse();
+      res.sendStatus = jest.fn();
+      const spy = jest.spyOn(res, 'sendStatus');
+
+      controller.checkTokens(req, res);
+      expect(spy).toHaveBeenCalledWith(200);
+    });
+
+    it('should return 401 if token is expired', () => {
+      const req = createRequest();
+      req.user = {
+        authTokens: {
+          testToken: {
+            expiresAt: Date.now() / 1000,
+          },
+        },
+      };
+      const res = createResponse();
+      res.status = jest.fn();
+      const spy = jest.spyOn(res, 'status');
+
+      controller.checkTokens(req, res);
+      expect(spy).toHaveBeenCalledWith(401);
+    });
+
+    it('should return 200 if valid token was refreshed via explicit query param', async () => {
+      options.defaultHttpOptions = {
+        timeout: 0,
+      };
+      const req = createRequest();
+      req.query = {
+        refresh: 'true',
+      };
+      req.user = {
+        authTokens: {
+          testToken: {
+            expiresAt: Date.now() / 1000 + 25,
+            accessToken: 'abc',
+            refreshToken: 'def',
+            tokenEndpoint: '/token',
+          },
+        },
+      };
+      const res = createResponse();
+      res.sendStatus = jest.fn();
+      const spy = jest.spyOn(res, 'sendStatus');
+      jest.spyOn(axios, 'request').mockReturnValue(
+        Promise.resolve({
+          status: 200,
+          data: {},
+        }),
+      );
+
+      await controller.checkTokens(req, res);
+      expect(spy).toHaveBeenCalledWith(200);
+    });
+
+    it('should return 401 if valid token failed to refresh via explicit query param', async () => {
+      const req = createRequest();
+      req.query = {
+        refresh: 'true',
+      };
+      req.user = {
+        authTokens: {
+          testToken: {
+            expiresAt: Date.now() / 1000 + 25,
+          },
+        },
+      };
+      const res = createResponse();
+      res.status = (() => {
+        return { send: jest.fn() };
+      }) as any;
+      const spy = jest.spyOn(res, 'status');
+
+      await controller.checkTokens(req, res);
+      expect(spy).toHaveBeenCalledWith(401);
+    });
+
+    it('should return 401 if valid token was refreshed via explicit query param but refresh failed', async () => {
+      const req = createRequest();
+      req.query = {
+        refresh: 'true',
+      };
+      req.user = {
+        authTokens: {
+          testToken: {
+            expiresAt: Date.now() / 1000 + 25,
+            accessToken: 'abc',
+            refreshToken: 'def',
+            tokenEndpoint: '/token',
+          },
+        },
+      };
+      const res = createResponse();
+      res.status = (() => {
+        return { send: jest.fn() };
+      }) as any;
+      const spy = jest.spyOn(res, 'status');
+      jest.spyOn(axios, 'request').mockReturnValue(
+        Promise.resolve({
+          status: 401,
+          data: {},
+        }),
+      );
+
+      await controller.checkTokens(req, res);
+      expect(spy).toHaveBeenCalledWith(401);
+    });
+
+    it('should return 200 if valid token was refreshed via explicit query param and res has expiresAt', async () => {
+      const req = createRequest();
+      req.query = {
+        refresh: 'true',
+      };
+      req.user = {
+        authTokens: {
+          testToken: {
+            expiresAt: Date.now() / 1000 + 25,
+            accessToken: 'abc',
+            refreshToken: 'def',
+            tokenEndpoint: '/token',
+          },
+        },
+      };
+      const res = createResponse();
+      res.sendStatus = jest.fn();
+      const spy = jest.spyOn(res, 'sendStatus');
+      jest.spyOn(axios, 'request').mockReturnValue(
+        Promise.resolve({
+          status: 200,
+          data: {
+            expires_at: Date.now() / 1000 + 1000,
+          },
+        }),
+      );
+
+      await controller.checkTokens(req, res);
+      expect(spy).toHaveBeenCalledWith(200);
+    });
+
+    it('should return 200 if valid token was refreshed via explicit query param and res has expires_in', async () => {
+      const req = createRequest();
+      req.query = {
+        refresh: 'true',
+      };
+      req.user = {
+        authTokens: {
+          testToken: {
+            expiresAt: Date.now() / 1000 + 25,
+            accessToken: 'abc',
+            refreshToken: 'def',
+            tokenEndpoint: '/token',
+          },
+        },
+      };
+      const res = createResponse();
+      res.sendStatus = jest.fn();
+      const spy = jest.spyOn(res, 'sendStatus');
+      jest.spyOn(axios, 'request').mockReturnValue(
+        Promise.resolve({
+          status: 200,
+          data: {
+            expires_in: 300,
+          },
+        }),
+      );
+
+      await controller.checkTokens(req, res);
+      expect(spy).toHaveBeenCalledWith(200);
+    });
+
+    it('should return 200 if valid token was not refreshed via explicit query param because less than idle time', async () => {
+      const req = createRequest();
+      req.query = {
+        refresh: 'true',
+      };
+      req.user = {
+        authTokens: {
+          testToken: {
+            expiresAt: Date.now() / 1000 + 500,
+            accessToken: 'abc',
+            refreshToken: 'def',
+            tokenEndpoint: '/token',
+          },
+        },
+      };
+      const res = createResponse();
+      res.sendStatus = jest.fn();
+      const spy = jest.spyOn(res, 'sendStatus');
+
+      await controller.checkTokens(req, res);
+      expect(spy).toHaveBeenCalledWith(200);
+    });
+  });
+
+  describe('refreshTokens', () => {
+    it('should return 200 if no token to refresh', async () => {
+      const req = createRequest();
+      req.user = {
+        authTokens: {},
+      };
+      const res = createResponse();
+      res.sendStatus = jest.fn();
+      const spy = jest.spyOn(res, 'sendStatus');
+
+      await controller.refreshTokens(req, res);
+      expect(spy).toHaveBeenCalledWith(200);
+    });
+
+    it('should return 200 if token was refreshed', async () => {
+      const req = createRequest();
+      req.user = {
+        authTokens: {
+          testToken: {
+            accessToken: 'abc',
+            refreshToken: 'def',
+            tokenEndpoint: '/token',
+          },
+        },
+      };
+      const res = createResponse();
+      res.sendStatus = jest.fn();
+      const spy = jest.spyOn(res, 'sendStatus');
+      jest.spyOn(axios, 'request').mockReturnValue(
+        Promise.resolve({
+          status: 200,
+          data: {
+            expires_in: 300,
+          },
+        }),
+      );
+
+      await controller.refreshTokens(req, res);
+      expect(spy).toHaveBeenCalledWith(200);
+    });
+
+    it('should return 401 if token failed to refresh', async () => {
+      const req = createRequest();
+      req.user = {
+        authTokens: {
+          testToken: {
+            accessToken: 'abc',
+            refreshToken: 'def',
+            tokenEndpoint: '/token',
+          },
+        },
+      };
+      const res = createResponse();
+      res.status = (() => {
+        return { send: jest.fn() };
+      }) as any;
+      const spy = jest.spyOn(res, 'status');
+      jest.spyOn(axios, 'request').mockReturnValue(
+        Promise.resolve({
+          status: 401,
+          data: {},
+        }),
+      );
+
+      await controller.refreshTokens(req, res);
+      expect(spy).toHaveBeenCalledWith(401);
     });
   });
 });

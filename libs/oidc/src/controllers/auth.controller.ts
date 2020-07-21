@@ -80,7 +80,7 @@ export class AuthController {
   }
 
   @Get('/check-token')
-  async validateTokens(@Request() req, @Res() res) {
+  async checkTokens(@Request() req, @Res() res) {
     const IDLE_TIME = 30; //idle time in seconds
     const refresh = req.query.refresh == 'true'; //if the refresh of the token is requested
 

@@ -39,7 +39,7 @@ export async function refreshToken(
     !authToken.refreshToken ||
     !authToken.tokenEndpoint
   ) {
-    return;
+    throw new Error('Missing token endpoint');
   }
 
   const response = await axios.request({
@@ -58,6 +58,7 @@ export async function refreshToken(
       scope: authToken.scope,
     }),
   });
+
   if (response.status == 200) {
     return {
       name: authorizationName,
@@ -65,13 +66,14 @@ export async function refreshToken(
         accessToken: response.data.access_token,
         refreshToken: response.data.refresh_token,
         expiresAt:
-          Number(response.data.expires_at) || response.data.expires_in
+          Number(response.data.expires_at) ||
+          (response.data.expires_in
             ? Date.now() / 1000 + Number(response.data.expires_in)
-            : null,
+            : null),
       },
     };
   } else {
-    return;
+    throw new Error(response.data);
   }
 }
 
