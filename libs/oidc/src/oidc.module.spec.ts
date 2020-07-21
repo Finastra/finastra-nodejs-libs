@@ -69,9 +69,7 @@ describe('OidcModule', () => {
 
     class oidcModuleOptions {
       createModuleConfig() {
-        MOCK_OIDC_MODULE_OPTIONS.defaultHttpOptions = {
-          timeout: 10000,
-        };
+        MOCK_OIDC_MODULE_OPTIONS.defaultHttpOptions = null;
         MOCK_OIDC_MODULE_OPTIONS.authParams.nonce = 'true';
         return MOCK_OIDC_MODULE_OPTIONS;
       }

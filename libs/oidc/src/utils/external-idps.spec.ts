@@ -38,9 +38,38 @@ describe('authenticateExternalIdps', () => {
     expect(result).toStrictEqual(MockOidcHelpers.config.externalIdps);
   });
 
+  it('should return tokens when expires_in', async () => {
+    jest.spyOn(Issuer, 'discover').mockReturnValue(
+      Promise.resolve({
+        keystore: () => {},
+        metadata: {
+          token_endpoint: 'http://token_endpoint',
+        },
+      } as any),
+    );
+    jest.spyOn(axios, 'request').mockReturnValue(
+      Promise.resolve({
+        data: {
+          access_token: 'access_token',
+          expires_in: 300,
+        },
+      }),
+    );
+
+    const result = await authenticateExternalIdps(MockOidcHelpers);
+    expect(result['idpTest'].expiresAt).toBeTruthy();
+  });
+
   it('should return empty tokens', async () => {
     jest.spyOn(Issuer, 'discover').mockReturnValue(Promise.reject());
     const result = await authenticateExternalIdps(MockOidcHelpers);
     expect(result).toBeUndefined();
+  });
+
+  it('should return empty if no externalIdps', async () => {
+    MockOidcHelpers.config.externalIdps = null;
+    const result = await authenticateExternalIdps(MockOidcHelpers);
+    expect(result).toBeUndefined();
+    MockOidcHelpers.config.externalIdps = MOCK_OIDC_MODULE_OPTIONS.externalIdps;
   });
 });
