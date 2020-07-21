@@ -9,17 +9,12 @@ import {
 import { Response } from 'express';
 
 import { OIDCGuard } from '../guards/oidc.guard';
-import { Issuer } from 'openid-client';
 import { OIDC_MODULE_OPTIONS, SESSION_STATE_COOKIE } from '../oidc.constants';
-import {
-  OidcModuleOptions,
-  IdentityProviderOptions,
-} from '../interfaces/oidc-module-options.interface';
+import { OidcModuleOptions } from '../interfaces/oidc-module-options.interface';
 import { Public } from '../decorators/public.decorator';
 import { join } from 'path';
 import {
   OidcHelpers,
-  clientCredentialsAuth,
   refreshToken,
   updateUserAuthToken,
   isExpired,
@@ -57,6 +52,7 @@ export class AuthController {
     req.session.destroy(async (error: any) => {
       const end_session_endpoint = this.oidcHelpers.TrustIssuer.metadata
         .end_session_endpoint;
+
       if (end_session_endpoint) {
         res.redirect(
           `${end_session_endpoint}?post_logout_redirect_uri=${

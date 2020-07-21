@@ -3,13 +3,18 @@ import axios from 'axios';
 import { authenticateExternalIdps } from './external-idps';
 import { OidcHelpers } from './oidc-helpers.util';
 import { JWKS } from 'jose';
-import { MOCK_CLIENT_INSTANCE, MOCK_OIDC_MODULE_OPTIONS } from '../mocks';
+import {
+  MOCK_CLIENT_INSTANCE,
+  MOCK_OIDC_MODULE_OPTIONS,
+  MOCK_TRUST_ISSUER,
+} from '../mocks';
 
 const keyStore = new JWKS.KeyStore([]);
 const MockOidcHelpers = new OidcHelpers(
   keyStore,
   MOCK_CLIENT_INSTANCE,
   MOCK_OIDC_MODULE_OPTIONS,
+  MOCK_TRUST_ISSUER,
 );
 
 describe('authenticateExternalIdps', () => {

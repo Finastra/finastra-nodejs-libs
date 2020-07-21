@@ -3,7 +3,11 @@ import { OidcStrategy } from './oidc.strategy';
 import { TokenSet, Client, Issuer } from 'openid-client';
 import { OidcHelpers } from '../utils';
 import { JWKS } from 'jose';
-import { MOCK_OIDC_MODULE_OPTIONS, MOCK_CLIENT_INSTANCE } from '../mocks';
+import {
+  MOCK_OIDC_MODULE_OPTIONS,
+  MOCK_CLIENT_INSTANCE,
+  MOCK_TRUST_ISSUER,
+} from '../mocks';
 
 const utils = require('../utils');
 const keyStore = new JWKS.KeyStore([]);
@@ -11,13 +15,8 @@ const MockOidcHelpers = new OidcHelpers(
   keyStore,
   MOCK_CLIENT_INSTANCE,
   MOCK_OIDC_MODULE_OPTIONS,
+  MOCK_TRUST_ISSUER,
 );
-MockOidcHelpers.TrustIssuer = {
-  metadata: {
-    issuer: '',
-    token_endpoint: '',
-  },
-} as Issuer<Client>;
 
 describe('OidcStrategy', () => {
   let strategy;

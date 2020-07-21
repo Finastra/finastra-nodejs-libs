@@ -9,6 +9,7 @@ import {
   MOCK_OIDC_MODULE_OPTIONS,
   MOCK_CLIENT_INSTANCE,
   MOCK_ISSUER_INSTANCE,
+  MOCK_TRUST_ISSUER,
 } from './mocks';
 import { MiddlewareConsumer } from '@nestjs/common';
 
@@ -17,6 +18,7 @@ const MockOidcHelpers = new OidcHelpers(
   keyStore,
   MOCK_CLIENT_INSTANCE,
   MOCK_OIDC_MODULE_OPTIONS,
+  MOCK_TRUST_ISSUER,
 );
 
 describe('OidcModule', () => {

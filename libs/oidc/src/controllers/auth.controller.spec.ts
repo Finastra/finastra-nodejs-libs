@@ -2,10 +2,14 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
 import { OIDC_MODULE_OPTIONS } from '../oidc.constants';
 import { createResponse, createRequest } from 'node-mocks-http';
-import { Issuer } from 'openid-client';
+import { Issuer, Client } from 'openid-client';
 import { OidcModuleOptions } from '../interfaces';
 import { JWKS } from 'jose';
-import { MOCK_OIDC_MODULE_OPTIONS, MOCK_CLIENT_INSTANCE } from '../mocks';
+import {
+  MOCK_OIDC_MODULE_OPTIONS,
+  MOCK_CLIENT_INSTANCE,
+  MOCK_TRUST_ISSUER,
+} from '../mocks';
 import { OidcHelpers } from '../utils';
 
 const keyStore = new JWKS.KeyStore([]);
@@ -13,11 +17,13 @@ const MockOidcHelpers = new OidcHelpers(
   keyStore,
   MOCK_CLIENT_INSTANCE,
   MOCK_OIDC_MODULE_OPTIONS,
+  MOCK_TRUST_ISSUER,
 );
 
 describe('AuthController', () => {
   let controller: AuthController;
   let options: OidcModuleOptions;
+  let oidcHelpers: OidcHelpers;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -36,6 +42,7 @@ describe('AuthController', () => {
 
     controller = module.get<AuthController>(AuthController);
     options = module.get<OidcModuleOptions>(OIDC_MODULE_OPTIONS);
+    oidcHelpers = module.get<OidcHelpers>(OidcHelpers);
   });
 
   it('should be defined', () => {
@@ -78,13 +85,6 @@ describe('AuthController', () => {
       req = createRequest();
       req.logout = jest.fn();
       res = createResponse();
-      jest.spyOn(Issuer, 'discover').mockReturnValue(
-        Promise.resolve({
-          metadata: {
-            end_session_endpoint: 'http://endpoint.io',
-          },
-        } as any),
-      );
       spyLogout = jest.spyOn(req, 'logout');
       spyResponse = jest.spyOn(res, 'redirect');
     });
@@ -102,23 +102,6 @@ describe('AuthController', () => {
 
       controller.logout(req, res);
       expect(spyLogout).toHaveBeenCalled();
-    });
-
-    it('should redirect on root if no end_session_endpoint found', done => {
-      jest.spyOn(Issuer, 'discover').mockReturnValue(
-        Promise.resolve({
-          metadata: {},
-        } as any),
-      );
-      (req.session as any) = {
-        destroy: jest.fn().mockImplementation(callback => {
-          callback().then(() => {
-            expect(spyResponse).toHaveBeenCalledWith('/loggedout');
-            done();
-          });
-        }),
-      };
-      controller.logout(req, res);
     });
 
     it('should redirect without id_token_hint', done => {
@@ -165,6 +148,20 @@ describe('AuthController', () => {
             expect(spyResponse).toHaveBeenCalledWith(
               expect.stringContaining(mockRedirectLogout),
             );
+            done();
+          });
+        }),
+      };
+      controller.logout(req, res);
+    });
+
+    it('should redirect on root if no end_session_endpoint found', done => {
+      oidcHelpers.TrustIssuer.metadata.end_session_endpoint = null;
+
+      (req.session as any) = {
+        destroy: jest.fn().mockImplementation(callback => {
+          callback().then(() => {
+            expect(spyResponse).toHaveBeenCalledWith('/loggedout');
             done();
           });
         }),
