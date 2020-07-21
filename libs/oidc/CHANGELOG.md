@@ -59,8 +59,8 @@
 
 New endpoints:
 
-- /check-token
-- /refresh-token
+- `/check-token` : Returns `200` if the token is valid, else returns `401`. \ To request token refresh if the token is about to expire, add `refresh` query parameter: `/check-token?refresh=true`
+- `/refresh-token` : Refresh user's token.
 
 ## 0.9.1 (2020-07-16)
 
