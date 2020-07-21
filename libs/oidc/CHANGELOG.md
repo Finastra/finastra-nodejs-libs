@@ -62,6 +62,10 @@ New endpoints:
 - `/check-token` : Returns `200` if the token is valid, else returns `401`. \ To request token refresh if the token is about to expire, add `refresh` query parameter: `/check-token?refresh=true`
 - `/refresh-token` : Refresh user's token.
 
+New option:
+
+- `idleTime`: If the token expiration date on `/check-token?refresh=true` call is in less than `idleTime` seconds, the token is refreshed. Default value: 30 seconds.
+
 ## 0.9.1 (2020-07-16)
 
 ### Bugfixes

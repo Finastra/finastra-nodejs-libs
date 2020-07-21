@@ -10,6 +10,7 @@ export interface OidcModuleOptions {
   clientMetadata: ClientMetadata;
   authParams: AuthorizationParameters;
   origin: string;
+  idleTime?: number;
   redirectUriLogout?: string;
   usePKCE?: boolean;
   userInfoMethod?: UserInfoMethod;

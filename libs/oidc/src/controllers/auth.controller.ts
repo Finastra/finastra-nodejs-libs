@@ -81,7 +81,6 @@ export class AuthController {
 
   @Get('/check-token')
   async checkTokens(@Request() req, @Res() res) {
-    const IDLE_TIME = 30; //idle time in seconds
     const refresh = req.query.refresh == 'true'; //if the refresh of the token is requested
 
     const authTokens = req.user.authTokens;
@@ -91,7 +90,8 @@ export class AuthController {
       valid = valid && !isExpired(authTokens[authName].expiresAt);
       if (
         authTokens[authName].expiresAt &&
-        authTokens[authName].expiresAt - Date.now() / 1000 < IDLE_TIME
+        authTokens[authName].expiresAt - Date.now() / 1000 <
+          this.oidcHelpers.config.idleTime
       ) {
         authTokensToRefresh.push(authName);
       }
