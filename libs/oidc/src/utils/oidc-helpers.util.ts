@@ -29,7 +29,6 @@ export function isExpired(expiresAt: number) {
 }
 
 export async function refreshToken(
-  authorizationName: string,
   authToken: IdentityProviderOptions,
   oidcHelpers: OidcHelpers,
   options: OidcModuleOptions,
@@ -61,16 +60,13 @@ export async function refreshToken(
 
   if (response.status == 200) {
     return {
-      name: authorizationName,
-      authInfo: {
-        accessToken: response.data.access_token,
-        refreshToken: response.data.refresh_token,
-        expiresAt:
-          Number(response.data.expires_at) ||
-          (response.data.expires_in
-            ? Date.now() / 1000 + Number(response.data.expires_in)
-            : null),
-      },
+      accessToken: response.data.access_token,
+      refreshToken: response.data.refresh_token,
+      expiresAt:
+        Number(response.data.expires_at) ||
+        (response.data.expires_in
+          ? Date.now() / 1000 + Number(response.data.expires_in)
+          : null),
     };
   } else {
     throw new Error(response.data);
@@ -78,14 +74,10 @@ export async function refreshToken(
 }
 
 export function updateUserAuthToken(
-  data: { name: string; authInfo: Partial<IdentityProviderOptions> }[],
+  data: Partial<IdentityProviderOptions>,
   req,
 ) {
-  for (const item of data) {
-    if (item) {
-      req.user.authTokens[item.name].accessToken = item.authInfo.accessToken;
-      req.user.authTokens[item.name].refreshToken = item.authInfo.refreshToken;
-      req.user.authTokens[item.name].expiresAt = item.authInfo.expiresAt;
-    }
-  }
+  req.user.authTokens.accessToken = data.accessToken;
+  req.user.authTokens.refreshToken = data.refreshToken;
+  req.user.authTokens.expiresAt = data.expiresAt;
 }

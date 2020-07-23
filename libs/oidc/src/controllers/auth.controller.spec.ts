@@ -198,9 +198,7 @@ describe('AuthController', () => {
       const req = createRequest();
       req.user = {
         authTokens: {
-          testToken: {
-            expiresAt: Date.now() / 1000,
-          },
+          expiresAt: Date.now() / 1000,
         },
       };
       const res = createResponse();
@@ -221,12 +219,10 @@ describe('AuthController', () => {
       };
       req.user = {
         authTokens: {
-          testToken: {
-            expiresAt: Date.now() / 1000 + 25,
-            accessToken: 'abc',
-            refreshToken: 'def',
-            tokenEndpoint: '/token',
-          },
+          expiresAt: Date.now() / 1000 + 25,
+          accessToken: 'abc',
+          refreshToken: 'def',
+          tokenEndpoint: '/token',
         },
       };
       const res = createResponse();
@@ -250,9 +246,7 @@ describe('AuthController', () => {
       };
       req.user = {
         authTokens: {
-          testToken: {
-            expiresAt: Date.now() / 1000 + 25,
-          },
+          expiresAt: Date.now() / 1000 + 25,
         },
       };
       const res = createResponse();
@@ -272,12 +266,10 @@ describe('AuthController', () => {
       };
       req.user = {
         authTokens: {
-          testToken: {
-            expiresAt: Date.now() / 1000 + 25,
-            accessToken: 'abc',
-            refreshToken: 'def',
-            tokenEndpoint: '/token',
-          },
+          expiresAt: Date.now() / 1000 + 25,
+          accessToken: 'abc',
+          refreshToken: 'def',
+          tokenEndpoint: '/token',
         },
       };
       const res = createResponse();
@@ -385,26 +377,24 @@ describe('AuthController', () => {
   describe('refreshTokens', () => {
     it('should return 200 if no token to refresh', async () => {
       const req = createRequest();
-      req.user = {
-        authTokens: {},
-      };
+      req.user = {};
       const res = createResponse();
-      res.sendStatus = jest.fn();
-      const spy = jest.spyOn(res, 'sendStatus');
+      res.status = (() => {
+        return { send: jest.fn() };
+      }) as any;
+      const spy = jest.spyOn(res, 'status');
 
       await controller.refreshTokens(req, res);
-      expect(spy).toHaveBeenCalledWith(200);
+      expect(spy).toHaveBeenCalledWith(401);
     });
 
     it('should return 200 if token was refreshed', async () => {
       const req = createRequest();
       req.user = {
         authTokens: {
-          testToken: {
-            accessToken: 'abc',
-            refreshToken: 'def',
-            tokenEndpoint: '/token',
-          },
+          accessToken: 'abc',
+          refreshToken: 'def',
+          tokenEndpoint: '/token',
         },
       };
       const res = createResponse();
@@ -427,11 +417,9 @@ describe('AuthController', () => {
       const req = createRequest();
       req.user = {
         authTokens: {
-          testToken: {
-            accessToken: 'abc',
-            refreshToken: 'def',
-            tokenEndpoint: '/token',
-          },
+          accessToken: 'abc',
+          refreshToken: 'def',
+          tokenEndpoint: '/token',
         },
       };
       const res = createResponse();
