@@ -84,29 +84,19 @@ export class AuthController {
     const refresh = req.query.refresh == 'true'; //if the refresh of the token is requested
 
     const authTokens = req.user.authTokens;
-    const authTokensToRefresh = []; // Tokens which will expire before next check token call
     let valid = true;
-    for (let authName in authTokens) {
-      valid = valid && !isExpired(authTokens[authName].expiresAt);
-      if (
-        authTokens[authName].expiresAt &&
-        authTokens[authName].expiresAt - Date.now() / 1000 <
-          this.oidcHelpers.config.idleTime
-      ) {
-        authTokensToRefresh.push(authName);
-      }
+    let needsRefresh = false;
+    valid = valid && !isExpired(authTokens.expiresAt);
+    if (
+      authTokens.expiresAt &&
+      authTokens.expiresAt - Date.now() / 1000 <
+        this.oidcHelpers.config.idleTime
+    ) {
+      needsRefresh = true;
     }
     if (valid) {
-      if (refresh && authTokensToRefresh.length) {
-        const promises = authTokensToRefresh.map(async authName => {
-          return await refreshToken(
-            authName,
-            authTokens[authName],
-            this.oidcHelpers,
-            this.options,
-          );
-        });
-        return await Promise.all(promises)
+      if (refresh && needsRefresh) {
+        return await refreshToken(authTokens, this.oidcHelpers, this.options)
           .then(data => {
             updateUserAuthToken(data, req);
             res.sendStatus(200);
@@ -127,15 +117,7 @@ export class AuthController {
   @Get('/refresh-token')
   refreshTokens(@Request() req, @Res() res) {
     const { authTokens } = req.user;
-    const promises = Object.keys(authTokens).map(authName =>
-      refreshToken(
-        authName,
-        authTokens[authName],
-        this.oidcHelpers,
-        this.options,
-      ),
-    );
-    return Promise.all(promises)
+    return refreshToken(authTokens, this.oidcHelpers, this.options)
       .then(data => {
         updateUserAuthToken(data, req);
         res.sendStatus(200);
