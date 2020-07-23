@@ -5,30 +5,32 @@
 <!-- TOC -->
 
 - [Changelog](#changelog)
+  - [0.10.1 (2020-07-23)](#0101-2020-07-23)
+    - [Bugfixes](#bugfixes)
   - [0.10.0 (2020-07-21)](#0100-2020-07-21)
     - [Features](#features)
   - [0.9.1 (2020-07-16)](#091-2020-07-16)
-    - [Bugfixes](#bugfixes)
+    - [Bugfixes](#bugfixes-1)
   - [0.9.0 (2020-07-16)](#090-2020-07-16)
     - [Features](#features-1)
   - [0.8.1 (2020-06-23)](#081-2020-06-23)
-    - [Bugfixes](#bugfixes-1)
+    - [Bugfixes](#bugfixes-2)
   - [0.8.0 (2020-06-22)](#080-2020-06-22)
     - [Features](#features-2)
   - [0.7.4 (2020-06-11)](#074-2020-06-11)
-    - [Bugfixes](#bugfixes-2)
-  - [0.7.3 (2020-06-10)](#073-2020-06-10)
     - [Bugfixes](#bugfixes-3)
-  - [0.7.2 (2020-06-10)](#072-2020-06-10)
+  - [0.7.3 (2020-06-10)](#073-2020-06-10)
     - [Bugfixes](#bugfixes-4)
-  - [0.7.1 (2020-06-10)](#071-2020-06-10)
+  - [0.7.2 (2020-06-10)](#072-2020-06-10)
     - [Bugfixes](#bugfixes-5)
+  - [0.7.1 (2020-06-10)](#071-2020-06-10)
+    - [Bugfixes](#bugfixes-6)
   - [0.7.0 (2020-06-05)](#070-2020-06-05)
     - [Features](#features-3)
       - [How to set a global guard BEFORE](#how-to-set-a-global-guard-before)
       - [How to set a global guard NOW](#how-to-set-a-global-guard-now)
   - [0.6.1 (2020-06-03)](#061-2020-06-03)
-    - [Bugfixes](#bugfixes-6)
+    - [Bugfixes](#bugfixes-7)
   - [0.6.0 (2020-05-27)](#060-2020-05-27)
     - [Features](#features-4)
     - [Doc fixes](#doc-fixes)
@@ -53,6 +55,12 @@
 
 <!-- /TOC -->
 
+## 0.10.1 (2020-07-23)
+
+### Bugfixes
+
+Remove unecessary `master` prefix for `authTokens`.
+
 ## 0.10.0 (2020-07-21)
 
 ### Features
@@ -65,6 +73,8 @@ New endpoints:
 New option:
 
 - `idleTime`: If the token expiration date on `/check-token?refresh=true` call is in less than `idleTime` seconds, the token is refreshed. Default value: 30 seconds.
+
+> Compatible with `@ffdc/nestjs-proxy` 0.3.0 onwards
 
 ## 0.9.1 (2020-07-16)
 

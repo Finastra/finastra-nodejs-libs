@@ -24,7 +24,7 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
       (Number(tokenset.expires_in)
         ? Date.now() / 1000 + Number(tokenset.expires_in)
         : null);
-    const master = {
+    const authTokens = {
       accessToken: tokenset.access_token,
       refreshToken: tokenset.refresh_token,
       tokenEndpoint: this.oidcHelpers.TrustIssuer.metadata.token_endpoint,
@@ -33,9 +33,7 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
     const user = {
       id_token,
       userinfo,
-      authTokens: {
-        master,
-      },
+      authTokens,
       ...externalIdps,
     };
     return user;

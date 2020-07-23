@@ -55,7 +55,7 @@ describe('OidcStrategy', () => {
       utils.authenticateExternalIdps = jest.fn().mockReturnValue({});
       const result = await strategy.validate(tokenset);
       expect(result).toBeTruthy();
-      expect(result.authTokens.master.expiresAt).toBeNull();
+      expect(result.authTokens.expiresAt).toBeNull();
     });
 
     it('should contain an expiration when given a token with expires_at', async () => {
@@ -71,7 +71,7 @@ describe('OidcStrategy', () => {
       utils.authenticateExternalIdps = jest.fn().mockReturnValue({});
       const result = await strategy.validate(tokenset);
       expect(result).toBeTruthy();
-      expect(result.authTokens.master.expiresAt).toBe(1);
+      expect(result.authTokens.expiresAt).toBe(1);
     });
 
     it('should contain an expiration when given a token with expires_in', async () => {
@@ -87,9 +87,7 @@ describe('OidcStrategy', () => {
       utils.authenticateExternalIdps = jest.fn().mockReturnValue({});
       const result = await strategy.validate(tokenset);
       expect(result).toBeTruthy();
-      expect(
-        result.authTokens.master.expiresAt > Date.now() / 1000,
-      ).toBeTruthy();
+      expect(result.authTokens.expiresAt > Date.now() / 1000).toBeTruthy();
     });
   });
 });
