@@ -108,7 +108,11 @@ describe('ProxyService', () => {
       req.query = {
         serviceId: services[0].id,
       };
-      req.user = { access_token: 'test' };
+      req.user = {
+        authTokens: {
+          access_token: 'test',
+        },
+      };
 
       const spy = jest.spyOn(proxy, 'web');
       service.proxyRequest(req, res);

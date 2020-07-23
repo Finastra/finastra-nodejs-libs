@@ -1,6 +1,6 @@
 {
   "name": "@ffdc/nestjs-proxy",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "contributors": [
     "David Boclé <david.bocle@finastra.com>"
   ],

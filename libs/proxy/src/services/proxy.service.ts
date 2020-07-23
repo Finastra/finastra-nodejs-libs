@@ -21,7 +21,7 @@ export class ProxyService {
     let token = null;
 
     if (req.hasOwnProperty('user')) {
-      token = (req.user as any).access_token;
+      token = (req.user as any).authTokens.access_token;
     }
 
     if (target && !serviceId) {
