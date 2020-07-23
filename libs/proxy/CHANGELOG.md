@@ -4,6 +4,8 @@
 
 <!-- TOC depthFrom:2 depthTo:3 -->
 
+- [0.3.1 (2020-07-23)](#031-2020-07-23)
+  - [Bugfixes](#bugfixes)
 - [0.3.0 (2020-07-23)](#030-2020-07-23)
   - [Features](#features)
 - [0.2.1 (2020-06-25)](#021-2020-06-25)
@@ -14,6 +16,12 @@
   - [Bug fixes](#bug-fixes-1)
 
 <!-- /TOC -->
+
+## 0.3.1 (2020-07-23)
+
+### Bugfixes
+
+Fix typo for `accessToken` which prevented to retrieve and pass token
 
 ## 0.3.0 (2020-07-23)
 
