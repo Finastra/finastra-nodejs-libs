@@ -5,32 +5,34 @@
 <!-- TOC -->
 
 - [Changelog](#changelog)
-  - [0.10.1 (2020-07-23)](#0101-2020-07-23)
+  - [0.10.2 (2020-07-24)](#0102-2020-07-24)
     - [Bugfixes](#bugfixes)
+  - [0.10.1 (2020-07-23)](#0101-2020-07-23)
+    - [Bugfixes](#bugfixes-1)
   - [0.10.0 (2020-07-21)](#0100-2020-07-21)
     - [Features](#features)
   - [0.9.1 (2020-07-16)](#091-2020-07-16)
-    - [Bugfixes](#bugfixes-1)
+    - [Bugfixes](#bugfixes-2)
   - [0.9.0 (2020-07-16)](#090-2020-07-16)
     - [Features](#features-1)
   - [0.8.1 (2020-06-23)](#081-2020-06-23)
-    - [Bugfixes](#bugfixes-2)
+    - [Bugfixes](#bugfixes-3)
   - [0.8.0 (2020-06-22)](#080-2020-06-22)
     - [Features](#features-2)
   - [0.7.4 (2020-06-11)](#074-2020-06-11)
-    - [Bugfixes](#bugfixes-3)
-  - [0.7.3 (2020-06-10)](#073-2020-06-10)
     - [Bugfixes](#bugfixes-4)
-  - [0.7.2 (2020-06-10)](#072-2020-06-10)
+  - [0.7.3 (2020-06-10)](#073-2020-06-10)
     - [Bugfixes](#bugfixes-5)
-  - [0.7.1 (2020-06-10)](#071-2020-06-10)
+  - [0.7.2 (2020-06-10)](#072-2020-06-10)
     - [Bugfixes](#bugfixes-6)
+  - [0.7.1 (2020-06-10)](#071-2020-06-10)
+    - [Bugfixes](#bugfixes-7)
   - [0.7.0 (2020-06-05)](#070-2020-06-05)
     - [Features](#features-3)
       - [How to set a global guard BEFORE](#how-to-set-a-global-guard-before)
       - [How to set a global guard NOW](#how-to-set-a-global-guard-now)
   - [0.6.1 (2020-06-03)](#061-2020-06-03)
-    - [Bugfixes](#bugfixes-7)
+    - [Bugfixes](#bugfixes-8)
   - [0.6.0 (2020-05-27)](#060-2020-05-27)
     - [Features](#features-4)
     - [Doc fixes](#doc-fixes)
@@ -54,6 +56,12 @@
     - [Bug fixes](#bug-fixes-3)
 
 <!-- /TOC -->
+
+## 0.10.2 (2020-07-24)
+
+### Bugfixes
+
+Fix refresh token with single authToken 🤓
 
 ## 0.10.1 (2020-07-23)
 

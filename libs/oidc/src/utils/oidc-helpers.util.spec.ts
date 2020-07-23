@@ -46,11 +46,3 @@ describe('isExpired', () => {
     expect(isExpired(null)).toBeFalsy();
   });
 });
-
-describe('updateUserAuthToken', () => {
-  it('should do nothing if no item', () => {
-    const req = createRequest();
-    updateUserAuthToken([null], req);
-    expect(req.hasOwnProperty('user')).toBeFalsy();
-  });
-});
