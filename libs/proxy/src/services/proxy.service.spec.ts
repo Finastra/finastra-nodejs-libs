@@ -110,7 +110,7 @@ describe('ProxyService', () => {
       };
       req.user = {
         authTokens: {
-          access_token: 'test',
+          accessToken: 'test',
         },
       };
 
