@@ -29,7 +29,7 @@ export class RequestService {
   }
 
   private getHeaders(user: User) {
-    const token = user.access_token;
+    const token = user.authTokens.accessToken;
     return {
       ...(token && { authorization: 'Bearer ' + token }),
     };
