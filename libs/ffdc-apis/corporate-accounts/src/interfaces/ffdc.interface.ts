@@ -11,5 +11,7 @@ export interface FFDCDataMeta {
 }
 
 export interface User {
-  access_token: string;
+  authTokens: {
+    accessToken: string;
+  };
 }

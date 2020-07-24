@@ -2,11 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CorporateAccountsService } from './corporate-accounts.service';
 import axios from 'axios';
 import { AccountType } from '../interfaces';
-import { ConfigService } from '@nestjs/config';
 import { CORP_ACCOUNTS_MODULE_OPTIONS } from '../constants';
 
 const user = {
-  access_token: '123',
+  authTokens: {
+    accessToken: '123',
+  },
 };
 
 describe('CorporateAccountsService', () => {
