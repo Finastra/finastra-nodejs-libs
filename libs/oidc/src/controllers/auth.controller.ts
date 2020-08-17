@@ -29,7 +29,6 @@ import { OidcStrategy } from '../strategies';
 import { Issuer, custom } from 'openid-client';
 import { v4 as uuid } from 'uuid';
 import { MOCK_CLIENT_INSTANCE } from '../mocks';
-import {} from '@nestjs/passport';
 import passport = require('passport');
 
 const logger = new Logger('AuthController');
