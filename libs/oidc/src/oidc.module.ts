@@ -8,7 +8,6 @@ import {
   RequestMethod,
 } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
-import { OidcStrategy } from './strategies';
 import { SessionSerializer } from './utils/session.serializer';
 import { AuthController } from './controllers/auth.controller';
 import { JwtModule } from '@nestjs/jwt';
@@ -27,15 +26,6 @@ import { TokenGuard } from './guards';
 
 const logger = new Logger('OidcModule');
 
-const OidcStrategyFactory = {
-  provide: 'OidcStrategy',
-  useFactory: async (oidcHelpers: OidcHelpers) => {
-    const strategy = new OidcStrategy(oidcHelpers);
-    return strategy;
-  },
-  inject: [OidcHelpers],
-};
-
 const OidcHelperFactory = {
   provide: 'OidcHelpers',
   useFactory: async (options: OidcModuleOptions) => {
@@ -44,10 +34,13 @@ const OidcHelperFactory = {
     }
     const issuer = options.issuer;
     try {
-      const TrustIssuer = await Issuer.discover(issuer);
-      const client = new TrustIssuer.Client(options.clientMetadata);
-      const tokenStore = await TrustIssuer.keystore();
-      options.authParams.redirect_uri = `${options.origin}/login/callback`;
+      let TrustIssuer, client, tokenStore;
+      if (issuer) {
+        TrustIssuer = await Issuer.discover(issuer);
+        client = new TrustIssuer.Client(options.clientMetadata);
+        tokenStore = await TrustIssuer.keystore();
+        options.authParams.redirect_uri = `${options.origin}/login/callback`;
+      }
       options.authParams.nonce =
         options.authParams.nonce === 'true' ? uuid() : options.authParams.nonce;
       const helpers = new OidcHelpers(tokenStore, client, options, TrustIssuer);
@@ -77,12 +70,7 @@ const OidcHelperFactory = {
     JwtModule.register({}),
   ],
   controllers: [AuthController],
-  providers: [
-    OidcHelperFactory,
-    OidcStrategyFactory,
-    SessionSerializer,
-    TokenGuard,
-  ],
+  providers: [OidcHelperFactory, SessionSerializer, TokenGuard],
   exports: [OidcHelperFactory],
 })
 export class OidcModule implements NestModule {

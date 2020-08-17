@@ -1,10 +1,9 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { SESSION_STATE_COOKIE } from '../oidc.constants';
 import * as cookie from 'cookie';
 
 @Injectable()
-export class OIDCGuard extends AuthGuard('oidc') {
+export class OIDCGuard {
   options = {};
 
   async canActivate(context: ExecutionContext) {
@@ -22,8 +21,6 @@ export class OIDCGuard extends AuthGuard('oidc') {
       this.options = {};
     }
 
-    const result = (await super.canActivate(context)) as boolean;
-    await super.logIn(request);
-    return result;
+    return true;
   }
 }

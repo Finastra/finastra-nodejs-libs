@@ -5,14 +5,11 @@ import { JWT } from 'jose';
 
 const logger = new Logger('UserInfo');
 
-export async function getUserInfo(
-  accessToken: string,
-  oidcHelpers: OidcHelpers,
-) {
+export async function getUserInfo(token: string, oidcHelpers: OidcHelpers) {
   let userInfoData = await (oidcHelpers.config.userInfoMethod ===
   UserInfoMethod.token
-    ? userInfo(accessToken)
-    : userInfoRemote(accessToken, oidcHelpers));
+    ? userInfo(token)
+    : userInfoRemote(token, oidcHelpers));
   if (oidcHelpers.config.userInfoCallback) {
     userInfoData = {
       ...userInfoData,
@@ -26,19 +23,20 @@ export async function getUserInfo(
   return userInfoData;
 }
 
-async function userInfoRemote(accessToken: string, oidcHelpers: OidcHelpers) {
+async function userInfoRemote(token: string, oidcHelpers: OidcHelpers) {
   try {
-    return await oidcHelpers.client.userinfo(accessToken);
+    return await oidcHelpers.client.userinfo(token);
   } catch (err) {
     const msg = `Error accessing user information`;
     logger.error(msg);
-    return userInfo(accessToken, 'sub');
+    return userInfo(token, 'sub');
   }
 }
 
-function userInfo(accessToken: string, usernameParameter?: string) {
-  const identity: any = JWT.decode(accessToken);
+function userInfo(token: string, usernameParameter?: string) {
+  const identity: any = JWT.decode(token);
   return {
     username: identity[usernameParameter] || identity.username || identity.name,
+    tenant: identity.tenant,
   };
 }
