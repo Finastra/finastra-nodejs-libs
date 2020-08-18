@@ -184,7 +184,7 @@ export class AuthController {
   }
 
   async createStrategy(tenantId?, channelType?) {
-    var strategy;
+    let strategy;
     if (this.options.defaultHttpOptions) {
       custom.setHttpOptionsDefaults(this.options.defaultHttpOptions);
     }
