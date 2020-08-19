@@ -17,7 +17,7 @@ import {
 } from './interfaces';
 import { OIDC_MODULE_OPTIONS } from './oidc.constants';
 import { mergeDefaults } from './utils';
-import { UserMiddleware } from './middlewares';
+import { UserMiddleware, LoginMiddleware } from './middlewares';
 import { TokenGuard } from './guards';
 import { OidcHelpersService } from './services';
 
@@ -34,6 +34,13 @@ export class OidcModule implements NestModule {
     consumer
       .apply(UserMiddleware)
       .forRoutes({ path: '*', method: RequestMethod.ALL });
+
+    consumer
+      .apply(LoginMiddleware)
+      .forRoutes(
+        { path: '/login', method: RequestMethod.ALL },
+        { path: '/:tenantId/:channelType/login', method: RequestMethod.ALL },
+      );
   }
 
   static forRoot(options: OidcModuleOptions): DynamicModule {

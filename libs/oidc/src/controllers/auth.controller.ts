@@ -7,12 +7,10 @@ import {
   Logger,
   Param,
   Next,
-  UseGuards,
   OnModuleInit,
 } from '@nestjs/common';
 import { Response } from 'express';
 
-import { OIDCGuard } from '../guards/oidc.guard';
 import { OIDC_MODULE_OPTIONS, SESSION_STATE_COOKIE } from '../oidc.constants';
 import {
   OidcModuleOptions,
@@ -27,6 +25,7 @@ import { v4 as uuid } from 'uuid';
 import { MOCK_CLIENT_INSTANCE } from '../mocks';
 import passport = require('passport');
 import { OidcHelpersService } from '../services';
+import * as fs from 'fs';
 
 const logger = new Logger('AuthController');
 
@@ -50,7 +49,6 @@ export class AuthController implements OnModuleInit {
   // Single tenancy login
 
   @Public()
-  @UseGuards(OIDCGuard)
   @Get('/login')
   loginSingleTenant(
     @Request() req,
@@ -62,7 +60,6 @@ export class AuthController implements OnModuleInit {
   }
 
   @Public()
-  @UseGuards(OIDCGuard)
   @Get('login/callback')
   loginSingleTenantCallback(
     @Request() req,
@@ -75,7 +72,6 @@ export class AuthController implements OnModuleInit {
 
   // Multitenancy login
   @Public()
-  @UseGuards(OIDCGuard)
   @Get('/:tenantId/:channelType/login')
   loginMultitenant(
     @Request() req,
@@ -87,7 +83,6 @@ export class AuthController implements OnModuleInit {
   }
 
   @Public()
-  @UseGuards(OIDCGuard)
   @Get('/:tenantId/:channelType/login/callback')
   loginMultitenantCallback(
     @Request() req,
@@ -105,7 +100,11 @@ export class AuthController implements OnModuleInit {
 
   @Public()
   @Get('/logout')
-  async logout(@Request() req, @Res() res: Response) {
+  async logout(@Request() req, @Res() res: Response, @Param() params) {
+    if (!req.isAuthenticated()) {
+      res.sendStatus(404);
+      return;
+    }
     const id_token = req.user ? req.user.id_token : undefined;
     req.logout();
     req.session.destroy(async (error: any) => {
@@ -127,15 +126,42 @@ export class AuthController implements OnModuleInit {
         res.cookie(SESSION_STATE_COOKIE, 'logged out', {
           maxAge: 15 * 1000 * 60,
         });
-        res.redirect('/loggedout');
+        let prefix =
+          params.tenantId && params.channelType
+            ? `/${params.tenantId}/${params.channelType}`
+            : '';
+        res.redirect(`${prefix}/loggedout`);
       }
     });
   }
 
   @Public()
+  @Get('/:tenantId/:channelType/logout')
+  async logoutMultitenant(
+    @Request() req,
+    @Res() res: Response,
+    @Param() params,
+  ) {
+    return this.logout(req, res, params);
+  }
+
+  @Public()
   @Get('/loggedout')
-  loggedout(@Res() res: Response) {
-    res.sendFile(join(__dirname, '../assets/loggedout.html'));
+  loggedout(@Res() res: Response, @Param() params) {
+    let data = fs
+      .readFileSync(join(__dirname, '../assets/loggedout.html'))
+      .toString();
+    let prefix =
+      params.tenantId && params.channelType
+        ? `/${params.tenantId}/${params.channelType}`
+        : '';
+    if (data) res.send(data.replace('rootUrl', `${prefix}/login`));
+  }
+
+  @Public()
+  @Get('/:tenantId/:channelType/loggedout')
+  loggedoutMultitenant(@Res() res: Response, @Param() params) {
+    return this.loggedout(res, params);
   }
 
   @Get('/check-token')
@@ -273,6 +299,7 @@ export class AuthController implements OnModuleInit {
         ? `/${params.tenantId}/${params.channelType}`
         : '';
     passport.authenticate(strategy, {
+      ...req.options,
       successRedirect: `${prefix}/`,
       failureRedirect: `${prefix}/login`,
     })(req, res, next);
