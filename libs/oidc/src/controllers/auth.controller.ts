@@ -268,12 +268,13 @@ export class AuthController implements OnModuleInit {
     var strategy =
       this.strategy ||
       (await this.createStrategy(params.tenantId, params.channelType));
+    let prefix =
+      params.tenantId && params.channelType
+        ? `/${params.tenantId}/${params.channelType}`
+        : '';
     passport.authenticate(strategy, {
-      successRedirect: '/',
-      failureRedirect:
-        params.tenantId && params.channelType
-          ? `${params.tenantId}/${params.channelType}/login`
-          : '/login',
+      successRedirect: `${prefix}/`,
+      failureRedirect: `${prefix}/login`,
     })(req, res, next);
   }
 }
