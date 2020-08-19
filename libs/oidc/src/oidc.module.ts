@@ -7,7 +7,6 @@ import {
   MiddlewareConsumer,
   RequestMethod,
 } from '@nestjs/common';
-import { PassportModule } from '@nestjs/passport';
 import { SessionSerializer } from './utils/session.serializer';
 import { AuthController } from './controllers/auth.controller';
 import { JwtModule } from '@nestjs/jwt';
@@ -17,61 +16,18 @@ import {
   OidcOptionsFactory,
 } from './interfaces';
 import { OIDC_MODULE_OPTIONS } from './oidc.constants';
-import { mergeDefaults, OidcHelpers } from './utils';
-import { Issuer, custom } from 'openid-client';
-import { v4 as uuid } from 'uuid';
-import { MOCK_CLIENT_INSTANCE } from './mocks';
+import { mergeDefaults } from './utils';
 import { UserMiddleware } from './middlewares';
 import { TokenGuard } from './guards';
+import { OidcHelpersService } from './services';
 
 const logger = new Logger('OidcModule');
 
-const OidcHelperFactory = {
-  provide: 'OidcHelpers',
-  useFactory: async (options: OidcModuleOptions) => {
-    if (options.defaultHttpOptions) {
-      custom.setHttpOptionsDefaults(options.defaultHttpOptions);
-    }
-    const issuer = options.issuer;
-    try {
-      let TrustIssuer, client, tokenStore;
-      if (issuer) {
-        TrustIssuer = await Issuer.discover(issuer);
-        client = new TrustIssuer.Client(options.clientMetadata);
-        tokenStore = await TrustIssuer.keystore();
-        options.authParams.redirect_uri = `${options.origin}/login/callback`;
-      }
-      options.authParams.nonce =
-        options.authParams.nonce === 'true' ? uuid() : options.authParams.nonce;
-      const helpers = new OidcHelpers(tokenStore, client, options, TrustIssuer);
-      return helpers;
-    } catch (err) {
-      const docUrl =
-        'https://github.com/fusionfabric/finastra-nodejs-libs/blob/develop/libs/oidc/README.md';
-      const msg = `Error accessing the issuer/tokenStore. Check if the url is valid or increase the timeout in the defaultHttpOptions : ${docUrl}`;
-      logger.error(msg);
-      logger.log('Terminating application');
-      process.exit(1);
-      return {
-        client: MOCK_CLIENT_INSTANCE,
-        config: {
-          authParams: undefined,
-          usePKCE: undefined,
-        },
-      }; // Used for unit test
-    }
-  },
-  inject: [OIDC_MODULE_OPTIONS],
-};
-
 @Module({
-  imports: [
-    PassportModule.register({ session: true, defaultStrategy: 'oidc' }),
-    JwtModule.register({}),
-  ],
+  imports: [JwtModule.register({})],
   controllers: [AuthController],
-  providers: [OidcHelperFactory, SessionSerializer, TokenGuard],
-  exports: [OidcHelperFactory],
+  providers: [SessionSerializer, TokenGuard, OidcHelpersService],
+  exports: [OidcHelpersService],
 })
 export class OidcModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

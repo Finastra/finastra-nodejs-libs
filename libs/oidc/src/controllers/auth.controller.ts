@@ -8,6 +8,7 @@ import {
   Param,
   Next,
   UseGuards,
+  OnModuleInit,
 } from '@nestjs/common';
 import { Response } from 'express';
 
@@ -19,28 +20,31 @@ import {
 } from '../interfaces/oidc-module-options.interface';
 import { Public } from '../decorators/public.decorator';
 import { join } from 'path';
-import {
-  OidcHelpers,
-  refreshToken,
-  updateUserAuthToken,
-  isExpired,
-} from '../utils';
+import { refreshToken, updateUserAuthToken, isExpired } from '../utils';
 import { OidcStrategy } from '../strategies';
 import { Issuer, custom } from 'openid-client';
 import { v4 as uuid } from 'uuid';
 import { MOCK_CLIENT_INSTANCE } from '../mocks';
 import passport = require('passport');
+import { OidcHelpersService } from '../services';
 
 const logger = new Logger('AuthController');
 
 @Controller()
-export class AuthController {
+export class AuthController implements OnModuleInit {
   multitenancy: boolean;
+  strategy: any;
   constructor(
     @Inject(OIDC_MODULE_OPTIONS) private options: OidcModuleOptions,
-    private oidcHelpers: OidcHelpers,
+    public oidcHelpersService: OidcHelpersService,
   ) {
-    this.multitenancy = !this.oidcHelpers.config.issuer;
+    this.multitenancy = !this.options.issuer;
+  }
+
+  async onModuleInit() {
+    if (!this.multitenancy) {
+      this.strategy = await this.createStrategy();
+    }
   }
 
   // Single tenancy login
@@ -70,7 +74,6 @@ export class AuthController {
   }
 
   // Multitenancy login
-
   @Public()
   @UseGuards(OIDCGuard)
   @Get('/:tenantId/:channelType/login')
@@ -106,8 +109,8 @@ export class AuthController {
     const id_token = req.user ? req.user.id_token : undefined;
     req.logout();
     req.session.destroy(async (error: any) => {
-      const end_session_endpoint = this.oidcHelpers.TrustIssuer.metadata
-        .end_session_endpoint;
+      const end_session_endpoint = this.oidcHelpersService.oidcHelpers
+        .TrustIssuer.metadata.end_session_endpoint;
 
       if (end_session_endpoint) {
         res.redirect(
@@ -146,13 +149,17 @@ export class AuthController {
     if (
       authTokens.expiresAt &&
       authTokens.expiresAt - Date.now() / 1000 <
-        this.oidcHelpers.config.idleTime
+        this.oidcHelpersService.oidcHelpers.config.idleTime
     ) {
       needsRefresh = true;
     }
     if (valid) {
       if (refresh && needsRefresh) {
-        return await refreshToken(authTokens, this.oidcHelpers, this.options)
+        return await refreshToken(
+          authTokens,
+          this.oidcHelpersService.oidcHelpers,
+          this.options,
+        )
           .then(data => {
             updateUserAuthToken(data, req);
             res.sendStatus(200);
@@ -173,7 +180,11 @@ export class AuthController {
   @Get('/refresh-token')
   refreshTokens(@Request() req, @Res() res) {
     const { authTokens } = req.user;
-    return refreshToken(authTokens, this.oidcHelpers, this.options)
+    return refreshToken(
+      authTokens,
+      this.oidcHelpersService.oidcHelpers,
+      this.options,
+    )
       .then(data => {
         updateUserAuthToken(data, req);
         res.sendStatus(200);
@@ -216,14 +227,14 @@ export class AuthController {
         this.options.authParams.nonce === 'true'
           ? uuid()
           : this.options.authParams.nonce;
-      this.oidcHelpers = new OidcHelpers(
+      this.oidcHelpersService.init(
         tokenStore,
         client,
         this.options,
         TrustIssuer,
       );
 
-      strategy = new OidcStrategy(this.oidcHelpers);
+      strategy = new OidcStrategy(this.oidcHelpersService.oidcHelpers);
       return strategy;
     } catch (err) {
       const docUrl =
@@ -254,10 +265,9 @@ export class AuthController {
       res.sendStatus(404);
       return;
     }
-    var strategy = await this.createStrategy(
-      params.tenantId,
-      params.channelType,
-    );
+    var strategy =
+      this.strategy ||
+      (await this.createStrategy(params.tenantId, params.channelType));
     passport.authenticate(strategy, {
       successRedirect: '/',
       failureRedirect:

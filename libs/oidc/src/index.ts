@@ -7,3 +7,4 @@ export * from './interfaces';
 export * from './strategies';
 export * from './utils';
 export * from './middlewares';
+export * from './services';
