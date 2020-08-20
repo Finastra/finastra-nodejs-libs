@@ -4,6 +4,7 @@ import { ExtractJwt } from 'passport-jwt';
 import { JWT } from 'jose';
 import { getUserInfo, authenticateExternalIdps } from '../utils';
 import { OidcHelpersService } from '../services';
+import { ChannelType } from '../interfaces';
 
 @Injectable()
 export class UserMiddleware implements NestMiddleware {
@@ -23,6 +24,12 @@ export class UserMiddleware implements NestMiddleware {
         );
       }
       req.user['userinfo'] = await getUserInfo(jwt, this.service.oidcHelpers);
+
+      // Get channel
+      const routeParams = req.params[0];
+      if (routeParams[1] === (ChannelType.b2c || ChannelType.b2e)) {
+        req.user['userinfo'].channel = routeParams[1];
+      }
 
       next();
     } catch (err) {

@@ -68,4 +68,5 @@ export interface IdentityProviderOptions {
   refreshToken?: string;
   tokenEndpoint?: string;
   expiresAt?: number;
+  channel?: ChannelType;
 }

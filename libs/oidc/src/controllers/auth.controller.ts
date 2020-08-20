@@ -46,7 +46,12 @@ export class AuthController implements OnModuleInit {
     }
   }
 
-  // Single tenancy login
+  @Get('/user')
+  user(@Request() req) {
+    return req.user.userinfo;
+  }
+
+  // Single tenancy
 
   @Public()
   @Get('/login')
@@ -68,34 +73,6 @@ export class AuthController implements OnModuleInit {
     @Param() params,
   ) {
     this.login(req, res, next, params, this.multitenancy);
-  }
-
-  // Multitenancy login
-  @Public()
-  @Get('/:tenantId/:channelType/login')
-  loginMultitenant(
-    @Request() req,
-    @Res() res: Response,
-    @Next() next: Function,
-    @Param() params,
-  ) {
-    this.login(req, res, next, params, !this.multitenancy);
-  }
-
-  @Public()
-  @Get('/:tenantId/:channelType/login/callback')
-  loginMultitenantCallback(
-    @Request() req,
-    @Res() res: Response,
-    @Next() next: Function,
-    @Param() params,
-  ) {
-    this.login(req, res, next, params, !this.multitenancy);
-  }
-
-  @Get('/user')
-  user(@Request() req) {
-    return req.user.userinfo;
   }
 
   @Public()
@@ -135,35 +112,6 @@ export class AuthController implements OnModuleInit {
     });
   }
 
-  @Public()
-  @Get('/:tenantId/:channelType/logout')
-  async logoutMultitenant(
-    @Request() req,
-    @Res() res: Response,
-    @Param() params,
-  ) {
-    return this.logout(req, res, params);
-  }
-
-  @Public()
-  @Get('/loggedout')
-  loggedout(@Res() res: Response, @Param() params) {
-    let data = fs
-      .readFileSync(join(__dirname, '../assets/loggedout.html'))
-      .toString();
-    let prefix =
-      params.tenantId && params.channelType
-        ? `/${params.tenantId}/${params.channelType}`
-        : '';
-    if (data) res.send(data.replace('rootUrl', `${prefix}/login`));
-  }
-
-  @Public()
-  @Get('/:tenantId/:channelType/loggedout')
-  loggedoutMultitenant(@Res() res: Response, @Param() params) {
-    return this.loggedout(res, params);
-  }
-
   @Get('/check-token')
   async checkTokens(@Request() req, @Res() res) {
     const refresh = req.query.refresh == 'true'; //if the refresh of the token is requested
@@ -184,7 +132,6 @@ export class AuthController implements OnModuleInit {
         return await refreshToken(
           authTokens,
           this.oidcHelpersService.oidcHelpers,
-          this.options,
         )
           .then(data => {
             updateUserAuthToken(data, req);
@@ -206,11 +153,8 @@ export class AuthController implements OnModuleInit {
   @Get('/refresh-token')
   refreshTokens(@Request() req, @Res() res) {
     const { authTokens } = req.user;
-    return refreshToken(
-      authTokens,
-      this.oidcHelpersService.oidcHelpers,
-      this.options,
-    )
+    authTokens.channel = req.params['channelType'];
+    return refreshToken(authTokens, this.oidcHelpersService.oidcHelpers)
       .then(data => {
         updateUserAuthToken(data, req);
         res.sendStatus(200);
@@ -218,6 +162,68 @@ export class AuthController implements OnModuleInit {
       .catch(err => {
         res.status(401).send(err);
       });
+  }
+
+  @Public()
+  @Get('/loggedout')
+  loggedout(@Res() res: Response, @Param() params) {
+    let data = fs
+      .readFileSync(join(__dirname, '../assets/loggedout.html'))
+      .toString();
+    let prefix =
+      params.tenantId && params.channelType
+        ? `/${params.tenantId}/${params.channelType}`
+        : '';
+    if (data) res.send(data.replace('rootUrl', `${prefix}/login`));
+  }
+
+  // Multitenancy
+  @Public()
+  @Get('/:tenantId/:channelType/login')
+  loginMultitenant(
+    @Request() req,
+    @Res() res: Response,
+    @Next() next: Function,
+    @Param() params,
+  ) {
+    this.login(req, res, next, params, !this.multitenancy);
+  }
+
+  @Public()
+  @Get('/:tenantId/:channelType/login/callback')
+  loginMultitenantCallback(
+    @Request() req,
+    @Res() res: Response,
+    @Next() next: Function,
+    @Param() params,
+  ) {
+    this.login(req, res, next, params, !this.multitenancy);
+  }
+
+  @Public()
+  @Get('/:tenantId/:channelType/logout')
+  async logoutMultitenant(
+    @Request() req,
+    @Res() res: Response,
+    @Param() params,
+  ) {
+    return this.logout(req, res, params);
+  }
+
+  @Public()
+  @Get('/:tenantId/:channelType/loggedout')
+  loggedoutMultitenant(@Res() res: Response, @Param() params) {
+    return this.loggedout(res, params);
+  }
+
+  @Get('/:tokenId/:channelType/check-token')
+  async checkTokensMultitenant(@Request() req, @Res() res) {
+    return this.checkTokens(req, res);
+  }
+
+  @Get('/:tokenId/:channelType/refresh-token')
+  refreshTokensMultitenant(@Request() req, @Res() res) {
+    return this.refreshTokens(req, res);
   }
 
   async createStrategy(tenantId?, channelType?) {
@@ -237,11 +243,11 @@ export class AuthController implements OnModuleInit {
         redirectUri = `${this.options.origin}/${tenantId}/${channelType}/login/callback`;
         switch (channelType.toLowerCase()) {
           case ChannelType.b2e:
-            clientMetadata = this.options['b2e'].clientMetadata;
+            clientMetadata = this.options[ChannelType.b2e].clientMetadata;
             break;
           default:
           case ChannelType.b2c:
-            clientMetadata = this.options['b2c'].clientMetadata;
+            clientMetadata = this.options[ChannelType.b2c].clientMetadata;
             break;
         }
       }

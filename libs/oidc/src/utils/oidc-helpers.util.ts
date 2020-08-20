@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { JWKS } from 'jose';
-import { OidcModuleOptions, IdentityProviderOptions } from '../interfaces';
+import {
+  OidcModuleOptions,
+  IdentityProviderOptions,
+  ChannelType,
+} from '../interfaces';
 import { Client, Issuer } from 'openid-client';
 import axios from 'axios';
 import { stringify } from 'querystring';
@@ -31,7 +35,6 @@ export function isExpired(expiresAt: number) {
 export async function refreshToken(
   authToken: IdentityProviderOptions,
   oidcHelpers: OidcHelpers,
-  options: OidcModuleOptions,
 ) {
   if (
     !authToken.accessToken ||
@@ -41,17 +44,30 @@ export async function refreshToken(
     throw new Error('Missing token endpoint');
   }
 
+  let clientMetadata;
+  switch (authToken.channel) {
+    case ChannelType.b2c:
+      clientMetadata = oidcHelpers.config[ChannelType.b2c].clientMetadata;
+      break;
+    case ChannelType.b2e:
+      clientMetadata = oidcHelpers.config[ChannelType.b2e].clientMetadata;
+      break;
+    default:
+      clientMetadata = oidcHelpers.config.clientMetadata;
+      break;
+  }
+
   const response = await axios.request({
     url: authToken.tokenEndpoint,
     method: 'post',
-    timeout: Number(options.defaultHttpOptions.timeout),
+    timeout: Number(oidcHelpers.config.defaultHttpOptions.timeout),
     // http://openid.net/specs/openid-connect-core-1_0.html#RefreshingAccessToken
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
     },
     data: stringify({
-      client_id: oidcHelpers.config.clientMetadata.client_id,
-      client_secret: oidcHelpers.config.clientMetadata.client_secret,
+      client_id: clientMetadata.client_id,
+      client_secret: clientMetadata.client_secret,
       grant_type: 'refresh_token',
       refresh_token: authToken.refreshToken,
       scope: authToken.scope,
