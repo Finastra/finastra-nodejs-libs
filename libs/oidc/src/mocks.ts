@@ -1,5 +1,7 @@
 import { OidcModuleOptions, UserInfoMethod } from './interfaces';
 import { Issuer, Client } from 'openid-client';
+import { OidcHelpers } from './utils';
+import { JWKS } from 'jose';
 
 export const MOCK_ISSUER = 'http://issuer.io';
 export const CLIENT_ID = '123';
@@ -39,3 +41,12 @@ export const MOCK_OIDC_MODULE_OPTIONS: OidcModuleOptions = {
     },
   },
 };
+
+export class MockOidcService {
+  helpers = new OidcHelpers(
+    new JWKS.KeyStore([]),
+    MOCK_CLIENT_INSTANCE,
+    MOCK_OIDC_MODULE_OPTIONS,
+    MOCK_TRUST_ISSUER,
+  );
+}
