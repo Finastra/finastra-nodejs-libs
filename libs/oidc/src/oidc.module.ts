@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { SessionSerializer } from './utils/session.serializer';
 import { AuthController } from './controllers/auth.controller';
+import { AuthMultitenantController } from './controllers/auth-multitenant.controller';
 import { JwtModule } from '@nestjs/jwt';
 import {
   OidcModuleOptions,
@@ -20,16 +21,14 @@ import { UserMiddleware, LoginMiddleware } from './middlewares';
 import { TokenGuard, TenancyGuard } from './guards';
 import { OidcService } from './services';
 import { APP_GUARD } from '@nestjs/core';
-import { AuthService } from './services';
 
 @Module({
   imports: [JwtModule.register({})],
-  controllers: [AuthController],
+  controllers: [AuthController, AuthMultitenantController],
   providers: [
     SessionSerializer,
     TokenGuard,
     OidcService,
-    AuthService,
     {
       provide: APP_GUARD,
       useClass: TenancyGuard,

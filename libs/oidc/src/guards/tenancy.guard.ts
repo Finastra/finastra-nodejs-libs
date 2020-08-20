@@ -16,7 +16,10 @@ export class TenancyGuard implements CanActivate {
       'isMultitenant',
       context.getHandler(),
     );
-    if (isMultitenant === this.oidcService.isMultitenant) {
+    if (
+      typeof isMultitenant === 'undefined' ||
+      isMultitenant === this.oidcService.isMultitenant
+    ) {
       return true;
     } else {
       throw new NotFoundException();
