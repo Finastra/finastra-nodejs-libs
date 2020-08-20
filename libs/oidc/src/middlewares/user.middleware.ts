@@ -3,27 +3,27 @@ import { Request, Response } from 'express';
 import { ExtractJwt } from 'passport-jwt';
 import { JWT } from 'jose';
 import { getUserInfo, authenticateExternalIdps } from '../utils';
-import { OidcHelpersService } from '../services';
+import { OidcService } from '../services';
 import { ChannelType } from '../interfaces';
 
 @Injectable()
 export class UserMiddleware implements NestMiddleware {
-  constructor(private service: OidcHelpersService) {}
+  constructor(private service: OidcService) {}
   async use(req: Request, res: Response, next: Function) {
     try {
       const jwt = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
       if (!jwt) throw 'No Jwt';
 
-      const tokenStore = this.service.oidcHelpers.tokenStore;
+      const tokenStore = this.service.helpers.tokenStore;
       const decodedJwt = JWT.verify(jwt, tokenStore);
 
       req.user = decodedJwt;
-      if (this.service.oidcHelpers.config.externalIdps) {
+      if (this.service.helpers.config.externalIdps) {
         req.user['authTokens'] = await authenticateExternalIdps(
-          this.service.oidcHelpers,
+          this.service.helpers,
         );
       }
-      req.user['userinfo'] = await getUserInfo(jwt, this.service.oidcHelpers);
+      req.user['userinfo'] = await getUserInfo(jwt, this.service.helpers);
 
       // Get channel
       const routeParams = req.params[0];

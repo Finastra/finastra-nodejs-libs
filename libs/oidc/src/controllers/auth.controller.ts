@@ -24,24 +24,25 @@ import { Issuer, custom } from 'openid-client';
 import { v4 as uuid } from 'uuid';
 import { MOCK_CLIENT_INSTANCE } from '../mocks';
 import passport = require('passport');
-import { OidcHelpersService } from '../services';
+import { OidcService } from '../services';
 import * as fs from 'fs';
+import { isAvailableRouteForMultitenant } from '../decorators';
 
 const logger = new Logger('AuthController');
 
 @Controller()
 export class AuthController implements OnModuleInit {
-  multitenancy: boolean;
   strategy: any;
+  isMultitenant = false;
   constructor(
     @Inject(OIDC_MODULE_OPTIONS) private options: OidcModuleOptions,
-    public oidcHelpersService: OidcHelpersService,
+    public oidcService: OidcService,
   ) {
-    this.multitenancy = !this.options.issuer;
+    this.isMultitenant = this.oidcService.isMultitenant;
   }
 
   async onModuleInit() {
-    if (!this.multitenancy) {
+    if (!this.oidcService.isMultitenant) {
       this.strategy = await this.createStrategy();
     }
   }
@@ -54,6 +55,7 @@ export class AuthController implements OnModuleInit {
   // Single tenancy
 
   @Public()
+  @isAvailableRouteForMultitenant(false)
   @Get('/login')
   loginSingleTenant(
     @Request() req,
@@ -61,10 +63,11 @@ export class AuthController implements OnModuleInit {
     @Next() next: Function,
     @Param() params,
   ) {
-    this.login(req, res, next, params, this.multitenancy);
+    this.login(req, res, next, params);
   }
 
   @Public()
+  @isAvailableRouteForMultitenant(false)
   @Get('login/callback')
   loginSingleTenantCallback(
     @Request() req,
@@ -72,10 +75,11 @@ export class AuthController implements OnModuleInit {
     @Next() next: Function,
     @Param() params,
   ) {
-    this.login(req, res, next, params, this.multitenancy);
+    this.login(req, res, next, params);
   }
 
   @Public()
+  @isAvailableRouteForMultitenant(false)
   @Get('/logout')
   async logout(@Request() req, @Res() res: Response, @Param() params) {
     if (!req.isAuthenticated()) {
@@ -85,8 +89,8 @@ export class AuthController implements OnModuleInit {
     const id_token = req.user ? req.user.id_token : undefined;
     req.logout();
     req.session.destroy(async (error: any) => {
-      const end_session_endpoint = this.oidcHelpersService.oidcHelpers
-        .TrustIssuer.metadata.end_session_endpoint;
+      const end_session_endpoint = this.oidcService.helpers.TrustIssuer.metadata
+        .end_session_endpoint;
 
       if (end_session_endpoint) {
         res.redirect(
@@ -112,6 +116,7 @@ export class AuthController implements OnModuleInit {
     });
   }
 
+  @isAvailableRouteForMultitenant(false)
   @Get('/check-token')
   async checkTokens(@Request() req, @Res() res) {
     const refresh = req.query.refresh == 'true'; //if the refresh of the token is requested
@@ -123,16 +128,13 @@ export class AuthController implements OnModuleInit {
     if (
       authTokens.expiresAt &&
       authTokens.expiresAt - Date.now() / 1000 <
-        this.oidcHelpersService.oidcHelpers.config.idleTime
+        this.oidcService.helpers.config.idleTime
     ) {
       needsRefresh = true;
     }
     if (valid) {
       if (refresh && needsRefresh) {
-        return await refreshToken(
-          authTokens,
-          this.oidcHelpersService.oidcHelpers,
-        )
+        return await refreshToken(authTokens, this.oidcService.helpers)
           .then(data => {
             updateUserAuthToken(data, req);
             res.sendStatus(200);
@@ -150,11 +152,12 @@ export class AuthController implements OnModuleInit {
     }
   }
 
+  @isAvailableRouteForMultitenant(false)
   @Get('/refresh-token')
   refreshTokens(@Request() req, @Res() res) {
     const { authTokens } = req.user;
     authTokens.channel = req.params['channelType'];
-    return refreshToken(authTokens, this.oidcHelpersService.oidcHelpers)
+    return refreshToken(authTokens, this.oidcService.helpers)
       .then(data => {
         updateUserAuthToken(data, req);
         res.sendStatus(200);
@@ -165,6 +168,7 @@ export class AuthController implements OnModuleInit {
   }
 
   @Public()
+  @isAvailableRouteForMultitenant(false)
   @Get('/loggedout')
   loggedout(@Res() res: Response, @Param() params) {
     let data = fs
@@ -179,6 +183,7 @@ export class AuthController implements OnModuleInit {
 
   // Multitenancy
   @Public()
+  @isAvailableRouteForMultitenant(false)
   @Get('/:tenantId/:channelType/login')
   loginMultitenant(
     @Request() req,
@@ -186,10 +191,11 @@ export class AuthController implements OnModuleInit {
     @Next() next: Function,
     @Param() params,
   ) {
-    this.login(req, res, next, params, !this.multitenancy);
+    this.login(req, res, next, params);
   }
 
   @Public()
+  @isAvailableRouteForMultitenant(true)
   @Get('/:tenantId/:channelType/login/callback')
   loginMultitenantCallback(
     @Request() req,
@@ -197,10 +203,11 @@ export class AuthController implements OnModuleInit {
     @Next() next: Function,
     @Param() params,
   ) {
-    this.login(req, res, next, params, !this.multitenancy);
+    this.login(req, res, next, params);
   }
 
   @Public()
+  @isAvailableRouteForMultitenant(true)
   @Get('/:tenantId/:channelType/logout')
   async logoutMultitenant(
     @Request() req,
@@ -211,16 +218,19 @@ export class AuthController implements OnModuleInit {
   }
 
   @Public()
+  @isAvailableRouteForMultitenant(true)
   @Get('/:tenantId/:channelType/loggedout')
   loggedoutMultitenant(@Res() res: Response, @Param() params) {
     return this.loggedout(res, params);
   }
 
+  @isAvailableRouteForMultitenant(true)
   @Get('/:tokenId/:channelType/check-token')
   async checkTokensMultitenant(@Request() req, @Res() res) {
     return this.checkTokens(req, res);
   }
 
+  @isAvailableRouteForMultitenant(true)
   @Get('/:tokenId/:channelType/refresh-token')
   refreshTokensMultitenant(@Request() req, @Res() res) {
     return this.refreshTokens(req, res);
@@ -259,16 +269,12 @@ export class AuthController implements OnModuleInit {
         this.options.authParams.nonce === 'true'
           ? uuid()
           : this.options.authParams.nonce;
-      this.oidcHelpersService.init(
-        tokenStore,
-        client,
-        this.options,
-        TrustIssuer,
-      );
+      this.oidcService.init(tokenStore, client, this.options, TrustIssuer);
 
-      strategy = new OidcStrategy(this.oidcHelpersService.oidcHelpers);
+      strategy = new OidcStrategy(this.oidcService.helpers);
       return strategy;
     } catch (err) {
+      console.log(err);
       const docUrl =
         'https://github.com/fusionfabric/finastra-nodejs-libs/blob/develop/libs/oidc/README.md';
       const msg = `Error accessing the issuer/tokenStore. Check if the url is valid or increase the timeout in the defaultHttpOptions : ${docUrl}`;
@@ -291,12 +297,7 @@ export class AuthController implements OnModuleInit {
     @Res() res: Response,
     @Next() next: Function,
     @Param() params,
-    unavailableRoute: boolean,
   ) {
-    if (unavailableRoute) {
-      res.sendStatus(404);
-      return;
-    }
     var strategy =
       this.strategy ||
       (await this.createStrategy(params.tenantId, params.channelType));

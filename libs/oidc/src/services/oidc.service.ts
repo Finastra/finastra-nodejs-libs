@@ -6,10 +6,11 @@ import { Client, Issuer } from 'openid-client';
 import { OIDC_MODULE_OPTIONS } from '../oidc.constants';
 
 @Injectable()
-export class OidcHelpersService {
-  oidcHelpers: OidcHelpers;
+export class OidcService {
+  helpers: OidcHelpers;
+  isMultitenant: boolean = false;
   constructor(@Inject(OIDC_MODULE_OPTIONS) private options: OidcModuleOptions) {
-    this.options;
+    this.isMultitenant = !!this.options.issuerOrigin;
   }
 
   init(
@@ -18,7 +19,7 @@ export class OidcHelpersService {
     config: OidcModuleOptions,
     TrustIssuer: Issuer<Client>,
   ) {
-    this.oidcHelpers = new OidcHelpers(tokenStore, client, config, TrustIssuer);
-    return this.oidcHelpers;
+    this.helpers = new OidcHelpers(tokenStore, client, config, TrustIssuer);
+    return this.helpers;
   }
 }

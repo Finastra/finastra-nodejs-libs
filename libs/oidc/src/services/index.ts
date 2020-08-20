@@ -1,1 +1,1 @@
-export * from './oidc-helpers.service';
+export * from './oidc.service';

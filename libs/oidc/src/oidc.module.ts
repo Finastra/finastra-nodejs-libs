@@ -18,16 +18,25 @@ import {
 import { OIDC_MODULE_OPTIONS } from './oidc.constants';
 import { mergeDefaults } from './utils';
 import { UserMiddleware, LoginMiddleware } from './middlewares';
-import { TokenGuard } from './guards';
-import { OidcHelpersService } from './services';
+import { TokenGuard, TenancyGuard } from './guards';
+import { OidcService } from './services';
+import { APP_GUARD } from '@nestjs/core';
 
 const logger = new Logger('OidcModule');
 
 @Module({
   imports: [JwtModule.register({})],
   controllers: [AuthController],
-  providers: [SessionSerializer, TokenGuard, OidcHelpersService],
-  exports: [OidcHelpersService],
+  providers: [
+    SessionSerializer,
+    TokenGuard,
+    OidcService,
+    {
+      provide: APP_GUARD,
+      useClass: TenancyGuard,
+    },
+  ],
+  exports: [OidcService],
 })
 export class OidcModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
