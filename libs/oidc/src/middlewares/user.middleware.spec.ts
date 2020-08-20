@@ -7,19 +7,15 @@ import {
   MOCK_CLIENT_INSTANCE,
   MOCK_OIDC_MODULE_OPTIONS,
   MOCK_TRUST_ISSUER,
+  MockOidcService,
 } from '../mocks';
 import { TestingModule, Test } from '@nestjs/testing';
+import { OidcService } from '../services';
 const utils = require('../utils');
 
 describe('User Middleware', () => {
   let middleware: UserMiddleware;
-  const keyStore = new JWKS.KeyStore([]);
-  const MockOidcHelpers = new OidcHelpers(
-    keyStore,
-    MOCK_CLIENT_INSTANCE,
-    MOCK_OIDC_MODULE_OPTIONS,
-    MOCK_TRUST_ISSUER,
-  );
+  let config;
 
   describe('config with external idp', () => {
     beforeEach(async () => {
@@ -27,13 +23,15 @@ describe('User Middleware', () => {
         providers: [
           UserMiddleware,
           {
-            provide: OidcHelpers,
-            useValue: MockOidcHelpers,
+            provide: OidcService,
+            useClass: MockOidcService,
           },
         ],
       }).compile();
 
       middleware = module.get<UserMiddleware>(UserMiddleware);
+      const service = module.get<OidcService>(OidcService);
+      config = service.helpers.config;
     });
 
     it('should not do anything if no bearer', () => {
@@ -54,13 +52,13 @@ describe('User Middleware', () => {
 
       utils.authenticateExternalIdps = jest
         .fn()
-        .mockReturnValue(MockOidcHelpers.config.externalIdps);
+        .mockReturnValue(config.externalIdps);
 
       const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c`;
       req.headers.authorization = `Bearer ${token}`;
 
       await middleware.use(req, res, next);
-      expect(req.user['authTokens']).toBe(MockOidcHelpers.config.externalIdps);
+      expect(req.user['authTokens']).toBe(config.externalIdps);
       expect(req.user['userinfo']).toBeTruthy();
       expect(next).toHaveBeenCalled();
     });
@@ -69,20 +67,22 @@ describe('User Middleware', () => {
   describe('no external idp', () => {
     const moduleOptions = { ...MOCK_OIDC_MODULE_OPTIONS };
     delete moduleOptions.externalIdps;
-    const MockOidcHelpersWithoutExtIdp = new OidcHelpers(
-      keyStore,
-      MOCK_CLIENT_INSTANCE,
-      moduleOptions,
-      MOCK_TRUST_ISSUER,
-    );
+    class MockOidcServiceWithoutExtIdp {
+      helpers = new OidcHelpers(
+        new JWKS.KeyStore([]),
+        MOCK_CLIENT_INSTANCE,
+        moduleOptions,
+        MOCK_TRUST_ISSUER,
+      );
+    }
 
     beforeEach(async () => {
       const module: TestingModule = await Test.createTestingModule({
         providers: [
           UserMiddleware,
           {
-            provide: OidcHelpers,
-            useValue: MockOidcHelpersWithoutExtIdp,
+            provide: OidcService,
+            useClass: MockOidcServiceWithoutExtIdp,
           },
         ],
       }).compile();

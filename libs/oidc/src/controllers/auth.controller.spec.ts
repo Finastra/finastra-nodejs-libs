@@ -3,22 +3,10 @@ import { AuthController } from './auth.controller';
 import { OIDC_MODULE_OPTIONS } from '../oidc.constants';
 import { createResponse, createRequest } from 'node-mocks-http';
 import { OidcModuleOptions } from '../interfaces';
-import { JWKS } from 'jose';
-import {
-  MOCK_OIDC_MODULE_OPTIONS,
-  MOCK_CLIENT_INSTANCE,
-  MOCK_TRUST_ISSUER,
-} from '../mocks';
+import { MOCK_OIDC_MODULE_OPTIONS, MockOidcService } from '../mocks';
 import { OidcHelpers } from '../utils';
 import axios from 'axios';
-
-const keyStore = new JWKS.KeyStore([]);
-const MockOidcHelpers = new OidcHelpers(
-  keyStore,
-  MOCK_CLIENT_INSTANCE,
-  MOCK_OIDC_MODULE_OPTIONS,
-  MOCK_TRUST_ISSUER,
-);
+import { OidcService } from '../services';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -34,8 +22,8 @@ describe('AuthController', () => {
           useValue: MOCK_OIDC_MODULE_OPTIONS,
         },
         {
-          provide: OidcHelpers,
-          useValue: MockOidcHelpers,
+          provide: OidcService,
+          useClass: MockOidcService,
         },
       ],
     }).compile();

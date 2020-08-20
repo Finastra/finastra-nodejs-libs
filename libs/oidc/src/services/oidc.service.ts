@@ -9,6 +9,7 @@ import { OIDC_MODULE_OPTIONS } from '../oidc.constants';
 export class OidcService {
   helpers: OidcHelpers;
   isMultitenant: boolean = false;
+
   constructor(@Inject(OIDC_MODULE_OPTIONS) private options: OidcModuleOptions) {
     this.isMultitenant = !!this.options.issuerOrigin;
   }
