@@ -2,7 +2,6 @@ import {
   Module,
   DynamicModule,
   Provider,
-  Logger,
   NestModule,
   MiddlewareConsumer,
   RequestMethod,
@@ -21,8 +20,7 @@ import { UserMiddleware, LoginMiddleware } from './middlewares';
 import { TokenGuard, TenancyGuard } from './guards';
 import { OidcService } from './services';
 import { APP_GUARD } from '@nestjs/core';
-
-const logger = new Logger('OidcModule');
+import { AuthService } from './services';
 
 @Module({
   imports: [JwtModule.register({})],
@@ -31,12 +29,12 @@ const logger = new Logger('OidcModule');
     SessionSerializer,
     TokenGuard,
     OidcService,
+    AuthService,
     {
       provide: APP_GUARD,
       useClass: TenancyGuard,
     },
   ],
-  exports: [OidcService],
 })
 export class OidcModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
