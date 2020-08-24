@@ -14,7 +14,7 @@ export class TenancyGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const isMultitenant = this.reflector.get<boolean>(
       'isMultitenant',
-      context.getHandler(),
+      context.getClass(),
     );
     if (
       typeof isMultitenant === 'undefined' ||

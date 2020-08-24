@@ -54,7 +54,6 @@ export class OidcService implements OnModuleInit {
   }
 
   async createStrategy(tenantId?, channelType?) {
-    console.log(channelType);
     let strategy;
     if (this.options.defaultHttpOptions) {
       custom.setHttpOptionsDefaults(this.options.defaultHttpOptions);
@@ -62,7 +61,6 @@ export class OidcService implements OnModuleInit {
 
     try {
       let issuer, redirectUri, clientMetadata, TrustIssuer, client, tokenStore;
-      console.log(this.options);
       if (this.options.issuer) {
         issuer = this.options.issuer;
         redirectUri = `${this.options.origin}/login/callback`;
@@ -93,7 +91,10 @@ export class OidcService implements OnModuleInit {
       strategy = new OidcStrategy(this.helpers);
       return strategy;
     } catch (err) {
-      console.log(err);
+      if (this.isMultitenant) {
+        this.logger.error(err);
+        return;
+      }
       const docUrl =
         'https://github.com/fusionfabric/finastra-nodejs-libs/blob/develop/libs/oidc/README.md';
       const msg = `Error accessing the issuer/tokenStore. Check if the url is valid or increase the timeout in the defaultHttpOptions : ${docUrl}`;
@@ -120,6 +121,10 @@ export class OidcService implements OnModuleInit {
     var strategy =
       this.strategy ||
       (await this.createStrategy(params.tenantId, params.channelType));
+    if (!strategy) {
+      res.sendStatus(404);
+      return;
+    }
     let prefix =
       params.tenantId && params.channelType
         ? `/${params.tenantId}/${params.channelType}`
