@@ -26,7 +26,7 @@ export class AuthMultitenantController {
   }
 
   @Public()
-  @Get('login/callback')
+  @Get('/login/callback')
   loginCallback(
     @Req() req: Request,
     @Res() res: Response,
