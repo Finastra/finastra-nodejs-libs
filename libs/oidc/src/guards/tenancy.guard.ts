@@ -16,9 +16,15 @@ export class TenancyGuard implements CanActivate {
       'isMultitenant',
       context.getClass(),
     );
+    const req = context.switchToHttp().getRequest();
     if (
-      typeof isMultitenant === 'undefined' ||
-      isMultitenant === this.oidcService.isMultitenant
+      (typeof isMultitenant === 'undefined' ||
+        isMultitenant === this.oidcService.isMultitenant) &&
+      (!req.user ||
+        (req.user.userinfo.channel &&
+          req.user.userinfo.tenant &&
+          req.user.userinfo.tenant === req.params.tenantId &&
+          req.user.userinfo.channel === req.params.channelType))
     ) {
       return true;
     } else {

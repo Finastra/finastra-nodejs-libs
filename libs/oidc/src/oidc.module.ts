@@ -20,7 +20,7 @@ import { mergeDefaults } from './utils';
 import { UserMiddleware, LoginMiddleware } from './middlewares';
 import { TokenGuard, TenancyGuard } from './guards';
 import { OidcService } from './services';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 
 @Module({
   imports: [JwtModule.register({})],

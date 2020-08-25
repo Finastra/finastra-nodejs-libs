@@ -88,7 +88,7 @@ export class OidcService implements OnModuleInit {
           : this.options.authParams.nonce;
       this.init(tokenStore, client, this.options, TrustIssuer);
 
-      strategy = new OidcStrategy(this.helpers);
+      strategy = new OidcStrategy(this.helpers, channelType);
       return strategy;
     } catch (err) {
       if (this.isMultitenant) {
@@ -186,6 +186,7 @@ export class OidcService implements OnModuleInit {
     }
     if (valid) {
       if (refresh && needsRefresh) {
+        authTokens.channel = req.user['userinfo'].channel;
         return await refreshToken(authTokens, this.helpers)
           .then(data => {
             updateUserAuthToken(data, req);
@@ -206,7 +207,7 @@ export class OidcService implements OnModuleInit {
 
   refreshTokens(@Req() req, @Res() res) {
     const { authTokens } = req.user;
-    authTokens.channel = req.params['channelType'];
+    authTokens.channel = req.user.userinfo.channel;
     return refreshToken(authTokens, this.helpers)
       .then(data => {
         updateUserAuthToken(data, req);
