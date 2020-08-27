@@ -1,24 +1,21 @@
 import { Logger } from '@nestjs/common';
 import { UserInfoMethod } from '../interfaces';
-import { OidcHelpers } from './oidc-helpers.util';
 import { JWT } from 'jose';
+import { OidcService } from '../services';
 
 const logger = new Logger('UserInfo');
 
-export async function getUserInfo(
-  accessToken: string,
-  oidcHelpers: OidcHelpers,
-) {
-  let userInfoData = await (oidcHelpers.config.userInfoMethod ===
+export async function getUserInfo(token: string, oidcService: OidcService) {
+  let userInfoData = await (oidcService.options.userInfoMethod ===
   UserInfoMethod.token
-    ? userInfo(accessToken)
-    : userInfoRemote(accessToken, oidcHelpers));
-  if (oidcHelpers.config.userInfoCallback) {
+    ? userInfo(token)
+    : userInfoRemote(token, oidcService));
+  if (oidcService.options.userInfoCallback) {
     userInfoData = {
       ...userInfoData,
-      ...(await oidcHelpers.config.userInfoCallback(
+      ...(await oidcService.options.userInfoCallback(
         userInfoData.username,
-        oidcHelpers.config.externalIdps,
+        oidcService.options.externalIdps,
       )),
     };
   }
@@ -26,19 +23,20 @@ export async function getUserInfo(
   return userInfoData;
 }
 
-async function userInfoRemote(accessToken: string, oidcHelpers: OidcHelpers) {
+async function userInfoRemote(token: string, oidcService: OidcService) {
   try {
-    return await oidcHelpers.client.userinfo(accessToken);
+    return await oidcService.client.userinfo(token);
   } catch (err) {
     const msg = `Error accessing user information`;
     logger.error(msg);
-    return userInfo(accessToken, 'sub');
+    return userInfo(token, 'sub');
   }
 }
 
-function userInfo(accessToken: string, usernameParameter?: string) {
-  const identity: any = JWT.decode(accessToken);
+function userInfo(token: string, usernameParameter?: string) {
+  const identity: any = JWT.decode(token);
   return {
     username: identity[usernameParameter] || identity.username || identity.name,
+    tenant: identity.tenant,
   };
 }

@@ -1,5 +1,6 @@
 import { OidcModuleOptions, UserInfoMethod } from './interfaces';
 import { Issuer, Client } from 'openid-client';
+import { JWKS } from 'jose';
 
 export const MOCK_ISSUER = 'http://issuer.io';
 export const CLIENT_ID = '123';
@@ -36,6 +37,29 @@ export const MOCK_OIDC_MODULE_OPTIONS: OidcModuleOptions = {
       clientSecret: 'clientSecret',
       issuer: 'http://issuer',
       scope: 'openid',
+    },
+  },
+};
+
+export class MockOidcService {
+  login(req, res, next, params) {}
+
+  logout(req, res, params) {}
+
+  checkToken(req, res) {}
+
+  refreshTokens(req, res) {}
+
+  loggedOut(res, params) {}
+
+  isExpired() {}
+}
+
+export const MOCK_REQUEST = {
+  user: {
+    userinfo: {
+      username: 'username',
+      groups: ['test-user'],
     },
   },
 };

@@ -8,7 +8,6 @@ import {
 
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { OidcModuleOptions } from '../interfaces';
 
 @Injectable()
 export class TokenGuard implements CanActivate {

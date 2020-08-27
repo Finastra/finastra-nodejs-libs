@@ -1,25 +1,9 @@
 import { TestingModule, Test } from '@nestjs/testing';
 import { createMock } from '@golevelup/nestjs-testing';
-import { Client, Issuer } from 'openid-client';
-import { JWKS } from 'jose';
-import { JwtService } from '@nestjs/jwt';
+import { Issuer } from 'openid-client';
 import { OidcModule } from './oidc.module';
-import { OidcHelpers } from './utils';
-import {
-  MOCK_OIDC_MODULE_OPTIONS,
-  MOCK_CLIENT_INSTANCE,
-  MOCK_ISSUER_INSTANCE,
-  MOCK_TRUST_ISSUER,
-} from './mocks';
+import { MOCK_OIDC_MODULE_OPTIONS, MOCK_ISSUER_INSTANCE } from './mocks';
 import { MiddlewareConsumer } from '@nestjs/common';
-
-const keyStore = new JWKS.KeyStore([]);
-const MockOidcHelpers = new OidcHelpers(
-  keyStore,
-  MOCK_CLIENT_INSTANCE,
-  MOCK_OIDC_MODULE_OPTIONS,
-  MOCK_TRUST_ISSUER,
-);
 
 describe('OidcModule', () => {
   describe('register sync', () => {
@@ -92,41 +76,6 @@ describe('OidcModule', () => {
 
     it('should be defined', () => {
       expect(module).toBeDefined();
-    });
-  });
-
-  describe('simulate error fetching issuer', () => {
-    let module: TestingModule;
-    let mockExit;
-
-    class oidcModuleOptions {
-      createModuleConfig() {
-        return MOCK_OIDC_MODULE_OPTIONS;
-      }
-    }
-
-    beforeEach(async () => {
-      const IssuerMock = MOCK_ISSUER_INSTANCE;
-      IssuerMock.keystore = jest.fn();
-      jest.spyOn(Issuer, 'discover').mockImplementation(() => Promise.reject());
-
-      mockExit = jest
-        .spyOn(process, 'exit')
-        .mockImplementation((code?: number): never => {
-          return undefined as never;
-        });
-
-      module = await Test.createTestingModule({
-        imports: [
-          OidcModule.forRootAsync({
-            useClass: oidcModuleOptions,
-          }),
-        ],
-      }).compile();
-    });
-
-    it('should terminate process', () => {
-      expect(mockExit).toHaveBeenCalled();
     });
   });
 

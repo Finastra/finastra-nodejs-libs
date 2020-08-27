@@ -5,19 +5,35 @@ import {
   HttpOptions,
 } from 'openid-client';
 
-export interface OidcModuleOptions {
-  issuer: string;
-  clientMetadata: ClientMetadata;
-  authParams: AuthorizationParameters;
+export type OidcModuleOptions = {
   origin: string;
+  authParams: AuthorizationParameters;
   idleTime?: number;
   redirectUriLogout?: string;
   usePKCE?: boolean;
-  userInfoMethod?: UserInfoMethod;
   defaultHttpOptions?: HttpOptions;
-  externalIdps?: { [idpName: string]: IdentityProviderOptions };
+  externalIdps?: ExternalIdps;
   userInfoCallback?: any;
+  userInfoMethod?: UserInfoMethod;
+} & XOR<
+  {
+    issuer: string;
+    clientMetadata: ClientMetadata;
+  },
+  { issuerOrigin: string } & (
+    | { b2c: OidcChannelOptions }
+    | { b2e: OidcChannelOptions }
+  )
+>;
+
+interface OidcChannelOptions {
+  clientMetadata: ClientMetadata;
 }
+
+type Without<T, U> = { [P in Exclude<keyof T, keyof U>]?: never };
+type XOR<T, U> = T | U extends object
+  ? (Without<T, U> & U) | (Without<U, T> & T)
+  : T | U;
 
 export interface OidcOptionsFactory {
   createModuleConfig(): Promise<OidcModuleOptions> | OidcModuleOptions;
@@ -38,6 +54,11 @@ export enum UserInfoMethod {
   endpoint = 'endpoint',
 }
 
+export enum ChannelType {
+  b2c = 'b2c',
+  b2e = 'b2e',
+}
+
 export interface IdentityProviderOptions {
   clientId: string;
   clientSecret: string;
@@ -47,4 +68,9 @@ export interface IdentityProviderOptions {
   refreshToken?: string;
   tokenEndpoint?: string;
   expiresAt?: number;
+  channel?: ChannelType;
+}
+
+export interface ExternalIdps {
+  [idpName: string]: IdentityProviderOptions;
 }
