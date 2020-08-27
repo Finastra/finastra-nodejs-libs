@@ -8,13 +8,11 @@ import {
   Req,
   OnModuleInit,
 } from '@nestjs/common';
-import { OidcModuleOptions, ChannelType } from '../interfaces';
 import {
-  OidcHelpers,
-  refreshToken,
-  updateUserAuthToken,
-  isExpired,
-} from '../utils';
+  OidcModuleOptions,
+  ChannelType,
+  IdentityProviderOptions,
+} from '../interfaces';
 import { JWKS } from 'jose';
 import { Client, Issuer, custom } from 'openid-client';
 import { OIDC_MODULE_OPTIONS, SESSION_STATE_COOKIE } from '../oidc.constants';
@@ -25,15 +23,18 @@ import passport = require('passport');
 import { Response, Request } from 'express';
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import { stringify } from 'querystring';
+import axios from 'axios';
 
+const logger = new Logger('OidcService');
 @Injectable()
 export class OidcService implements OnModuleInit {
-  private logger = new Logger(OidcService.name);
-  helpers: OidcHelpers;
-  strategy: any;
+  client: Client;
   isMultitenant: boolean = false;
-
-  constructor(@Inject(OIDC_MODULE_OPTIONS) private options: OidcModuleOptions) {
+  strategy: any;
+  tokenStore: JWKS.KeyStore;
+  trustIssuer: Issuer<Client>;
+  constructor(@Inject(OIDC_MODULE_OPTIONS) public options: OidcModuleOptions) {
     this.isMultitenant = !!this.options.issuerOrigin;
   }
 
@@ -43,16 +44,6 @@ export class OidcService implements OnModuleInit {
     }
   }
 
-  init(
-    tokenStore: JWKS.KeyStore,
-    client: Client,
-    config: OidcModuleOptions,
-    TrustIssuer: Issuer<Client>,
-  ) {
-    this.helpers = new OidcHelpers(tokenStore, client, config, TrustIssuer);
-    return this.helpers;
-  }
-
   async createStrategy(tenantId?, channelType?) {
     let strategy;
     if (this.options.defaultHttpOptions) {
@@ -60,7 +51,7 @@ export class OidcService implements OnModuleInit {
     }
 
     try {
-      let issuer, redirectUri, clientMetadata, TrustIssuer, client, tokenStore;
+      let issuer, redirectUri, clientMetadata;
       if (this.options.issuer) {
         issuer = this.options.issuer;
         redirectUri = `${this.options.origin}/login/callback`;
@@ -78,28 +69,27 @@ export class OidcService implements OnModuleInit {
             break;
         }
       }
-      TrustIssuer = await Issuer.discover(issuer);
-      client = new TrustIssuer.Client(clientMetadata);
-      tokenStore = await TrustIssuer.keystore();
+      this.trustIssuer = await Issuer.discover(issuer);
+      this.client = new this.trustIssuer.Client(clientMetadata);
+      this.tokenStore = await this.trustIssuer.keystore();
       this.options.authParams.redirect_uri = redirectUri;
       this.options.authParams.nonce =
         this.options.authParams.nonce === 'true'
           ? uuid()
           : this.options.authParams.nonce;
-      this.init(tokenStore, client, this.options, TrustIssuer);
 
-      strategy = new OidcStrategy(this.helpers, channelType);
+      strategy = new OidcStrategy(this, channelType);
       return strategy;
     } catch (err) {
       if (this.isMultitenant) {
-        this.logger.error(err);
+        logger.error(err);
         return;
       }
       const docUrl =
         'https://github.com/fusionfabric/finastra-nodejs-libs/blob/develop/libs/oidc/README.md';
       const msg = `Error accessing the issuer/tokenStore. Check if the url is valid or increase the timeout in the defaultHttpOptions : ${docUrl}`;
-      this.logger.error(msg);
-      this.logger.log('Terminating application');
+      logger.error(msg);
+      logger.log('Terminating application');
       process.exit(1);
       return {
         ...this.options,
@@ -110,6 +100,14 @@ export class OidcService implements OnModuleInit {
         },
       }; // Used for unit test
     }
+  }
+
+  isExpired(expiresAt: number) {
+    if (expiresAt != null) {
+      let remainingTime = expiresAt - Date.now() / 1000;
+      return remainingTime <= 0;
+    }
+    return false;
   }
 
   async login(
@@ -144,7 +142,7 @@ export class OidcService implements OnModuleInit {
     const id_token = req.user ? req.user.id_token : undefined;
     req.logout();
     req.session.destroy(async (error: any) => {
-      const end_session_endpoint = this.helpers.TrustIssuer.metadata
+      const end_session_endpoint = this.trustIssuer.metadata
         .end_session_endpoint;
 
       if (end_session_endpoint) {
@@ -177,19 +175,19 @@ export class OidcService implements OnModuleInit {
     const authTokens = req.user['authTokens'];
     let valid = true;
     let needsRefresh = false;
-    valid = valid && !isExpired(authTokens.expiresAt);
+    valid = valid && !this.isExpired(authTokens.expiresAt);
     if (
       authTokens.expiresAt &&
-      authTokens.expiresAt - Date.now() / 1000 < this.helpers.config.idleTime
+      authTokens.expiresAt - Date.now() / 1000 < this.options.idleTime
     ) {
       needsRefresh = true;
     }
     if (valid) {
       if (refresh && needsRefresh) {
         authTokens.channel = req.user['userinfo'].channel;
-        return await refreshToken(authTokens, this.helpers)
+        return await this._refreshToken(authTokens)
           .then(data => {
-            updateUserAuthToken(data, req);
+            this._updateUserAuthToken(data, req);
             res.sendStatus(200);
           })
           .catch(err => {
@@ -208,9 +206,9 @@ export class OidcService implements OnModuleInit {
   refreshTokens(@Req() req, @Res() res) {
     const { authTokens } = req.user;
     authTokens.channel = req.user.userinfo.channel;
-    return refreshToken(authTokens, this.helpers)
+    return this._refreshToken(authTokens)
       .then(data => {
-        updateUserAuthToken(data, req);
+        this._updateUserAuthToken(data, req);
         res.sendStatus(200);
       })
       .catch(err => {
@@ -227,5 +225,65 @@ export class OidcService implements OnModuleInit {
         ? `/${params.tenantId}/${params.channelType}`
         : '';
     if (data) res.send(data.replace('rootUrl', `${prefix}/login`));
+  }
+
+  async _refreshToken(authToken: IdentityProviderOptions) {
+    if (
+      !authToken.accessToken ||
+      !authToken.refreshToken ||
+      !authToken.tokenEndpoint
+    ) {
+      throw new Error('Missing token endpoint');
+    }
+
+    let clientMetadata;
+    switch (authToken.channel) {
+      case ChannelType.b2c:
+        clientMetadata = this.options[ChannelType.b2c].clientMetadata;
+        break;
+      case ChannelType.b2e:
+        clientMetadata = this.options[ChannelType.b2e].clientMetadata;
+        break;
+      default:
+        clientMetadata = this.options.clientMetadata;
+        break;
+    }
+
+    const response = await axios.request({
+      url: authToken.tokenEndpoint,
+      method: 'post',
+      timeout: Number(this.options.defaultHttpOptions.timeout),
+      // http://openid.net/specs/openid-connect-core-1_0.html#RefreshingAccessToken
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      data: stringify({
+        client_id: clientMetadata.client_id,
+        client_secret: clientMetadata.client_secret,
+        grant_type: 'refresh_token',
+        refresh_token: authToken.refreshToken,
+        scope: authToken.scope,
+      }),
+    });
+
+    if (response.status == 200) {
+      return {
+        accessToken: response.data.access_token,
+        refreshToken: response.data.refresh_token,
+        expiresAt:
+          Number(response.data.expires_at) ||
+          (response.data.expires_in
+            ? Date.now() / 1000 + Number(response.data.expires_in)
+            : null),
+      };
+    } else {
+      throw new Error(response.data);
+    }
+  }
+
+  _updateUserAuthToken(data: Partial<IdentityProviderOptions>, req) {
+    req.user.authTokens.accessToken = data.accessToken;
+    req.user.authTokens.refreshToken = data.refreshToken;
+    req.user.authTokens.expiresAt = data.expiresAt;
   }
 }

@@ -1,21 +1,21 @@
 import { Logger } from '@nestjs/common';
 import { UserInfoMethod } from '../interfaces';
-import { OidcHelpers } from './oidc-helpers.util';
 import { JWT } from 'jose';
+import { OidcService } from '../services';
 
 const logger = new Logger('UserInfo');
 
-export async function getUserInfo(token: string, oidcHelpers: OidcHelpers) {
-  let userInfoData = await (oidcHelpers.config.userInfoMethod ===
+export async function getUserInfo(token: string, oidcService: OidcService) {
+  let userInfoData = await (oidcService.options.userInfoMethod ===
   UserInfoMethod.token
     ? userInfo(token)
-    : userInfoRemote(token, oidcHelpers));
-  if (oidcHelpers.config.userInfoCallback) {
+    : userInfoRemote(token, oidcService));
+  if (oidcService.options.userInfoCallback) {
     userInfoData = {
       ...userInfoData,
-      ...(await oidcHelpers.config.userInfoCallback(
+      ...(await oidcService.options.userInfoCallback(
         userInfoData.username,
-        oidcHelpers.config.externalIdps,
+        oidcService.options.externalIdps,
       )),
     };
   }
@@ -23,9 +23,9 @@ export async function getUserInfo(token: string, oidcHelpers: OidcHelpers) {
   return userInfoData;
 }
 
-async function userInfoRemote(token: string, oidcHelpers: OidcHelpers) {
+async function userInfoRemote(token: string, oidcService: OidcService) {
   try {
-    return await oidcHelpers.client.userinfo(token);
+    return await oidcService.client.userinfo(token);
   } catch (err) {
     const msg = `Error accessing user information`;
     logger.error(msg);

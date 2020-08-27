@@ -1,21 +1,15 @@
-import { JWKS, JWT } from 'jose';
+import { JWT } from 'jose';
 import { UserMiddleware } from './user.middleware';
-import { OidcHelpers } from '../utils';
 import { createMock } from '@golevelup/nestjs-testing';
 import { Request, Response } from 'express';
-import {
-  MOCK_CLIENT_INSTANCE,
-  MOCK_OIDC_MODULE_OPTIONS,
-  MOCK_TRUST_ISSUER,
-  MockOidcService,
-} from '../mocks';
+import { MOCK_OIDC_MODULE_OPTIONS, MockOidcService } from '../mocks';
 import { TestingModule, Test } from '@nestjs/testing';
 import { OidcService } from '../services';
 const utils = require('../utils');
 
 describe('User Middleware', () => {
   let middleware: UserMiddleware;
-  let config;
+  let service;
 
   describe('config with external idp', () => {
     beforeEach(async () => {
@@ -30,8 +24,7 @@ describe('User Middleware', () => {
       }).compile();
 
       middleware = module.get<UserMiddleware>(UserMiddleware);
-      const service = module.get<OidcService>(OidcService);
-      config = service.helpers.config;
+      service = module.get<OidcService>(OidcService);
     });
 
     it('should not do anything if no bearer', () => {
@@ -52,13 +45,13 @@ describe('User Middleware', () => {
 
       utils.authenticateExternalIdps = jest
         .fn()
-        .mockReturnValue(config.externalIdps);
+        .mockReturnValue(service.options.externalIdps);
 
       const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c`;
       req.headers.authorization = `Bearer ${token}`;
 
       await middleware.use(req, res, next);
-      expect(req.user['authTokens']).toBe(config.externalIdps);
+      expect(req.user['authTokens']).toBe(service.options.externalIdps);
       expect(req.user['userinfo']).toBeTruthy();
       expect(next).toHaveBeenCalled();
     });
@@ -68,12 +61,7 @@ describe('User Middleware', () => {
     const moduleOptions = { ...MOCK_OIDC_MODULE_OPTIONS };
     delete moduleOptions.externalIdps;
     class MockOidcServiceWithoutExtIdp {
-      helpers = new OidcHelpers(
-        new JWKS.KeyStore([]),
-        MOCK_CLIENT_INSTANCE,
-        moduleOptions,
-        MOCK_TRUST_ISSUER,
-      );
+      options = moduleOptions;
     }
 
     beforeEach(async () => {
@@ -99,6 +87,59 @@ describe('User Middleware', () => {
       const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c`;
       req.headers.authorization = `Bearer ${token}`;
       await middleware.use(req, res, next);
+      expect(req.user['userinfo']).toBeTruthy();
+      expect(next).toHaveBeenCalled();
+    });
+
+    it('should add user in request', async () => {
+      const req = createMock<Request>();
+      req['params'] = {
+        0: 'tenant/test',
+      };
+      const res = createMock<Response>();
+      const next = jest.fn();
+      jest.spyOn(JWT, 'verify').mockReturnValue({
+        username: 'John Doe',
+      } as any);
+      const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c`;
+      req.headers.authorization = `Bearer ${token}`;
+      await middleware.use(req, res, next);
+      expect(req.user['userinfo']).toBeTruthy();
+      expect(next).toHaveBeenCalled();
+    });
+
+    it('should add channel in user in request if channel in url', async () => {
+      const req = createMock<Request>();
+      req['params'] = {
+        0: 'tenant/b2e',
+      };
+      const res = createMock<Response>();
+      const next = jest.fn();
+      jest.spyOn(JWT, 'verify').mockReturnValue({
+        username: 'John Doe',
+      } as any);
+      const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c`;
+      req.headers.authorization = `Bearer ${token}`;
+      await middleware.use(req, res, next);
+      expect(req.user['userinfo'].channel).toEqual('b2e');
+      expect(req.user['userinfo']).toBeTruthy();
+      expect(next).toHaveBeenCalled();
+    });
+
+    it('should add channel in user in request if channel in url', async () => {
+      const req = createMock<Request>();
+      req['params'] = {
+        0: 'tenant/b2c',
+      };
+      const res = createMock<Response>();
+      const next = jest.fn();
+      jest.spyOn(JWT, 'verify').mockReturnValue({
+        username: 'John Doe',
+      } as any);
+      const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c`;
+      req.headers.authorization = `Bearer ${token}`;
+      await middleware.use(req, res, next);
+      expect(req.user['userinfo'].channel).toEqual('b2c');
       expect(req.user['userinfo']).toBeTruthy();
       expect(next).toHaveBeenCalled();
     });

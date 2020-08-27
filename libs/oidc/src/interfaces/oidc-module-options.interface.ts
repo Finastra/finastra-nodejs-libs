@@ -12,7 +12,7 @@ export type OidcModuleOptions = {
   redirectUriLogout?: string;
   usePKCE?: boolean;
   defaultHttpOptions?: HttpOptions;
-  externalIdps?: { [idpName: string]: IdentityProviderOptions };
+  externalIdps?: ExternalIdps;
   userInfoCallback?: any;
   userInfoMethod?: UserInfoMethod;
 } & XOR<
@@ -69,4 +69,8 @@ export interface IdentityProviderOptions {
   tokenEndpoint?: string;
   expiresAt?: number;
   channel?: ChannelType;
+}
+
+export interface ExternalIdps {
+  [idpName: string]: IdentityProviderOptions;
 }

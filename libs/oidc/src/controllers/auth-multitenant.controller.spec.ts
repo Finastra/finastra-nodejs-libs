@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthController } from './auth.controller';
 import { createResponse, createRequest } from 'node-mocks-http';
 import { MockOidcService, MOCK_REQUEST } from '../mocks';
 import { OidcService } from '../services';
+import { AuthMultitenantController } from './auth-multitenant.controller';
 
-describe('AuthController', () => {
-  let controller: AuthController;
+describe('AuthMultitenantController', () => {
+  let controller: AuthMultitenantController;
   let oidcService: OidcService;
 
   const MOCK_REQ = createRequest(MOCK_REQUEST);
@@ -15,7 +15,7 @@ describe('AuthController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [AuthController],
+      controllers: [AuthMultitenantController],
       providers: [
         {
           provide: OidcService,
@@ -24,7 +24,9 @@ describe('AuthController', () => {
       ],
     }).compile();
 
-    controller = module.get<AuthController>(AuthController);
+    controller = module.get<AuthMultitenantController>(
+      AuthMultitenantController,
+    );
     oidcService = module.get<OidcService>(OidcService);
   });
 

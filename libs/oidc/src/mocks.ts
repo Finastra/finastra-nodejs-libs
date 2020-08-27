@@ -1,6 +1,5 @@
 import { OidcModuleOptions, UserInfoMethod } from './interfaces';
 import { Issuer, Client } from 'openid-client';
-import { OidcHelpers } from './utils';
 import { JWKS } from 'jose';
 
 export const MOCK_ISSUER = 'http://issuer.io';
@@ -43,10 +42,31 @@ export const MOCK_OIDC_MODULE_OPTIONS: OidcModuleOptions = {
 };
 
 export class MockOidcService {
-  helpers = new OidcHelpers(
-    new JWKS.KeyStore([]),
-    MOCK_CLIENT_INSTANCE,
-    MOCK_OIDC_MODULE_OPTIONS,
-    MOCK_TRUST_ISSUER,
-  );
+  client = MOCK_CLIENT_INSTANCE;
+  isMultitenant = false;
+  strategy = {};
+  tokenStore = new JWKS.KeyStore([]);
+  trustIssuer = MOCK_TRUST_ISSUER;
+  options = MOCK_OIDC_MODULE_OPTIONS;
+
+  login(req, res, next, params) {}
+
+  logout(req, res, params) {}
+
+  checkToken(req, res) {}
+
+  refreshTokens(req, res) {}
+
+  loggedOut(res, params) {}
+
+  isExpired() {}
 }
+
+export const MOCK_REQUEST = {
+  user: {
+    userinfo: {
+      username: 'username',
+      groups: ['test-user'],
+    },
+  },
+};

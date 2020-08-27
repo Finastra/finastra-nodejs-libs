@@ -14,20 +14,23 @@ export class UserMiddleware implements NestMiddleware {
       const jwt = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
       if (!jwt) throw 'No Jwt';
 
-      const tokenStore = this.service.helpers.tokenStore;
+      const tokenStore = this.service.tokenStore;
       const decodedJwt = JWT.verify(jwt, tokenStore);
 
       req.user = decodedJwt;
-      if (this.service.helpers.config.externalIdps) {
+      if (this.service.options.externalIdps) {
         req.user['authTokens'] = await authenticateExternalIdps(
-          this.service.helpers,
+          this.service.options.externalIdps,
         );
       }
-      req.user['userinfo'] = await getUserInfo(jwt, this.service.helpers);
+      req.user['userinfo'] = await getUserInfo(jwt, this.service);
 
       // Get channel
-      const routeParams = req.params[0];
-      if (routeParams[1] === (ChannelType.b2c || ChannelType.b2e)) {
+      const routeParams = req.params[0].split('/');
+      if (
+        routeParams[1] === ChannelType.b2c ||
+        routeParams[1] === ChannelType.b2e
+      ) {
         req.user['userinfo'].channel = routeParams[1];
       }
 
