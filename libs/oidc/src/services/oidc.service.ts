@@ -44,7 +44,7 @@ export class OidcService implements OnModuleInit {
     }
   }
 
-  async createStrategy(tenantId?, channelType?) {
+  async createStrategy(tenantId?: string, channelType?: ChannelType) {
     let strategy;
     if (this.options.defaultHttpOptions) {
       custom.setHttpOptionsDefaults(this.options.defaultHttpOptions);
@@ -91,14 +91,6 @@ export class OidcService implements OnModuleInit {
       logger.error(msg);
       logger.log('Terminating application');
       process.exit(1);
-      return {
-        ...this.options,
-        client: MOCK_CLIENT_INSTANCE,
-        config: {
-          authParams: undefined,
-          usePKCE: undefined,
-        },
-      }; // Used for unit test
     }
   }
 
@@ -119,10 +111,6 @@ export class OidcService implements OnModuleInit {
     var strategy =
       this.strategy ||
       (await this.createStrategy(params.tenantId, params.channelType));
-    if (!strategy) {
-      res.sendStatus(404);
-      return;
-    }
     let prefix =
       params.tenantId && params.channelType
         ? `/${params.tenantId}/${params.channelType}`
@@ -224,7 +212,7 @@ export class OidcService implements OnModuleInit {
       params.tenantId && params.channelType
         ? `/${params.tenantId}/${params.channelType}`
         : '';
-    if (data) res.send(data.replace('rootUrl', `${prefix}/login`));
+    res.send(data.replace('rootUrl', `${prefix}/login`));
   }
 
   async _refreshToken(authToken: IdentityProviderOptions) {

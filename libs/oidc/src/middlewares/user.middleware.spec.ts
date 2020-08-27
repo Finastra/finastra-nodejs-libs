@@ -43,6 +43,8 @@ describe('User Middleware', () => {
         username: 'John Doe',
       } as any);
 
+      service.options = MOCK_OIDC_MODULE_OPTIONS;
+
       utils.authenticateExternalIdps = jest
         .fn()
         .mockReturnValue(service.options.externalIdps);

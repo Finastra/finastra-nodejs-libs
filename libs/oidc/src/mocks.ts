@@ -42,13 +42,6 @@ export const MOCK_OIDC_MODULE_OPTIONS: OidcModuleOptions = {
 };
 
 export class MockOidcService {
-  client = MOCK_CLIENT_INSTANCE;
-  isMultitenant = false;
-  strategy = {};
-  tokenStore = new JWKS.KeyStore([]);
-  trustIssuer = MOCK_TRUST_ISSUER;
-  options = MOCK_OIDC_MODULE_OPTIONS;
-
   login(req, res, next, params) {}
 
   logout(req, res, params) {}
