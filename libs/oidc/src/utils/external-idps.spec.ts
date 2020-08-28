@@ -1,21 +1,10 @@
 import { Issuer } from 'openid-client';
 import axios from 'axios';
 import { authenticateExternalIdps } from './external-idps';
-import { OidcHelpers } from './oidc-helpers.util';
 import { JWKS } from 'jose';
-import {
-  MOCK_CLIENT_INSTANCE,
-  MOCK_OIDC_MODULE_OPTIONS,
-  MOCK_TRUST_ISSUER,
-} from '../mocks';
+import { MOCK_OIDC_MODULE_OPTIONS } from '../mocks';
 
 const keyStore = new JWKS.KeyStore([]);
-const MockOidcHelpers = new OidcHelpers(
-  keyStore,
-  MOCK_CLIENT_INSTANCE,
-  MOCK_OIDC_MODULE_OPTIONS,
-  MOCK_TRUST_ISSUER,
-);
 
 describe('authenticateExternalIdps', () => {
   it('should return tokens', async () => {
@@ -34,8 +23,10 @@ describe('authenticateExternalIdps', () => {
         },
       }),
     );
-    const result = await authenticateExternalIdps(MockOidcHelpers);
-    expect(result).toStrictEqual(MockOidcHelpers.config.externalIdps);
+    const result = await authenticateExternalIdps(
+      MOCK_OIDC_MODULE_OPTIONS.externalIdps,
+    );
+    expect(result).toStrictEqual(MOCK_OIDC_MODULE_OPTIONS.externalIdps);
   });
 
   it('should return tokens when expires_in', async () => {
@@ -56,20 +47,22 @@ describe('authenticateExternalIdps', () => {
       }),
     );
 
-    const result = await authenticateExternalIdps(MockOidcHelpers);
+    const result = await authenticateExternalIdps(
+      MOCK_OIDC_MODULE_OPTIONS.externalIdps,
+    );
     expect(result['idpTest'].expiresAt).toBeTruthy();
   });
 
   it('should return empty tokens', async () => {
     jest.spyOn(Issuer, 'discover').mockReturnValue(Promise.reject());
-    const result = await authenticateExternalIdps(MockOidcHelpers);
+    const result = await authenticateExternalIdps(
+      MOCK_OIDC_MODULE_OPTIONS.externalIdps,
+    );
     expect(result).toBeUndefined();
   });
 
   it('should return empty if no externalIdps', async () => {
-    MockOidcHelpers.config.externalIdps = null;
-    const result = await authenticateExternalIdps(MockOidcHelpers);
+    const result = await authenticateExternalIdps(null);
     expect(result).toBeUndefined();
-    MockOidcHelpers.config.externalIdps = MOCK_OIDC_MODULE_OPTIONS.externalIdps;
   });
 });

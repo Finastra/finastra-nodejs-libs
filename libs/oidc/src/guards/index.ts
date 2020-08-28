@@ -1,2 +1,2 @@
-export * from './oidc.guard';
 export * from './token.guard';
+export * from './tenancy.guard';

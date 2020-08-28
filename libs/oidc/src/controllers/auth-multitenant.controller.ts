@@ -4,9 +4,9 @@ import { Public } from '../decorators/public.decorator';
 import { OidcService } from '../services';
 import { isAvailableRouteForMultitenant } from '../decorators';
 
-@isAvailableRouteForMultitenant(false)
-@Controller()
-export class AuthController {
+@isAvailableRouteForMultitenant(true)
+@Controller('/:tenantId/:channelType')
+export class AuthMultitenantController {
   constructor(public oidcService: OidcService) {}
 
   @Get('/user')

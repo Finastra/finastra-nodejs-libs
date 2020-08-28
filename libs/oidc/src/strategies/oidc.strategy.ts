@@ -1,24 +1,32 @@
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy, TokenSet, Client } from 'openid-client';
-import { OidcHelpers, getUserInfo, authenticateExternalIdps } from '../utils';
+import { Strategy, TokenSet } from 'openid-client';
+import { getUserInfo, authenticateExternalIdps } from '../utils';
+import { ChannelType } from '../interfaces';
+import { OidcService } from '../services';
 
 export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
   userInfoCallback: any;
-  constructor(private oidcHelpers: OidcHelpers) {
+  constructor(
+    private oidcService: OidcService,
+    private channelType?: ChannelType,
+  ) {
     super({
-      client: oidcHelpers.client,
-      params: oidcHelpers.config.authParams,
+      client: oidcService.client,
+      params: oidcService.options.authParams,
       passReqToCallback: false,
-      usePKCE: oidcHelpers.config.usePKCE,
+      usePKCE: oidcService.options.usePKCE,
     });
-    this.userInfoCallback = oidcHelpers.config.userInfoCallback;
+    this.userInfoCallback = oidcService.options.userInfoCallback;
   }
 
   async validate(tokenset: TokenSet): Promise<any> {
-    const externalIdps = await authenticateExternalIdps(this.oidcHelpers);
-    let userinfo = await getUserInfo(tokenset.access_token, this.oidcHelpers);
-
+    const externalIdps = await authenticateExternalIdps(
+      this.oidcService.options.externalIdps,
+    );
     const id_token = tokenset.id_token;
+    let userinfo = await getUserInfo(id_token, this.oidcService);
+    userinfo['channel'] = this.channelType;
+
     const expiresAt =
       Number(tokenset.expires_at) ||
       (Number(tokenset.expires_in)
@@ -27,7 +35,7 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
     const authTokens = {
       accessToken: tokenset.access_token,
       refreshToken: tokenset.refresh_token,
-      tokenEndpoint: this.oidcHelpers.TrustIssuer.metadata.token_endpoint,
+      tokenEndpoint: this.oidcService.trustIssuer.metadata.token_endpoint,
       expiresAt,
     };
     const user = {

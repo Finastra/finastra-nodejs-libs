@@ -1,12 +1,7 @@
-import {
-  Module,
-  NestModule,
-  MiddlewareConsumer,
-  RequestMethod,
-} from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { CatsModule } from './cats/cats.module';
-import { OidcModule, UserMiddleware } from '@ffdc/nestjs-oidc';
+import { OidcModule } from '@ffdc/nestjs-oidc';
 import { ProxyModule } from '@ffdc/nestjs-proxy';
 import { GraphQLModule } from '@nestjs/graphql';
 import { CorporateAccountsModule } from '@ffdc/api_corporate-accounts';
@@ -17,15 +12,15 @@ import { OidcConfigService } from './configs/oidc-config.service';
 
 @Module({
   imports: [
+    OidcModule.forRootAsync({
+      useClass: OidcConfigService,
+      imports: [ConfigModule],
+    }),
     CatsModule,
     CorporateAccountsModule.forRoot({}),
     ConfigModule.forRoot({
       isGlobal: true,
       ignoreEnvFile: process.env.NODE_ENV === 'production',
-    }),
-    OidcModule.forRootAsync({
-      useClass: OidcConfigService,
-      imports: [ConfigModule],
     }),
     ProxyModule.forRootAsync({
       useClass: ProxyConfigService,

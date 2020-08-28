@@ -1,27 +1,25 @@
 import { createMock } from '@golevelup/nestjs-testing';
 import { OidcStrategy } from './oidc.strategy';
-import { TokenSet, Client, Issuer } from 'openid-client';
-import { OidcHelpers } from '../utils';
+import { TokenSet } from 'openid-client';
 import { JWKS } from 'jose';
 import {
   MOCK_OIDC_MODULE_OPTIONS,
   MOCK_CLIENT_INSTANCE,
   MOCK_TRUST_ISSUER,
 } from '../mocks';
+import { OidcService } from '../services';
 
 const utils = require('../utils');
-const keyStore = new JWKS.KeyStore([]);
-const MockOidcHelpers = new OidcHelpers(
-  keyStore,
-  MOCK_CLIENT_INSTANCE,
-  MOCK_OIDC_MODULE_OPTIONS,
-  MOCK_TRUST_ISSUER,
-);
 
 describe('OidcStrategy', () => {
   let strategy;
+
   beforeEach(() => {
-    strategy = new OidcStrategy(MockOidcHelpers);
+    const mockOidcService = new OidcService(MOCK_OIDC_MODULE_OPTIONS);
+    mockOidcService.client = MOCK_CLIENT_INSTANCE;
+    mockOidcService.tokenStore = new JWKS.KeyStore([]);
+    mockOidcService.trustIssuer = MOCK_TRUST_ISSUER;
+    strategy = new OidcStrategy(mockOidcService);
   });
 
   it('should be defined', () => {

@@ -2,14 +2,12 @@ import { Issuer } from 'openid-client';
 import axios from 'axios';
 import { stringify } from 'querystring';
 import { Logger } from '@nestjs/common';
-import { OidcHelpers } from './oidc-helpers.util';
-import { IdentityProviderOptions } from '../interfaces';
+import { IdentityProviderOptions, ExternalIdps } from '../interfaces';
 
 const logger = new Logger('ExternalIdps');
 
-export async function authenticateExternalIdps(oidcHelpers: OidcHelpers) {
+export async function authenticateExternalIdps(externalIdps: ExternalIdps) {
   const tokens = {};
-  const externalIdps = oidcHelpers.config.externalIdps;
   if (!externalIdps) return;
   const promises = Object.keys(externalIdps).map(async idpName => {
     tokens[idpName] = await clientCredentialsAuth(externalIdps[idpName]);
