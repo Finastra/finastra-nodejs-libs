@@ -71,10 +71,10 @@ Here is the sample of config to add:
 {
   externalIdps: {
     azure: {
-      clientId: this.configService.get('OIDC_AAD_CLIENT_ID'),
-      clientSecret: this.configService.get('OIDC_AAD_CLIENT_SECRET'),
-      issuer: this.configService.get('OIDC_AAD_ISSUER'),
-      scope: this.configService.get('OIDC_SCOPE'),
+      clientId: configService.get('OIDC_AAD_CLIENT_ID'),
+      clientSecret: configService.get('OIDC_AAD_CLIENT_SECRET'),
+      issuer: configService.get('OIDC_AAD_ISSUER'),
+      scope: configService.get('OIDC_SCOPE'),
     },
   },
   userInfoCallback: async (userId, idpInfos) => {
@@ -137,3 +137,74 @@ import { TokenGuard } from '@ffdc/nestjs-oidc';
 | redirectUriLogout | Where to redirect user after logout. If not specified, `origin` is used |
 | usePKCE           | Boolean to user or not [PKCE](https://oauth.net/2/pkce/)                |
 | userInfoMethod    | `token` or `endpoint`. Default being `token`                            |
+
+## Authenticating with multi-tenancy
+
+### Pre-requisites
+
+Before you begin, this multi-tenancy implementation is only compatible with FFDC tenants.
+Make sure you've configured your applications and tenants in [Finastra developer portal](https://developer.fusionfabric.cloud/) and Finastra Organization Admin portal.
+
+### Exposed endpoints
+
+The exposed endpoints are the same but they will be prefixed by tenantId and channelType (`/:tenantId/:channelType/`):
+
+- login
+- login/callback
+- logout
+- user
+- check-token
+- refresh-token
+
+### Usage
+
+`app.module.ts`
+
+```typescript
+import { OidcModule } from '@ffdc/nestjs-oidc';
+
+@Module({
+  imports: [
+    OidcModule.forRootAsync({
+      useFactory: async (configService: ConfigService) => ({
+        issuerOrigin: configService.get('OIDC_ISSUER_ORIGIN'),
+        b2c: {
+          clientMetadata: {
+            client_id: configService.get('OIDC_CLIENT_ID_B2C'),
+            client_secret: configService.get('OIDC_CLIENT_SECRET_B2C'),
+          },
+        },
+        b2e: {
+          clientMetadata: {
+            client_id: configService.get('OIDC_CLIENT_ID_B2E'),
+            client_secret: configService.get('OIDC_CLIENT_SECRET_B2E'),
+          },
+        },
+        authParams: {
+          scope: configService.get('OIDC_SCOPE'),
+        },
+        origin: configService.get('ORIGIN'),
+        // Optional properties
+        defaultHttpOptions: {
+          timeout: 20000,
+        },
+        userInfoCallback: async (userId, idpInfos) => {
+          return {
+            username: userId,
+            customUserInfo: 'custom',
+          };
+        },
+        idleTime: 30, // in seconds
+      }),
+      inject: [ConfigService],
+      imports: [ConfigModule],
+    }),
+  ],
+  controllers: [],
+  providers: [],
+})
+export class AppModule {}
+```
+
+> `issuerOrigin` is the route url of the IDP issuer. Issuer will be built with this pattern: `:issuerOrigin/:tenantId/.well-known/openid-configuration`
+> The other parameters remains the same that on single tenancy except that `clientMetadata` need to be embedded in channel type `b2c` or `b2e` parameter.
