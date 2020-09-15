@@ -12,16 +12,17 @@ export class TenancyGuard implements CanActivate {
   constructor(private reflector: Reflector, private oidcService: OidcService) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const isMultitenant = this.reflector.get<boolean>(
-      'isMultitenant',
-      context.getClass(),
-    );
+    const isMultitenant =
+      this.reflector.get<boolean>('isMultitenant', context.getClass()) ||
+      this.reflector.get<boolean>('isMultitenant', context.getHandler());
     const req = context.switchToHttp().getRequest();
     if (
       (typeof isMultitenant === 'undefined' ||
         isMultitenant === this.oidcService.isMultitenant) &&
       (!req.user ||
         !req.user.userinfo.channel ||
+        !req.params.tenantId ||
+        !req.params.channelType ||
         (req.user.userinfo.channel &&
           req.user.userinfo.tenant &&
           req.user.userinfo.tenant === req.params.tenantId &&
