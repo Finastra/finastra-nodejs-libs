@@ -3,7 +3,7 @@ import { createProxyServer } from 'http-proxy';
 import * as queryString from 'querystring';
 import { concatPath } from './utils';
 import { ProxyService } from './services';
-import { ProxyController } from './controllers';
+import { ProxyController, ProxyMultitenantController } from './controllers';
 import {
   defaultProxyOptions,
   PROXY_MODULE_OPTIONS,
@@ -60,7 +60,7 @@ const proxyFactory = {
 
 @Module({
   providers: [ProxyService, proxyFactory],
-  controllers: [ProxyController],
+  controllers: [ProxyController, ProxyMultitenantController],
 })
 export class ProxyModule {
   static forRoot(options: ProxyModuleOptions): DynamicModule {

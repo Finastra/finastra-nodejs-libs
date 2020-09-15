@@ -1,4 +1,4 @@
-import { Injectable, Inject, Logger } from '@nestjs/common';
+import { Injectable, Inject, Logger, Param } from '@nestjs/common';
 import { Server } from 'http-proxy';
 import { parse } from 'url';
 import { Request, Response } from 'express';
@@ -15,7 +15,7 @@ export class ProxyService {
     @Inject(PROXY_MODULE_OPTIONS) private options: ProxyModuleOptions,
   ) {}
 
-  async proxyRequest(req: Request, res: Response) {
+  async proxyRequest(req: Request, res: Response, @Param() params?) {
     const target = req.query.target;
     const serviceId = req.query.serviceId;
     let token = null;
@@ -24,8 +24,13 @@ export class ProxyService {
       token = (req.user as any).authTokens.accessToken;
     }
 
+    const prefix =
+      params.tenantId && params.channelType
+        ? `/${params.tenantId}/${params.channelType}`
+        : '';
+
     if (target && !serviceId) {
-      return this.doProxy(req, res, target, token);
+      return this.doProxy(req, res, concatPath(prefix, target), token);
     }
 
     if (serviceId) {
@@ -40,7 +45,7 @@ export class ProxyService {
         return this.doProxy(
           req,
           res,
-          target ? concatPath(baseUrl, target) : baseUrl,
+          target ? concatPath(baseUrl, prefix, target) : baseUrl,
           token,
           service.config,
         );
