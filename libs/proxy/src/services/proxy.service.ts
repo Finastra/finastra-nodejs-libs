@@ -24,10 +24,7 @@ export class ProxyService {
       token = (req.user as any).authTokens.accessToken;
     }
 
-    const prefix =
-      params.tenantId && params.channelType
-        ? `/${params.tenantId}/${params.channelType}`
-        : '';
+    const prefix = params ? `${params[0]}` : '';
 
     if (target && !serviceId) {
       return this.doProxy(req, res, concatPath(prefix, target), token);
