@@ -158,7 +158,7 @@ The exposed endpoints are the same but they will be prefixed by tenantId and cha
 
 The `TokenGuard` is available and works the same as in single tenancy.
 
-If your application handle single and multi tenancy, you can use `@isAvailableRouteForMultitenant` decorator with a boolean parameter on classes or functions.
+If your application handles single and multi tenancy, you can use `@isAvailableRouteForMultitenant` decorator with a boolean parameter on classes or functions.
 
 ### Usage
 
