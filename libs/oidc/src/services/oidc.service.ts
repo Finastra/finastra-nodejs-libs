@@ -72,7 +72,7 @@ export class OidcService implements OnModuleInit {
       this.trustIssuer = await Issuer.discover(issuer);
       this.client = new this.trustIssuer.Client(clientMetadata);
       this.tokenStores[
-        `${tenantId}.${channelType}`
+        this.getTokenStoreKey(tenantId, channelType)
       ] = await this.trustIssuer.keystore();
       this.options.authParams.redirect_uri = redirectUri;
       this.options.authParams.nonce =
@@ -94,6 +94,10 @@ export class OidcService implements OnModuleInit {
       logger.log('Terminating application');
       process.exit(1);
     }
+  }
+
+  getTokenStoreKey(tenantId, channelType): string {
+    return `${tenantId}.${channelType}`;
   }
 
   isExpired(expiresAt: number) {

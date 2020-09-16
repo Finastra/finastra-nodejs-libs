@@ -14,7 +14,8 @@ export class UserMiddleware implements NestMiddleware {
       const jwt = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
       if (!jwt) throw 'No Jwt';
 
-      const routeParams = req.params[0].split('/');
+      const routeParams =
+        req.params && req.params[0] && req.params[0].split('/');
       let tenantId, channelType;
       if (
         routeParams[1] === ChannelType.b2c ||
@@ -26,11 +27,15 @@ export class UserMiddleware implements NestMiddleware {
 
       if (
         !this.service.tokenStores ||
-        !this.service.tokenStores[`${tenantId}.${channelType}`]
+        !this.service.tokenStores[
+          this.service.getTokenStoreKey(tenantId, channelType)
+        ]
       ) {
         await this.service.createStrategy(tenantId, channelType);
       }
-      const tokenStore = this.service.tokenStores[`${tenantId}.${channelType}`];
+      const tokenStore = this.service.tokenStores[
+        this.service.getTokenStoreKey(tenantId, channelType)
+      ];
       const decodedJwt = JWT.verify(jwt, tokenStore);
 
       req.user = decodedJwt;
