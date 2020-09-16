@@ -156,6 +156,10 @@ The exposed endpoints are the same but they will be prefixed by tenantId and cha
 - check-token
 - refresh-token
 
+The `TokenGuard` is available and works the same as in single tenancy.
+
+If your application handle single and multi tenancy, you can use `@isAvailableRouteForMultitenant` decorator with a boolean parameter on classes or functions.
+
 ### Usage
 
 `app.module.ts`
