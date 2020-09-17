@@ -32,7 +32,7 @@ export class OidcService implements OnModuleInit {
   client: Client;
   isMultitenant: boolean = false;
   strategy: any;
-  tokenStore: JWKS.KeyStore;
+  tokenStores: { [tokenName: string]: JWKS.KeyStore } = {};
   trustIssuer: Issuer<Client>;
   constructor(@Inject(OIDC_MODULE_OPTIONS) public options: OidcModuleOptions) {
     this.isMultitenant = !!this.options.issuerOrigin;
@@ -71,7 +71,9 @@ export class OidcService implements OnModuleInit {
       }
       this.trustIssuer = await Issuer.discover(issuer);
       this.client = new this.trustIssuer.Client(clientMetadata);
-      this.tokenStore = await this.trustIssuer.keystore();
+      this.tokenStores[
+        this.getTokenStoreKey(tenantId, channelType)
+      ] = await this.trustIssuer.keystore();
       this.options.authParams.redirect_uri = redirectUri;
       this.options.authParams.nonce =
         this.options.authParams.nonce === 'true'
@@ -92,6 +94,10 @@ export class OidcService implements OnModuleInit {
       logger.log('Terminating application');
       process.exit(1);
     }
+  }
+
+  getTokenStoreKey(tenantId, channelType): string {
+    return `${tenantId}.${channelType}`;
   }
 
   isExpired(expiresAt: number) {

@@ -19,7 +19,7 @@ describe('AuthController', () => {
       providers: [
         {
           provide: OidcService,
-          useClass: MockOidcService,
+          useValue: MockOidcService,
         },
       ],
     }).compile();

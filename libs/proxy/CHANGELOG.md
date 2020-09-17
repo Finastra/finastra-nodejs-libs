@@ -4,18 +4,26 @@
 
 <!-- TOC depthFrom:2 depthTo:3 -->
 
+- [0.4.0 (2020-09-16)](#040-2020-09-16)
+    - [Features](#features)
 - [0.3.1 (2020-07-23)](#031-2020-07-23)
-  - [Bugfixes](#bugfixes)
+    - [Bugfixes](#bugfixes)
 - [0.3.0 (2020-07-23)](#030-2020-07-23)
-  - [Features](#features)
+    - [Features](#features-1)
 - [0.2.1 (2020-06-25)](#021-2020-06-25)
-  - [Bug fixes](#bug-fixes)
+    - [Bug fixes](#bug-fixes)
 - [0.2.0 (2020-05-19)](#020-2020-05-19)
-  - [Features](#features-1)
+    - [Features](#features-2)
 - [0.1.1 (2020-04-30)](#011-2020-04-30)
-  - [Bug fixes](#bug-fixes-1)
+    - [Bug fixes](#bug-fixes-1)
 
 <!-- /TOC -->
+
+## 0.4.0 (2020-09-16)
+
+### Features
+
+It is possible to use proxy module with oidc module with a multitenancy configuration.
 
 ## 0.3.1 (2020-07-23)
 

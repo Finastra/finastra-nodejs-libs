@@ -159,6 +159,27 @@ describe('ProxyService', () => {
         });
       service.proxyRequest(req, res);
     });
+
+    it('should call proxy with token and params', () => {
+      const req = createMock<Request>();
+      const res = createMock<Response>();
+      const MOCK_PARAMS = ['tenant/b2c'];
+
+      req.query = {
+        serviceId: services[0].id,
+      };
+      req.user = {
+        authTokens: {
+          accessToken: 'test',
+        },
+      };
+
+      const spy = jest.spyOn(proxy, 'web');
+      service.proxyRequest(req, res, MOCK_PARAMS);
+      expect((spy.mock.calls[0][2] as any).headers).toHaveProperty(
+        'authorization',
+      );
+    });
   });
 });
 
