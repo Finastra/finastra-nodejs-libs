@@ -21,7 +21,7 @@ describe('TenancyGuard', () => {
         },
         {
           provide: OidcService,
-          useClass: MockOidcService,
+          useValue: MockOidcService,
         },
       ],
     }).compile();

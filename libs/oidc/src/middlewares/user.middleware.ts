@@ -18,8 +18,10 @@ export class UserMiddleware implements NestMiddleware {
         req.params && req.params[0] && req.params[0].split('/');
       let tenantId, channelType;
       if (
-        routeParams[1] === ChannelType.b2c ||
-        routeParams[1] === ChannelType.b2e
+        routeParams &&
+        routeParams[1] &&
+        (routeParams[1] === ChannelType.b2c ||
+          routeParams[1] === ChannelType.b2e)
       ) {
         tenantId = routeParams[0];
         channelType = routeParams[1];
