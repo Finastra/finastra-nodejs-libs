@@ -14,6 +14,7 @@ class NoopLogger extends Logger {
 describe('ProxyController', () => {
   let controller: ProxyController;
   let service: ProxyService;
+  const MOCK_PARAMS = {};
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -41,7 +42,7 @@ describe('ProxyController', () => {
       const res = createResponse();
       const req = createRequest();
       const spy = jest.spyOn(service, 'proxyRequest');
-      controller.proxy(res, req);
+      controller.proxy(res, req, MOCK_PARAMS);
       expect(spy).toHaveBeenCalled();
     });
 
@@ -52,7 +53,7 @@ describe('ProxyController', () => {
         throw new Error();
       });
       const spy = jest.spyOn(res, 'status');
-      controller.proxy(res, req);
+      controller.proxy(res, req, MOCK_PARAMS);
       expect(spy).toHaveBeenCalledWith(500);
     });
   });
