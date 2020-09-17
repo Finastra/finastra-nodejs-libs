@@ -16,15 +16,15 @@ import { OidcConfigService } from './configs/oidc-config.service';
       useClass: OidcConfigService,
       imports: [ConfigModule],
     }),
+    ProxyModule.forRootAsync({
+      useClass: ProxyConfigService,
+      imports: [ConfigModule],
+    }),
     CatsModule,
     CorporateAccountsModule.forRoot({}),
     ConfigModule.forRoot({
       isGlobal: true,
       ignoreEnvFile: process.env.NODE_ENV === 'production',
-    }),
-    ProxyModule.forRootAsync({
-      useClass: ProxyConfigService,
-      imports: [ConfigModule],
     }),
     GraphQLModule.forRootAsync({
       useClass: GqlConfigService,

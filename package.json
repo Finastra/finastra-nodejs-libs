@@ -49,7 +49,7 @@
     "graphql": "^15.0.0",
     "graphql-tools": "^5.0.0",
     "helmet": "^3.21.2",
-    "http-proxy": "^1.18.0",
+    "http-proxy": "^1.18.1",
     "mongoose": "^5.8.11",
     "openid-client": "^3.14.2",
     "passport": "^0.4.1",

@@ -41,19 +41,27 @@ export const MOCK_OIDC_MODULE_OPTIONS: OidcModuleOptions = {
   },
 };
 
-export class MockOidcService {
-  login(req, res, next, params) {}
+export const MockOidcService = {
+  login: (req, res, next, params) => {},
 
-  logout(req, res, params) {}
+  logout: (req, res, params) => {},
 
-  checkToken(req, res) {}
+  checkToken: (req, res) => {},
 
-  refreshTokens(req, res) {}
+  refreshTokens: (req, res) => {},
 
-  loggedOut(res, params) {}
+  loggedOut: (res, params) => {},
 
-  isExpired() {}
-}
+  isExpired: () => {},
+
+  createStrategy: () => {
+    return Promise.resolve({});
+  },
+
+  getTokenStoreKey: () => {
+    return 'tenant.b2c';
+  },
+};
 
 export const MOCK_REQUEST = {
   user: {

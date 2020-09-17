@@ -107,3 +107,7 @@ const accountId = '112';
 const target = `${accountId}/details`;
 fetch(`${serverUri}/proxy?serviceId=${serviceId}&target=${target}`);
 ```
+
+## Using module with a service using OIDC module with multitenancy configuration
+
+All proxy calls need to be prefixed by `/${TENANT_ID}/${CHANEL_TYPE}`
