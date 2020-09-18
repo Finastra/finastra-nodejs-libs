@@ -5,6 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { GqlExecutionContext } from '@nestjs/graphql';
 import { OidcService } from '../services';
 
 @Injectable()
@@ -15,7 +16,12 @@ export class TenancyGuard implements CanActivate {
     const isMultitenant =
       this.reflector.get<boolean>('isMultitenant', context.getClass()) ||
       this.reflector.get<boolean>('isMultitenant', context.getHandler());
-    const req = context.switchToHttp().getRequest();
+
+    let req = context.switchToHttp().getRequest();
+    if (context['contextType'] === 'graphql') {
+      req = GqlExecutionContext.create(context).getContext().req;
+    }
+
     if (
       (typeof isMultitenant === 'undefined' ||
         isMultitenant === this.oidcService.isMultitenant) &&

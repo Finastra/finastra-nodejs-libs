@@ -5,6 +5,7 @@ import { TenancyGuard } from './tenancy.guard';
 import { OidcService } from '../services';
 import { MockOidcService, MOCK_REQUEST } from '../mocks';
 import { TestingModule, Test } from '@nestjs/testing';
+import { GqlExecutionContext } from '@nestjs/graphql';
 
 describe('TenancyGuard', () => {
   let guard: TenancyGuard;
@@ -135,7 +136,7 @@ describe('TenancyGuard', () => {
     }).toThrow(new NotFoundException());
   });
 
-  it('should return truen if user tenant and channel and tenant and channel in url are the same', () => {
+  it('should return true if user tenant and channel and tenant and channel in url are the same', () => {
     jest.spyOn(guard['reflector'], 'get').mockReturnValue(true);
     oidcService.isMultitenant = true;
     const req = {
@@ -152,5 +153,28 @@ describe('TenancyGuard', () => {
     expect(() => {
       guard.canActivate(context);
     }).toBeTruthy();
+  });
+
+  it('should handle graphQL context', async () => {
+    jest.spyOn(guard['reflector'], 'get').mockReturnValue(true);
+    oidcService.isMultitenant = true;
+    const context = createMock<ExecutionContext>();
+    context['contextType'] = 'graphql';
+
+    jest.spyOn(GqlExecutionContext, 'create').mockReturnValue(
+      createMock<GqlExecutionContext>({
+        getContext: () => ({
+          req: {
+            ...MOCK_REQUEST,
+            params: {
+              tenantId: 'tenant',
+              channelType: 'b2c',
+            },
+          },
+        }),
+      }),
+    );
+
+    expect(await guard.canActivate(context)).toBeTruthy();
   });
 });
