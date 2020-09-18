@@ -102,7 +102,8 @@
       "**/*.(t|j)s",
       "!src/**/*.ts",
       "!**/index.ts",
-      "!**/*mock.ts"
+      "!**/*mock.ts",
+      "!**/mocks.ts"
     ],
     "coverageDirectory": "./coverage",
     "testEnvironment": "node",
