@@ -28,7 +28,6 @@ export const MOCK_OIDC_MODULE_OPTIONS: OidcModuleOptions = {
   defaultHttpOptions: {
     timeout: 0,
   },
-  idleTime: 30,
   origin: 'bla',
   userInfoMethod: UserInfoMethod.token,
   externalIdps: {
