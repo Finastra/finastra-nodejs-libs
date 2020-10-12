@@ -25,6 +25,7 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 import { stringify } from 'querystring';
 import axios from 'axios';
+import { nextTick } from 'process';
 
 const logger = new Logger('OidcService');
 @Injectable()
@@ -163,51 +164,22 @@ export class OidcService implements OnModuleInit {
     });
   }
 
-  async checkToken(@Req() req: Request, @Res() res: Response) {
-    const refresh = req.query.refresh == 'true'; //if the refresh of the token is requested
-
-    const authTokens = req.user['authTokens'];
-    let valid = true;
-    let needsRefresh = false;
-    valid = valid && !this.isExpired(authTokens.expiresAt);
-    if (
-      authTokens.expiresAt &&
-      authTokens.expiresAt - Date.now() / 1000 < this.options.idleTime
-    ) {
-      needsRefresh = true;
-    }
-    if (valid) {
-      if (refresh && needsRefresh) {
-        authTokens.channel = req.user['userinfo'].channel;
-        return await this._refreshToken(authTokens)
-          .then(data => {
-            this._updateUserAuthToken(data, req);
-            res.sendStatus(200);
-          })
-          .catch(err => {
-            res.status(401).send(err);
-          });
-      } else {
-        return res.sendStatus(200);
-      }
-    } else {
-      return res
-        .status(401)
-        .send('Your session has expired. \n\nPlease log in again');
-    }
-  }
-
-  refreshTokens(@Req() req, @Res() res) {
+  async refreshTokens(@Req() req, @Res() res, @Next() next: Function) {
     const { authTokens } = req.user;
     authTokens.channel = req.user.userinfo.channel;
-    return this._refreshToken(authTokens)
-      .then(data => {
-        this._updateUserAuthToken(data, req);
-        res.sendStatus(200);
-      })
-      .catch(err => {
-        res.status(401).send(err);
-      });
+    if (this.isExpired(authTokens.expiresAt)) {
+      authTokens.channel = req.user['userinfo'].channel;
+      return await this._refreshToken(authTokens)
+        .then(data => {
+          this._updateUserAuthToken(data, req);
+          res.sendStatus(200);
+        })
+        .catch(err => {
+          res.status(401).send(err);
+        });
+    } else {
+      return res.sendStatus(200);
+    }
   }
 
   loggedOut(@Res() res: Response, @Param() params) {

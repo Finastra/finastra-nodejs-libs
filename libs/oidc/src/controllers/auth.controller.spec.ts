@@ -78,19 +78,11 @@ describe('AuthController', () => {
     });
   });
 
-  describe('checkTokens', () => {
-    it('should call oidcService logout', async () => {
-      const spy = jest.spyOn(oidcService, 'checkToken').mockReturnThis();
-      await controller.checkTokens(MOCK_REQ, MOCK_RES);
-      expect(spy).toHaveBeenCalledWith(MOCK_REQ, MOCK_RES);
-    });
-  });
-
   describe('refreshTokens', () => {
     it('should call oidcService logout', async () => {
       const spy = jest.spyOn(oidcService, 'refreshTokens').mockReturnThis();
-      await controller.refreshTokens(MOCK_REQ, MOCK_RES);
-      expect(spy).toHaveBeenCalledWith(MOCK_REQ, MOCK_RES);
+      await controller.refreshTokens(MOCK_REQ, MOCK_RES, MOCK_NEXT);
+      expect(spy).toHaveBeenCalledWith(MOCK_REQ, MOCK_RES, MOCK_NEXT);
     });
   });
 

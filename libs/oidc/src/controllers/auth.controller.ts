@@ -42,14 +42,9 @@ export class AuthController {
     this.oidcService.logout(req, res, params);
   }
 
-  @Get('/check-token')
-  async checkTokens(@Req() req: Request, @Res() res: Response) {
-    this.oidcService.checkToken(req, res);
-  }
-
   @Get('/refresh-token')
-  refreshTokens(@Req() req, @Res() res) {
-    this.oidcService.refreshTokens(req, res);
+  refreshTokens(@Req() req, @Res() res, @Next() next: Function) {
+    this.oidcService.refreshTokens(req, res, next);
   }
 
   @Public()
