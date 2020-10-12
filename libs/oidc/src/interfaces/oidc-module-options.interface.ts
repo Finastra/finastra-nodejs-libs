@@ -8,7 +8,6 @@ import {
 export type OidcModuleOptions = {
   origin: string;
   authParams: AuthorizationParameters;
-  idleTime?: number;
   redirectUriLogout?: string;
   usePKCE?: boolean;
   defaultHttpOptions?: HttpOptions;
