@@ -77,13 +77,14 @@ describe('OidcService', () => {
       expect(mockExit).toHaveBeenCalled();
     });
 
-    it('should do nothing on error fetching issuer for multitenant app', async () => {
+    it('should throw on error fetching issuer for multitenant app', async () => {
       const IssuerMock = MOCK_ISSUER_INSTANCE;
       IssuerMock.keystore = jest.fn();
       jest.spyOn(Issuer, 'discover').mockImplementation(() => Promise.reject());
       service.isMultitenant = true;
-      const strategy = await service.createStrategy('tenant', ChannelType.b2c);
-      expect(strategy).toBeUndefined();
+      await expect(
+        service.createStrategy('tenant', ChannelType.b2c),
+      ).rejects.toThrow();
     });
   });
 
@@ -159,6 +160,20 @@ describe('OidcService', () => {
         .mockImplementation(() => {
           return (req, res, next) => {};
         });
+      await service.login(req, res, next, params);
+      expect(spy).toHaveBeenCalled();
+    });
+
+    it('should send a 404 when error in createStrategy', async () => {
+      service.strategy = null;
+      params = {
+        tenantId: 'tenant',
+        channelType: 'b2c',
+      };
+      jest.spyOn(service, 'createStrategy').mockImplementation(() => {
+        throw new Error();
+      });
+      const spy = jest.spyOn(res, 'status');
       await service.login(req, res, next, params);
       expect(spy).toHaveBeenCalled();
     });

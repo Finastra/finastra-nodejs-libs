@@ -2,7 +2,7 @@ import {
   Injectable,
   CanActivate,
   ExecutionContext,
-  NotFoundException,
+  HttpException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
@@ -36,7 +36,13 @@ export class TenancyGuard implements CanActivate {
     ) {
       return true;
     } else {
-      throw new NotFoundException();
+      throw new HttpException(
+        {
+          tenantId: req.params.tenantId,
+          channelType: req.params.channelType,
+        },
+        421,
+      );
     }
   }
 }

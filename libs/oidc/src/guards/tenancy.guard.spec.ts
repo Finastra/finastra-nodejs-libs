@@ -77,7 +77,7 @@ describe('TenancyGuard', () => {
     context.switchToHttp().getRequest.mockReturnValue({});
     expect(() => {
       guard.canActivate(context);
-    }).toThrow(new NotFoundException());
+    }).toThrow();
   });
 
   it('should throw not found exception if user channel and channel in url are not the same', () => {
@@ -96,7 +96,7 @@ describe('TenancyGuard', () => {
     context.switchToHttp().getRequest.mockReturnValue(req);
     expect(() => {
       guard.canActivate(context);
-    }).toThrow(new NotFoundException());
+    }).toThrow();
   });
 
   it('should throw not found exception if user tenant and tenant in url are not the same', () => {
@@ -115,7 +115,7 @@ describe('TenancyGuard', () => {
     context.switchToHttp().getRequest.mockReturnValue(req);
     expect(() => {
       guard.canActivate(context);
-    }).toThrow(new NotFoundException());
+    }).toThrow();
   });
 
   it('should throw not found exception if user got a channel but no tenant', () => {
@@ -133,7 +133,7 @@ describe('TenancyGuard', () => {
     context.switchToHttp().getRequest.mockReturnValue(req);
     expect(() => {
       guard.canActivate(context);
-    }).toThrow(new NotFoundException());
+    }).toThrow();
   });
 
   it('should return true if user tenant and channel and tenant and channel in url are the same', () => {
