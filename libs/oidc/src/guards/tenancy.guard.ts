@@ -38,8 +38,8 @@ export class TenancyGuard implements CanActivate {
     } else {
       throw new HttpException(
         {
-          tenantId: req?.params?.tenantId,
-          channelType: req?.params?.channelType,
+          tenantId: req.params.tenantId,
+          channelType: req.params.channelType,
         },
         421,
       );

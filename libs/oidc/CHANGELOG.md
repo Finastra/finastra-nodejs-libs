@@ -71,7 +71,8 @@
 
 ### Bugfixes
 
-`Tenancy Guard` sends back a [421](https://httpstatuses.com/421) if the requested tenantId or channelType is different from the one in the userinfo.
+- `Tenancy Guard` sends back a [421](https://httpstatuses.com/421) if the requested tenantId or channelType is different from the one in the userinfo.
+- Better handling of errors when fetching issuer in multitenant apps
 
 ## 0.12.0 (2020-10-12)
 
