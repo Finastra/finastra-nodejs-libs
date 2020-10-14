@@ -15,8 +15,8 @@ export class TenantSwitchController {
     this.oidcService.tenantSwitchWarn(res, params);
   }
 
-  @Get('/tenant-switch')
-  getTenantSwitch(@Req() req, @Res() res: Response) {
-    this.oidcService.logout(req, res, req.query);
+  @Get('/:tenantId/:channelType/tenant-switch')
+  getTenantSwitch(@Req() req, @Res() res: Response, @Param() params) {
+    this.oidcService.logout(req, res, params);
   }
 }

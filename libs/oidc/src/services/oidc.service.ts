@@ -180,7 +180,10 @@ export class OidcService implements OnModuleInit {
           params.tenantId && params.channelType
             ? `/${params.tenantId}/${params.channelType}`
             : '';
-        res.redirect(`${prefix}/loggedout`);
+        let suffix = req.query
+          ? `?tenantId=${req.query.tenantId}&channelType=${req.query.channelType}`
+          : '';
+        res.redirect(`${prefix}/loggedout${suffix}`);
       }
     });
   }
@@ -203,12 +206,14 @@ export class OidcService implements OnModuleInit {
     }
   }
 
-  loggedOut(@Res() res: Response, @Param() params) {
+  loggedOut(@Req() req, @Res() res: Response, @Param() params) {
     let data = readFileSync(
       join(__dirname, '../assets/loggedout.html'),
     ).toString();
     let prefix =
-      params.tenantId && params.channelType
+      req.query.tenantId && req.query.channelType
+        ? `/${req.query.tenantId}/${req.query.channelType}`
+        : params.tenantId && params.channelType
         ? `/${params.tenantId}/${params.channelType}`
         : '';
     res.send(data.replace('rootUrl', `${prefix}/login`));
