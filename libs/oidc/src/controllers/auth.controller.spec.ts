@@ -79,7 +79,7 @@ describe('AuthController', () => {
   });
 
   describe('refreshTokens', () => {
-    it('should call oidcService logout', async () => {
+    it('should call oidcService refreshTokens', async () => {
       const spy = jest.spyOn(oidcService, 'refreshTokens').mockReturnThis();
       await controller.refreshTokens(MOCK_REQ, MOCK_RES, MOCK_NEXT);
       expect(spy).toHaveBeenCalledWith(MOCK_REQ, MOCK_RES, MOCK_NEXT);
@@ -91,6 +91,22 @@ describe('AuthController', () => {
       const spy = jest.spyOn(oidcService, 'loggedOut').mockReturnThis();
       await controller.loggedOut(MOCK_RES, MOCK_PARAMS);
       expect(spy).toHaveBeenCalledWith(MOCK_RES, MOCK_PARAMS);
+    });
+  });
+
+  describe('getTenantSwitchWarn', () => {
+    it('should call oidcService getTenantSwitchWarn', async () => {
+      const spy = jest.spyOn(oidcService, 'tenantSwitchWarn').mockReturnThis();
+      await controller.getTenantSwitchWarn(MOCK_RES, MOCK_PARAMS);
+      expect(spy).toHaveBeenCalledWith(MOCK_RES, MOCK_PARAMS);
+    });
+  });
+
+  describe('getTenantSwitch', () => {
+    it('should call oidcService getTenantSwitch', async () => {
+      const spy = jest.spyOn(oidcService, 'logout').mockReturnThis();
+      await controller.getTenantSwitch(MOCK_REQ, MOCK_RES);
+      expect(spy).toHaveBeenCalled();
     });
   });
 });

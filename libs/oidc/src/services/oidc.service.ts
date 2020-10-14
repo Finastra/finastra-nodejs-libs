@@ -63,7 +63,6 @@ export class OidcService implements OnModuleInit {
           case ChannelType.b2e:
             clientMetadata = this.options[ChannelType.b2e].clientMetadata;
             break;
-          default:
           case ChannelType.b2c:
             clientMetadata = this.options[ChannelType.b2c].clientMetadata;
             break;

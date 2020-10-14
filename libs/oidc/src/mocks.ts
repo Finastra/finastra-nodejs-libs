@@ -51,6 +51,8 @@ export const MockOidcService = {
 
   loggedOut: (res, params) => {},
 
+  tenantSwitchWarn: (res, params) => {},
+
   isExpired: () => {},
 
   createStrategy: () => {
