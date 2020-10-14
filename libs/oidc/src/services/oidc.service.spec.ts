@@ -319,11 +319,35 @@ describe('OidcService', () => {
       };
       service.logout(req, res, params);
     });
+    it('should redirect on prefixed and suffixed loggedout if query contains tenantId and channelType', done => {
+      service.idpInfos[idpKey].trustIssuer.metadata.end_session_endpoint = null;
+
+      params = {
+        tenantId: 'tenant',
+        channelType: ChannelType.b2c,
+      };
+      req.query = {
+        tenantId: 'tenant',
+        channelType: 'b2c',
+      };
+      (req.session as any) = {
+        destroy: jest.fn().mockImplementation(callback => {
+          callback().then(() => {
+            expect(spyResponse).toHaveBeenCalledWith(
+              `/${params.tenantId}/${params.channelType}/loggedout?tenantId=${req.query.tenantId}&channelType=${req.query.channelType}`,
+            );
+            done();
+          });
+        }),
+      };
+      service.logout(req, res, params);
+    });
   });
 
   describe('loggedOut', () => {
-    let res, params;
+    let req, res, params;
     beforeEach(() => {
+      req = createRequest();
       res = createResponse();
       params = {};
     });
@@ -331,7 +355,7 @@ describe('OidcService', () => {
       const res = createResponse();
       res.send = jest.fn();
       const spy = jest.spyOn(res, 'send');
-      service.loggedOut(res, params);
+      service.loggedOut(req, res, params);
       expect(spy).toHaveBeenCalled();
     });
 
@@ -343,7 +367,23 @@ describe('OidcService', () => {
         tenantId: 'tenant',
         channelType: ChannelType.b2c,
       };
-      service.loggedOut(res, params);
+      service.loggedOut(req, res, params);
+      expect(spy).toHaveBeenCalled();
+    });
+
+    it('should set prefix with query content before sending loggedout file', () => {
+      req.query = {
+        tenantId: 'tenant',
+        channelType: 'b2c',
+      };
+      const res = createResponse();
+      res.send = jest.fn();
+      const spy = jest.spyOn(res, 'send');
+      params = {
+        tenantId: 'tenant',
+        channelType: ChannelType.b2c,
+      };
+      service.loggedOut(req, res, params);
       expect(spy).toHaveBeenCalled();
     });
   });

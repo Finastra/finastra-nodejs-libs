@@ -180,9 +180,10 @@ export class OidcService implements OnModuleInit {
           params.tenantId && params.channelType
             ? `/${params.tenantId}/${params.channelType}`
             : '';
-        let suffix = req.query
-          ? `?tenantId=${req.query.tenantId}&channelType=${req.query.channelType}`
-          : '';
+        let suffix =
+          req.query.tenantId && req.query.channelType
+            ? `?tenantId=${req.query.tenantId}&channelType=${req.query.channelType}`
+            : '';
         res.redirect(`${prefix}/loggedout${suffix}`);
       }
     });
