@@ -7,6 +7,7 @@ import {
   Param,
   Req,
   OnModuleInit,
+  HttpStatus,
 } from '@nestjs/common';
 import {
   OidcModuleOptions,
@@ -17,7 +18,6 @@ import { JWKS } from 'jose';
 import { Client, Issuer, custom } from 'openid-client';
 import { OIDC_MODULE_OPTIONS, SESSION_STATE_COOKIE } from '../oidc.constants';
 import { v4 as uuid } from 'uuid';
-import { MOCK_CLIENT_INSTANCE } from '../mocks';
 import { OidcStrategy } from '../strategies';
 import passport = require('passport');
 import { Response, Request } from 'express';
@@ -25,7 +25,6 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 import { stringify } from 'querystring';
 import axios from 'axios';
-import { nextTick } from 'process';
 
 const logger = new Logger('OidcService');
 @Injectable()
@@ -85,8 +84,16 @@ export class OidcService implements OnModuleInit {
       return strategy;
     } catch (err) {
       if (this.isMultitenant) {
-        logger.error(err);
-        return;
+        const errorMsg = {
+          error: err,
+          debug: {
+            origin: this.options.origin,
+            tenantId,
+            channelType,
+          },
+        };
+        logger.error(errorMsg);
+        throw new Error();
       }
       const docUrl =
         'https://github.com/fusionfabric/finastra-nodejs-libs/blob/develop/libs/oidc/README.md';
@@ -115,18 +122,22 @@ export class OidcService implements OnModuleInit {
     @Next() next: Function,
     @Param() params,
   ) {
-    var strategy =
-      this.strategy ||
-      (await this.createStrategy(params.tenantId, params.channelType));
-    let prefix =
-      params.tenantId && params.channelType
-        ? `/${params.tenantId}/${params.channelType}`
-        : '';
-    passport.authenticate(strategy, {
-      ...req['options'],
-      successRedirect: `${prefix}/`,
-      failureRedirect: `${prefix}/login`,
-    })(req, res, next);
+    try {
+      const strategy =
+        this.strategy ||
+        (await this.createStrategy(params.tenantId, params.channelType));
+      let prefix =
+        params.tenantId && params.channelType
+          ? `/${params.tenantId}/${params.channelType}`
+          : '';
+      passport.authenticate(strategy, {
+        ...req['options'],
+        successRedirect: `${prefix}/`,
+        failureRedirect: `${prefix}/login`,
+      })(req, res, next);
+    } catch (err) {
+      res.status(HttpStatus.NOT_FOUND).send();
+    }
   }
 
   async logout(@Req() req, @Res() res: Response, @Param() params) {
