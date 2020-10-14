@@ -29,11 +29,15 @@ import axios from 'axios';
 const logger = new Logger('OidcService');
 @Injectable()
 export class OidcService implements OnModuleInit {
-  client: Client;
   isMultitenant: boolean = false;
   strategy: any;
-  tokenStores: { [tokenName: string]: JWKS.KeyStore } = {};
-  trustIssuer: Issuer<Client>;
+  idpInfos: {
+    [tokenName: string]: {
+      trustIssuer: Issuer<Client>;
+      tokenStore: JWKS.KeyStore;
+      client: Client;
+    };
+  } = {};
   constructor(@Inject(OIDC_MODULE_OPTIONS) public options: OidcModuleOptions) {
     this.isMultitenant = !!this.options.issuerOrigin;
   }
@@ -69,18 +73,24 @@ export class OidcService implements OnModuleInit {
             break;
         }
       }
-      this.trustIssuer = await Issuer.discover(issuer);
-      this.client = new this.trustIssuer.Client(clientMetadata);
-      this.tokenStores[
-        this.getTokenStoreKey(tenantId, channelType)
-      ] = await this.trustIssuer.keystore();
+      const trustIssuer = await Issuer.discover(issuer);
+      const client = new trustIssuer.Client(clientMetadata);
+      const tokenStore = await trustIssuer.keystore();
+
+      const key = this.getIdpInfosKey(tenantId, channelType);
+
+      this.idpInfos[key] = {
+        trustIssuer,
+        client,
+        tokenStore,
+      };
       this.options.authParams.redirect_uri = redirectUri;
       this.options.authParams.nonce =
         this.options.authParams.nonce === 'true'
           ? uuid()
           : this.options.authParams.nonce;
 
-      strategy = new OidcStrategy(this, channelType);
+      strategy = new OidcStrategy(this, key, channelType);
       return strategy;
     } catch (err) {
       if (this.isMultitenant) {
@@ -104,7 +114,7 @@ export class OidcService implements OnModuleInit {
     }
   }
 
-  getTokenStoreKey(tenantId, channelType): string {
+  getIdpInfosKey(tenantId, channelType): string {
     return `${tenantId}.${channelType}`;
   }
 
@@ -148,8 +158,9 @@ export class OidcService implements OnModuleInit {
     const id_token = req.user ? req.user.id_token : undefined;
     req.logout();
     req.session.destroy(async (error: any) => {
-      const end_session_endpoint = this.trustIssuer.metadata
-        .end_session_endpoint;
+      const end_session_endpoint = this.idpInfos[
+        this.getIdpInfosKey(params.tenantId, params.channelType)
+      ].trustIssuer.metadata.end_session_endpoint;
 
       if (end_session_endpoint) {
         res.redirect(

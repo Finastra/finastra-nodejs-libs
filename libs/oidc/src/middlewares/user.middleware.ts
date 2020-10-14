@@ -27,18 +27,15 @@ export class UserMiddleware implements NestMiddleware {
         channelType = routeParams[1];
       }
 
+      const key = this.service.getIdpInfosKey(tenantId, channelType);
+
       if (
-        !this.service.tokenStores ||
-        !this.service.tokenStores[
-          this.service.getTokenStoreKey(tenantId, channelType)
-        ]
+        !this.service.idpInfos[key] ||
+        !this.service.idpInfos[key].tokenStore
       ) {
         await this.service.createStrategy(tenantId, channelType);
       }
-      const tokenStore = this.service.tokenStores[
-        this.service.getTokenStoreKey(tenantId, channelType)
-      ];
-      const decodedJwt = JWT.verify(jwt, tokenStore);
+      const decodedJwt = JWT.verify(jwt, this.service.idpInfos[key].tokenStore);
 
       req.user = decodedJwt;
       if (this.service.options.externalIdps) {
@@ -46,7 +43,7 @@ export class UserMiddleware implements NestMiddleware {
           this.service.options.externalIdps,
         );
       }
-      req.user['userinfo'] = await getUserInfo(jwt, this.service);
+      req.user['userinfo'] = await getUserInfo(jwt, this.service, key);
       req.user['userinfo'].channel = channelType;
 
       next();
