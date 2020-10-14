@@ -34,6 +34,7 @@ import { APP_GUARD } from '@nestjs/core';
       useClass: TenancyGuard,
     },
   ],
+  exports: [OidcService],
 })
 export class OidcModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
