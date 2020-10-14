@@ -52,4 +52,15 @@ export class AuthController {
   loggedOut(@Res() res: Response, @Param() params) {
     this.oidcService.loggedOut(res, params);
   }
+
+  @Get('/tenant-switch-warn')
+  @Public()
+  getTenantSwitchWarn(@Res() res: Response, @Param() params) {
+    this.oidcService.tenantSwitchWarn(res, params);
+  }
+
+  @Get('/tenant-switch')
+  getTenantSwitch(@Req() req, @Res() res: Response) {
+    this.oidcService.logout(req, res, req.query);
+  }
 }

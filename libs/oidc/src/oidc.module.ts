@@ -20,7 +20,8 @@ import { mergeDefaults } from './utils';
 import { UserMiddleware, LoginMiddleware } from './middlewares';
 import { TokenGuard, TenancyGuard } from './guards';
 import { OidcService } from './services';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
+import { MisdirectedFilter } from './filters';
 
 @Module({
   imports: [JwtModule.register({})],
@@ -33,8 +34,11 @@ import { APP_GUARD } from '@nestjs/core';
       provide: APP_GUARD,
       useClass: TenancyGuard,
     },
+    {
+      provide: APP_FILTER,
+      useClass: MisdirectedFilter,
+    },
   ],
-  exports: [OidcService],
 })
 export class OidcModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
+import { HttpStatus } from '../interfaces';
 import { OidcService } from '../services';
 
 @Injectable()
@@ -41,7 +42,7 @@ export class TenancyGuard implements CanActivate {
           tenantId: req.params.tenantId,
           channelType: req.params.channelType,
         },
-        421,
+        HttpStatus.MISDIRECTED,
       );
     }
   }

@@ -204,6 +204,13 @@ export class OidcService implements OnModuleInit {
     res.send(data.replace('rootUrl', `${prefix}/login`));
   }
 
+  tenantSwitchWarn(@Res() res: Response, @Param() params) {
+    let data = readFileSync(
+      join(__dirname, '../assets/tenant-switch.html'),
+    ).toString();
+    res.send(data);
+  }
+
   async _refreshToken(authToken: IdentityProviderOptions) {
     if (
       !authToken.accessToken ||
