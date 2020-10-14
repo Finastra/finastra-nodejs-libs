@@ -22,10 +22,15 @@ import { TokenGuard, TenancyGuard } from './guards';
 import { OidcService } from './services';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { MisdirectedFilter } from './filters';
+import { TenantSwitchController } from './controllers';
 
 @Module({
   imports: [JwtModule.register({})],
-  controllers: [AuthController, AuthMultitenantController],
+  controllers: [
+    AuthController,
+    AuthMultitenantController,
+    TenantSwitchController,
+  ],
   providers: [
     SessionSerializer,
     TokenGuard,
