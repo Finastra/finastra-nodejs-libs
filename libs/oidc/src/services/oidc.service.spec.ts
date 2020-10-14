@@ -328,6 +328,22 @@ describe('OidcService', () => {
     });
   });
 
+  describe('tenantSwitchWarn', () => {
+    let res, params;
+    beforeEach(() => {
+      res = createResponse();
+      params = {};
+    });
+
+    it('should send tenant warn file', () => {
+      const res = createResponse();
+      res.send = jest.fn();
+      const spy = jest.spyOn(res, 'send');
+      service.tenantSwitchWarn(res, params);
+      expect(spy).toHaveBeenCalled();
+    });
+  });
+
   describe('refreshTokens', () => {
     beforeEach(() => {
       service.options['b2c'] = {
