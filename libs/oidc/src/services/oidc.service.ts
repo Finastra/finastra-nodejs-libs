@@ -67,7 +67,6 @@ export class OidcService implements OnModuleInit {
           case ChannelType.b2e:
             clientMetadata = this.options[ChannelType.b2e].clientMetadata;
             break;
-          default:
           case ChannelType.b2c:
             clientMetadata = this.options[ChannelType.b2c].clientMetadata;
             break;
@@ -213,6 +212,13 @@ export class OidcService implements OnModuleInit {
         ? `/${params.tenantId}/${params.channelType}`
         : '';
     res.send(data.replace('rootUrl', `${prefix}/login`));
+  }
+
+  tenantSwitchWarn(@Res() res: Response, @Param() params) {
+    let data = readFileSync(
+      join(__dirname, '../assets/tenant-switch.html'),
+    ).toString();
+    res.send(data);
   }
 
   async _refreshToken(authToken: IdentityProviderOptions) {

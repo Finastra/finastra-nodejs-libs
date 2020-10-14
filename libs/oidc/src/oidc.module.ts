@@ -20,11 +20,17 @@ import { mergeDefaults } from './utils';
 import { UserMiddleware, LoginMiddleware } from './middlewares';
 import { TokenGuard, TenancyGuard } from './guards';
 import { OidcService } from './services';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
+import { MisdirectedFilter } from './filters';
+import { TenantSwitchController } from './controllers';
 
 @Module({
   imports: [JwtModule.register({})],
-  controllers: [AuthController, AuthMultitenantController],
+  controllers: [
+    AuthController,
+    AuthMultitenantController,
+    TenantSwitchController,
+  ],
   providers: [
     SessionSerializer,
     TokenGuard,
@@ -32,6 +38,10 @@ import { APP_GUARD } from '@nestjs/core';
     {
       provide: APP_GUARD,
       useClass: TenancyGuard,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: MisdirectedFilter,
     },
   ],
 })
