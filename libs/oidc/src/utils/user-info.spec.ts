@@ -12,12 +12,15 @@ describe('OidcStrategy', () => {
   const MOCK_ACCESS_TOKEN =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
 
+  const idpKey = 'idpKey';
   let service;
   beforeEach(() => {
     service = new OidcService(MOCK_OIDC_MODULE_OPTIONS);
-    service.client = MOCK_CLIENT_INSTANCE;
-    service.tokenStore = new JWKS.KeyStore([]);
-    service.trustIssuer = MOCK_TRUST_ISSUER;
+    service.idpInfos[idpKey] = {
+      client: MOCK_CLIENT_INSTANCE,
+      tokenStore: new JWKS.KeyStore([]),
+      trustIssuer: MOCK_TRUST_ISSUER,
+    };
   });
 
   describe('getUserInfo', () => {
@@ -29,7 +32,7 @@ describe('OidcStrategy', () => {
           groups: ['admin'],
         };
       };
-      expect(await getUserInfo(MOCK_ACCESS_TOKEN, service)).toEqual({
+      expect(await getUserInfo(MOCK_ACCESS_TOKEN, service, idpKey)).toEqual({
         username: 'John Doe',
         groups: ['admin'],
       });
@@ -37,7 +40,7 @@ describe('OidcStrategy', () => {
 
     it('should return user info with remote user info method', async () => {
       service.options.userInfoMethod = UserInfoMethod.endpoint;
-      service.client.userinfo = () => {
+      service.idpInfos[idpKey].client.userinfo = () => {
         return new Promise((resolve, reject) =>
           resolve({
             sub: 'John Doe',
@@ -51,7 +54,7 @@ describe('OidcStrategy', () => {
           groups: ['admin'],
         };
       };
-      expect(await getUserInfo(MOCK_ACCESS_TOKEN, service)).toEqual({
+      expect(await getUserInfo(MOCK_ACCESS_TOKEN, service, idpKey)).toEqual({
         username: 'John Doe',
         sub: 'John Doe',
         groups: ['admin'],
@@ -61,10 +64,10 @@ describe('OidcStrategy', () => {
     it('should put sub in username if user info endpoint call failed', async () => {
       service.options.userInfoMethod = UserInfoMethod.endpoint;
       service.options.userInfoCallback = null;
-      service.client.userinfo = () => {
+      service.idpInfos[idpKey].client.userinfo = () => {
         return new Promise((resolve, reject) => reject('no user info'));
       };
-      expect(await getUserInfo(MOCK_ACCESS_TOKEN, service)).toEqual({
+      expect(await getUserInfo(MOCK_ACCESS_TOKEN, service, idpKey)).toEqual({
         username: '1234567890',
       });
     });

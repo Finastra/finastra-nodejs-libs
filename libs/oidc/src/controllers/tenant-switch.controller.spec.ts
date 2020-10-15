@@ -42,7 +42,7 @@ describe('TenantSwitchController', () => {
   describe('getTenantSwitch', () => {
     it('should call oidcService getTenantSwitch', async () => {
       const spy = jest.spyOn(oidcService, 'logout').mockReturnThis();
-      await controller.getTenantSwitch(MOCK_REQ, MOCK_RES);
+      await controller.getTenantSwitch(MOCK_REQ, MOCK_RES, MOCK_PARAMS);
       expect(spy).toHaveBeenCalled();
     });
   });

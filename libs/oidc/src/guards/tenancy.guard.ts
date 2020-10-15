@@ -15,9 +15,18 @@ export class TenancyGuard implements CanActivate {
   constructor(private reflector: Reflector, private oidcService: OidcService) {}
 
   canActivate(context: ExecutionContext): boolean {
+    const classIsMultitenant = this.reflector.get<boolean>(
+      'isMultitenant',
+      context.getClass(),
+    );
+    const handlerIsMultitenant = this.reflector.get<boolean>(
+      'isMultitenant',
+      context.getHandler(),
+    );
     const isMultitenant =
-      this.reflector.get<boolean>('isMultitenant', context.getClass()) ||
-      this.reflector.get<boolean>('isMultitenant', context.getHandler());
+      typeof classIsMultitenant !== 'undefined'
+        ? classIsMultitenant
+        : handlerIsMultitenant;
 
     let req = context.switchToHttp().getRequest();
     if (context['contextType'] === 'graphql') {

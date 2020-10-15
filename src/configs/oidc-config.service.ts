@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { OidcOptionsFactory, OidcModuleOptions } from '@ffdc/nestjs-oidc';
+import {
+  OidcOptionsFactory,
+  OidcModuleOptions,
+  UserInfoMethod,
+} from '@ffdc/nestjs-oidc';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
