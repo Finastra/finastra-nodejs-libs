@@ -88,11 +88,11 @@ describe('AuthMultitenantController', () => {
     });
   });
 
-  describe('refreshTokens', () => {
+  describe('loggedOut', () => {
     it('should call oidcService logout', async () => {
       const spy = jest.spyOn(oidcService, 'loggedOut').mockReturnThis();
-      await controller.loggedOut(MOCK_RES, MOCK_PARAMS);
-      expect(spy).toHaveBeenCalledWith(MOCK_RES, MOCK_PARAMS);
+      await controller.loggedOut(MOCK_REQ, MOCK_RES, MOCK_PARAMS);
+      expect(spy).toHaveBeenCalledWith(MOCK_REQ, MOCK_RES, MOCK_PARAMS);
     });
   });
 });

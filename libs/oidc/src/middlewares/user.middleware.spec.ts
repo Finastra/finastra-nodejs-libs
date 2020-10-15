@@ -11,6 +11,7 @@ const utils = require('../utils');
 describe('User Middleware', () => {
   let middleware: UserMiddleware;
   let service;
+  const idpKey = 'idpKey';
 
   describe('no token store', () => {
     beforeEach(async () => {
@@ -26,6 +27,7 @@ describe('User Middleware', () => {
 
       middleware = module.get<UserMiddleware>(UserMiddleware);
       service = module.get<OidcService>(OidcService);
+      service.idpInfos = { idpKey: {} };
     });
 
     it('should add channel in user in request when there is no token store if channel in url with tenant and channel b2c ', async () => {
@@ -46,11 +48,12 @@ describe('User Middleware', () => {
         .mockReturnValue(service.options.externalIdps);
 
       jest.spyOn(service, 'createStrategy').mockImplementation(() => {
-        service.tokenStores = {
-          'tenant.b2c': new JWKS.KeyStore([]),
-        };
+        service.idpInfos[idpKey].tokenStore = new JWKS.KeyStore([]);
         return Promise.resolve({});
       });
+      service.getIdpInfosKey = () => {
+        return idpKey;
+      };
 
       const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c`;
       req.headers.authorization = `Bearer ${token}`;
@@ -81,6 +84,7 @@ describe('User Middleware', () => {
 
       middleware = module.get<UserMiddleware>(UserMiddleware);
       service = module.get<OidcService>(OidcService);
+      service.idpInfos = { idpKey: {} };
     });
 
     it('should not do anything if no bearer', () => {
@@ -98,6 +102,9 @@ describe('User Middleware', () => {
       jest.spyOn(JWT, 'verify').mockReturnValue({
         username: 'John Doe',
       } as any);
+      service.getIdpInfosKey = () => {
+        return idpKey;
+      };
 
       service.options = MOCK_OIDC_MODULE_OPTIONS;
 
@@ -121,8 +128,10 @@ describe('User Middleware', () => {
     const mockOidcServiceWithoutExtIdp = {
       ...MockOidcService,
       options: moduleOptions,
-      tokenStores: {
-        'tenant.b2c': new JWKS.KeyStore([]),
+      idpInfos: {
+        idpKey: {
+          tokenStore: new JWKS.KeyStore([]),
+        },
       },
     };
 
@@ -137,6 +146,11 @@ describe('User Middleware', () => {
         ],
       }).compile();
       middleware = module.get<UserMiddleware>(UserMiddleware);
+      service = module.get<OidcService>(OidcService);
+      service.idpInfos = { idpKey: {} };
+      service.getIdpInfosKey = () => {
+        return idpKey;
+      };
     });
 
     it('should add user in request', async () => {
@@ -199,6 +213,32 @@ describe('User Middleware', () => {
       jest.spyOn(JWT, 'verify').mockReturnValue({
         username: 'John Doe',
       } as any);
+      service.getIdpInfosKey = () => {
+        return idpKey;
+      };
+      const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c`;
+      req.headers.authorization = `Bearer ${token}`;
+      await middleware.use(req, res, next);
+      expect(req.user['userinfo'].channel).toEqual('b2c');
+      expect(req.user['userinfo']).toBeTruthy();
+      expect(next).toHaveBeenCalled();
+    });
+
+    it('should add channel in user in request if channel in url with tenant and channel b2c for existing tokenStore', async () => {
+      const req = createMock<Request>();
+      req['params'] = {
+        0: 'tenant/b2c',
+      };
+      const res = createMock<Response>();
+      const next = jest.fn();
+      jest.spyOn(JWT, 'verify').mockReturnValue({
+        username: 'John Doe',
+      } as any);
+      service.getIdpInfosKey = () => {
+        return idpKey;
+      };
+      service.idpInfos[idpKey] = {};
+      service.idpInfos[idpKey].tokenStore = new JWKS.KeyStore();
       const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c`;
       req.headers.authorization = `Bearer ${token}`;
       await middleware.use(req, res, next);

@@ -49,7 +49,7 @@ export class AuthController {
 
   @Public()
   @Get('/loggedout')
-  loggedOut(@Res() res: Response, @Param() params) {
-    this.oidcService.loggedOut(res, params);
+  loggedOut(@Req() req, @Res() res: Response, @Param() params) {
+    this.oidcService.loggedOut(req, res, params);
   }
 }

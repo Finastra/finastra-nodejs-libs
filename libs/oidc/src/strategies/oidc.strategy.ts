@@ -8,10 +8,11 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
   userInfoCallback: any;
   constructor(
     private oidcService: OidcService,
+    private idpKey: string,
     private channelType?: ChannelType,
   ) {
     super({
-      client: oidcService.client,
+      client: oidcService.idpInfos[idpKey].client,
       params: oidcService.options.authParams,
       passReqToCallback: false,
       usePKCE: oidcService.options.usePKCE,
@@ -24,7 +25,7 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
       this.oidcService.options.externalIdps,
     );
     const id_token = tokenset.id_token;
-    let userinfo = await getUserInfo(id_token, this.oidcService);
+    let userinfo = await getUserInfo(id_token, this.oidcService, this.idpKey);
     userinfo['channel'] = this.channelType;
 
     const expiresAt =
@@ -35,7 +36,8 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
     const authTokens = {
       accessToken: tokenset.access_token,
       refreshToken: tokenset.refresh_token,
-      tokenEndpoint: this.oidcService.trustIssuer.metadata.token_endpoint,
+      tokenEndpoint: this.oidcService.idpInfos[this.idpKey].trustIssuer.metadata
+        .token_endpoint,
       expiresAt,
     };
     const user = {

@@ -16,12 +16,13 @@ describe('OidcStrategy', () => {
 
   beforeEach(() => {
     const mockOidcService = new OidcService(MOCK_OIDC_MODULE_OPTIONS);
-    mockOidcService.client = MOCK_CLIENT_INSTANCE;
-    mockOidcService.tokenStores = {
-      'tenant.b2c': new JWKS.KeyStore([]),
+    const idpKey = 'idpKey';
+    mockOidcService.idpInfos[idpKey] = {
+      client: MOCK_CLIENT_INSTANCE,
+      tokenStore: new JWKS.KeyStore([]),
+      trustIssuer: MOCK_TRUST_ISSUER,
     };
-    mockOidcService.trustIssuer = MOCK_TRUST_ISSUER;
-    strategy = new OidcStrategy(mockOidcService);
+    strategy = new OidcStrategy(mockOidcService, idpKey);
   });
 
   it('should be defined', () => {

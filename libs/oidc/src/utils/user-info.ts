@@ -5,11 +5,15 @@ import { OidcService } from '../services';
 
 const logger = new Logger('UserInfo');
 
-export async function getUserInfo(token: string, oidcService: OidcService) {
+export async function getUserInfo(
+  token: string,
+  oidcService: OidcService,
+  idpKey: string,
+) {
   let userInfoData = await (oidcService.options.userInfoMethod ===
   UserInfoMethod.token
     ? userInfo(token)
-    : userInfoRemote(token, oidcService));
+    : userInfoRemote(token, oidcService, idpKey));
   if (oidcService.options.userInfoCallback) {
     userInfoData = {
       ...userInfoData,
@@ -23,9 +27,13 @@ export async function getUserInfo(token: string, oidcService: OidcService) {
   return userInfoData;
 }
 
-async function userInfoRemote(token: string, oidcService: OidcService) {
+async function userInfoRemote(
+  token: string,
+  oidcService: OidcService,
+  idpKey: string,
+) {
   try {
-    return await oidcService.client.userinfo(token);
+    return await oidcService.idpInfos[idpKey].client.userinfo(token);
   } catch (err) {
     const msg = `Error accessing user information`;
     logger.error(msg);
