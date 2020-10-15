@@ -33,11 +33,15 @@ export class TenancyGuard implements CanActivate {
       req = GqlExecutionContext.create(context).getContext().req;
     }
 
-    if (isMultitenant !== this.oidcService.isMultitenant) {
+    if (
+      typeof isMultitenant !== 'undefined' &&
+      isMultitenant !== this.oidcService.isMultitenant
+    ) {
       throw new NotFoundException();
     } else if (
-      typeof isMultitenant === 'undefined' ||
-      !req.user ||
+      ((typeof isMultitenant === 'undefined' ||
+        isMultitenant === this.oidcService.isMultitenant) &&
+        !req.user) ||
       !req.user.userinfo.channel ||
       !req.params.tenantId ||
       !req.params.channelType ||
