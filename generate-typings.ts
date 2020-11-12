@@ -4,7 +4,7 @@ import { join } from 'path';
 const libs = ['corporate-accounts'];
 
 const definitionsFactory = new GraphQLDefinitionsFactory();
-libs.forEach((lib) => {
+libs.forEach(lib => {
   generateTypings(lib);
 });
 

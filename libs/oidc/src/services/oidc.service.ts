@@ -159,11 +159,11 @@ export class OidcService implements OnModuleInit {
     if (this.isExpired(authTokens.expiresAt)) {
       authTokens.channel = req.user['userinfo'].channel;
       return await this._refreshToken(authTokens)
-        .then((data) => {
+        .then(data => {
           this._updateUserAuthToken(data, req);
           res.sendStatus(200);
         })
-        .catch((err) => {
+        .catch(err => {
           res.status(401).send(err);
         });
     } else {

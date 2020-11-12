@@ -207,7 +207,7 @@ describe('OidcService', () => {
 
     it('should call logout', () => {
       (req.session as any) = {
-        destroy: (cb) => {
+        destroy: cb => {
           cb(null);
         },
       };
@@ -216,10 +216,10 @@ describe('OidcService', () => {
       expect(spyLogout).toHaveBeenCalled();
     });
 
-    it('should redirect without id_token_hint', (done) => {
+    it('should redirect without id_token_hint', done => {
       req.user = {};
       (req.session as any) = {
-        destroy: jest.fn().mockImplementation((callback) => {
+        destroy: jest.fn().mockImplementation(callback => {
           callback().then(() => {
             expect(spyResponse).toHaveBeenCalledWith(expect.not.stringContaining('id_token_hint'));
             done();
@@ -229,12 +229,12 @@ describe('OidcService', () => {
       service.logout(req, res, params);
     });
 
-    it('should redirect with id_token_hint', (done) => {
+    it('should redirect with id_token_hint', done => {
       req.user = {
         id_token: '123',
       };
       (req.session as any) = {
-        destroy: jest.fn().mockImplementation((callback) => {
+        destroy: jest.fn().mockImplementation(callback => {
           callback().then(() => {
             expect(spyResponse).toHaveBeenCalledWith(expect.stringContaining('id_token_hint'));
             done();
@@ -244,14 +244,14 @@ describe('OidcService', () => {
       service.logout(req, res, params);
     });
 
-    it('should redirect on redirectUriLogout if set', (done) => {
+    it('should redirect on redirectUriLogout if set', done => {
       req.user = {
         id_token: '123',
       };
       const mockRedirectLogout = 'other-website';
       options.redirectUriLogout = mockRedirectLogout;
       (req.session as any) = {
-        destroy: jest.fn().mockImplementation((callback) => {
+        destroy: jest.fn().mockImplementation(callback => {
           callback().then(() => {
             expect(spyResponse).toHaveBeenCalledWith(expect.stringContaining(mockRedirectLogout));
             done();
@@ -261,11 +261,11 @@ describe('OidcService', () => {
       service.logout(req, res, params);
     });
 
-    it('should redirect on loggedout if no end_session_endpoint found', (done) => {
+    it('should redirect on loggedout if no end_session_endpoint found', done => {
       service.idpInfos[idpKey].trustIssuer.metadata.end_session_endpoint = null;
 
       (req.session as any) = {
-        destroy: jest.fn().mockImplementation((callback) => {
+        destroy: jest.fn().mockImplementation(callback => {
           callback().then(() => {
             expect(spyResponse).toHaveBeenCalledWith('/loggedout');
             done();
@@ -275,7 +275,7 @@ describe('OidcService', () => {
       service.logout(req, res, params);
     });
 
-    it('should redirect on prefixed loggedout if no end_session_endpoint found', (done) => {
+    it('should redirect on prefixed loggedout if no end_session_endpoint found', done => {
       service.idpInfos[idpKey].trustIssuer.metadata.end_session_endpoint = null;
 
       params = {
@@ -283,7 +283,7 @@ describe('OidcService', () => {
         channelType: ChannelType.b2c,
       };
       (req.session as any) = {
-        destroy: jest.fn().mockImplementation((callback) => {
+        destroy: jest.fn().mockImplementation(callback => {
           callback().then(() => {
             expect(spyResponse).toHaveBeenCalledWith(`/${params.tenantId}/${params.channelType}/loggedout`);
             done();
@@ -292,7 +292,7 @@ describe('OidcService', () => {
       };
       service.logout(req, res, params);
     });
-    it('should redirect on prefixed and suffixed loggedout if query contains tenantId and channelType', (done) => {
+    it('should redirect on prefixed and suffixed loggedout if query contains tenantId and channelType', done => {
       service.idpInfos[idpKey].trustIssuer.metadata.end_session_endpoint = null;
 
       params = {
@@ -304,7 +304,7 @@ describe('OidcService', () => {
         channelType: 'b2c',
       };
       (req.session as any) = {
-        destroy: jest.fn().mockImplementation((callback) => {
+        destroy: jest.fn().mockImplementation(callback => {
           callback().then(() => {
             expect(spyResponse).toHaveBeenCalledWith(
               `/${params.tenantId}/${params.channelType}/loggedout?tenantId=${req.query.tenantId}&channelType=${req.query.channelType}`,

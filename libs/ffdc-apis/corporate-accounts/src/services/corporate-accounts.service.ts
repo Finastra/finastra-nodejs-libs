@@ -45,7 +45,7 @@ export class CorporateAccountsService extends RequestService {
 
     const accounts = await this.get<FFDCItems<AccountwBalance[]>>(url, user);
 
-    accounts.items = accounts.items.map((account) => {
+    accounts.items = accounts.items.map(account => {
       return this.sanitizeProperties<AccountwBalance>(account, ['availableBalance', 'availableBalanceEquivalent']);
     });
 
@@ -78,7 +78,7 @@ export class CorporateAccountsService extends RequestService {
     if (offset || offset === 0) url += `&offset=${offset}`;
 
     const statement = await this.get<FFDCItems<AccountStatement[]>>(url, user);
-    statement.items = statement.items.map((transaction) => {
+    statement.items = statement.items.map(transaction => {
       return this.sanitizeProperties<AccountStatement>(transaction, ['amount', 'balance']);
     });
     return statement;
@@ -86,7 +86,7 @@ export class CorporateAccountsService extends RequestService {
 
   private sanitizeProperties<T>(object: Object, props: string[]) {
     const newObj = { ...object };
-    props.forEach((property) => {
+    props.forEach(property => {
       newObj[property] = this.sanitizeNumber(object[property]);
     });
     return newObj as T;

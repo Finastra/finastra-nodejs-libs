@@ -32,7 +32,7 @@ export class ProxyService {
 
     if (serviceId) {
       const services = new Map(
-        this.options.services ? this.options.services.map((service) => [service.id, service]) : [],
+        this.options.services ? this.options.services.map(service => [service.id, service]) : [],
       );
       if (services.has(serviceId)) {
         const service = services.get(serviceId);
@@ -76,7 +76,7 @@ export class ProxyService {
       ...(options && options.headers),
     }; // To deep extend headers
 
-    this.proxy.web(req, res, requestOptions, (err) => {
+    this.proxy.web(req, res, requestOptions, err => {
       if (err.code === 'ECONNRESET') return;
 
       this.logger.error(`Error ${err.code} while proxying ${req.method} ${req.url}`);

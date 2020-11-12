@@ -9,7 +9,7 @@ const logger = new Logger('ExternalIdps');
 export async function authenticateExternalIdps(externalIdps: ExternalIdps): Promise<ExternalIdps | any> {
   const tokens: ExternalIdps = {};
   if (!externalIdps) return;
-  const promises = Object.keys(externalIdps).map(async (idpName) => {
+  const promises = Object.keys(externalIdps).map(async idpName => {
     tokens[idpName] = await clientCredentialsAuth(externalIdps[idpName]);
   });
   return await Promise.all(promises)

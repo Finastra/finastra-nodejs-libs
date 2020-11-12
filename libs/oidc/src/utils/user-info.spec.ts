@@ -22,7 +22,7 @@ describe('OidcStrategy', () => {
   describe('getUserInfo', () => {
     it('should return user info with token user info method', async () => {
       service.options.userInfoMethod = UserInfoMethod.token;
-      service.options.userInfoCallback = (userId) => {
+      service.options.userInfoCallback = userId => {
         return {
           username: userId,
           groups: ['admin'],
@@ -46,7 +46,7 @@ describe('OidcStrategy', () => {
           }),
         );
       };
-      service.options.userInfoCallback = (userId) => {
+      service.options.userInfoCallback = userId => {
         return {
           username: userId,
           groups: ['admin'],

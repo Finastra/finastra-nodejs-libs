@@ -119,7 +119,7 @@ describe('ProxyService', () => {
       expect((spy.mock.calls[0][2] as any).headers).toHaveProperty('authorization');
     });
 
-    it('should send a 500 if error comes from proxy', (done) => {
+    it('should send a 500 if error comes from proxy', done => {
       const req = createMock<Request>();
       const res = createMock<Response>();
 
@@ -137,7 +137,7 @@ describe('ProxyService', () => {
       service.proxyRequest(req, res);
     });
 
-    it('should not throw an error if error from proxy is ECONNRESET', (done) => {
+    it('should not throw an error if error from proxy is ECONNRESET', done => {
       const req = createMock<Request>();
       const res = createMock<Response>();
 
