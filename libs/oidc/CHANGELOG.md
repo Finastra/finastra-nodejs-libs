@@ -263,7 +263,7 @@ OidcModule.forRootAsync({
       scopes: configService.get('OIDC_SCOPES'),
     },
     origin: configService.get('ORIGIN'),
-    userInfoCallback: async (userId) => {
+    userInfoCallback: async userId => {
       return {
         username: userId,
         customUserInfo: 'custom',
