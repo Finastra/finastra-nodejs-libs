@@ -34,13 +34,7 @@ describe('AccountsBalanceResolver', () => {
     });
 
     it('should request service with default values', () => {
-      resolver.accountsBalance(
-        {},
-        AccountType.CURRENT,
-        undefined,
-        undefined,
-        'EUR',
-      );
+      resolver.accountsBalance({}, AccountType.CURRENT, undefined, undefined, 'EUR');
       expect(service.getAccountsDetails).toHaveBeenCalled();
     });
   });

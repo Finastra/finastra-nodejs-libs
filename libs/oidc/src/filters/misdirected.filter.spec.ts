@@ -42,9 +42,7 @@ describe('MisdirectedFilter', () => {
     jest.spyOn(host, 'switchToHttp').mockReturnValue(ctx);
 
     it('should catch 401 and redirect', () => {
-      jest
-        .spyOn(exception, 'getStatus')
-        .mockReturnValue(HttpStatus.MISDIRECTED);
+      jest.spyOn(exception, 'getStatus').mockReturnValue(HttpStatus.MISDIRECTED);
       const spy = jest.spyOn(res, 'redirect');
       filter.catch(exception, host);
       expect(spy).toHaveBeenCalled();

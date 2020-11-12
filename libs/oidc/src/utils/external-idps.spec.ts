@@ -23,9 +23,7 @@ describe('authenticateExternalIdps', () => {
         },
       }),
     );
-    const result = await authenticateExternalIdps(
-      MOCK_OIDC_MODULE_OPTIONS.externalIdps,
-    );
+    const result = await authenticateExternalIdps(MOCK_OIDC_MODULE_OPTIONS.externalIdps);
     expect(result).toStrictEqual(MOCK_OIDC_MODULE_OPTIONS.externalIdps);
   });
 
@@ -47,17 +45,13 @@ describe('authenticateExternalIdps', () => {
       }),
     );
 
-    const result = await authenticateExternalIdps(
-      MOCK_OIDC_MODULE_OPTIONS.externalIdps,
-    );
+    const result = await authenticateExternalIdps(MOCK_OIDC_MODULE_OPTIONS.externalIdps);
     expect(result['idpTest'].expiresAt).toBeTruthy();
   });
 
   it('should return empty tokens', async () => {
     jest.spyOn(Issuer, 'discover').mockReturnValue(Promise.reject());
-    const result = await authenticateExternalIdps(
-      MOCK_OIDC_MODULE_OPTIONS.externalIdps,
-    );
+    const result = await authenticateExternalIdps(MOCK_OIDC_MODULE_OPTIONS.externalIdps);
     expect(result).toBeUndefined();
   });
 

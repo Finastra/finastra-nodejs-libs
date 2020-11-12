@@ -15,13 +15,6 @@ export class AccountStatementResolver {
     @Args('limit') limit: number,
     @Args('offset') offset: number,
   ) {
-    return this.accountsService.getAccountStatement(
-      user,
-      id,
-      fromDate,
-      toDate,
-      limit,
-      offset,
-    );
+    return this.accountsService.getAccountStatement(user, id, fromDate, toDate, limit, offset);
   }
 }
