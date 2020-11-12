@@ -14,34 +14,23 @@ export class UserMiddleware implements NestMiddleware {
       const jwt = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
       if (!jwt) throw 'No Jwt';
 
-      const routeParams =
-        req.params && req.params[0] && req.params[0].split('/');
+      const routeParams = req.params && req.params[0] && req.params[0].split('/');
       let tenantId, channelType;
-      if (
-        routeParams &&
-        routeParams[1] &&
-        (routeParams[1] === ChannelType.b2c ||
-          routeParams[1] === ChannelType.b2e)
-      ) {
+      if (routeParams && routeParams[1] && (routeParams[1] === ChannelType.b2c || routeParams[1] === ChannelType.b2e)) {
         tenantId = routeParams[0];
         channelType = routeParams[1];
       }
 
       const key = this.service.getIdpInfosKey(tenantId, channelType);
 
-      if (
-        !this.service.idpInfos[key] ||
-        !this.service.idpInfos[key].tokenStore
-      ) {
+      if (!this.service.idpInfos[key] || !this.service.idpInfos[key].tokenStore) {
         await this.service.createStrategy(tenantId, channelType);
       }
       const decodedJwt = JWT.verify(jwt, this.service.idpInfos[key].tokenStore);
 
       req.user = decodedJwt;
       if (this.service.options.externalIdps) {
-        req.user['authTokens'] = await authenticateExternalIdps(
-          this.service.options.externalIdps,
-        );
+        req.user['authTokens'] = await authenticateExternalIdps(this.service.options.externalIdps);
       }
       req.user['userinfo'] = await getUserInfo(jwt, this.service, key);
       req.user['userinfo'].channel = channelType;

@@ -1,19 +1,5 @@
-import {
-  Injectable,
-  Inject,
-  Logger,
-  Res,
-  Next,
-  Param,
-  Req,
-  OnModuleInit,
-  HttpStatus,
-} from '@nestjs/common';
-import {
-  OidcModuleOptions,
-  ChannelType,
-  IdentityProviderOptions,
-} from '../interfaces';
+import { Injectable, Inject, Logger, Res, Next, Param, Req, OnModuleInit, HttpStatus } from '@nestjs/common';
+import { OidcModuleOptions, ChannelType, IdentityProviderOptions } from '../interfaces';
 import { JWKS } from 'jose';
 import { Client, Issuer, custom } from 'openid-client';
 import { OIDC_MODULE_OPTIONS, SESSION_STATE_COOKIE } from '../oidc.constants';
@@ -84,10 +70,7 @@ export class OidcService implements OnModuleInit {
         tokenStore,
       };
       this.options.authParams.redirect_uri = redirectUri;
-      this.options.authParams.nonce =
-        this.options.authParams.nonce === 'true'
-          ? uuid()
-          : this.options.authParams.nonce;
+      this.options.authParams.nonce = this.options.authParams.nonce === 'true' ? uuid() : this.options.authParams.nonce;
 
       strategy = new OidcStrategy(this, key, channelType);
       return strategy;
@@ -104,8 +87,7 @@ export class OidcService implements OnModuleInit {
         logger.error(errorMsg);
         throw new Error();
       }
-      const docUrl =
-        'https://github.com/fusionfabric/finastra-nodejs-libs/blob/develop/libs/oidc/README.md';
+      const docUrl = 'https://github.com/fusionfabric/finastra-nodejs-libs/blob/develop/libs/oidc/README.md';
       const msg = `Error accessing the issuer/tokenStore. Check if the url is valid or increase the timeout in the defaultHttpOptions : ${docUrl}`;
       logger.error(msg);
       logger.log('Terminating application');
@@ -125,20 +107,10 @@ export class OidcService implements OnModuleInit {
     return false;
   }
 
-  async login(
-    @Req() req: Request,
-    @Res() res: Response,
-    @Next() next: Function,
-    @Param() params,
-  ) {
+  async login(@Req() req: Request, @Res() res: Response, @Next() next: Function, @Param() params) {
     try {
-      const strategy =
-        this.strategy ||
-        (await this.createStrategy(params.tenantId, params.channelType));
-      let prefix =
-        params.tenantId && params.channelType
-          ? `/${params.tenantId}/${params.channelType}`
-          : '';
+      const strategy = this.strategy || (await this.createStrategy(params.tenantId, params.channelType));
+      let prefix = params.tenantId && params.channelType ? `/${params.tenantId}/${params.channelType}` : '';
       passport.authenticate(strategy, {
         ...req['options'],
         successRedirect: `${prefix}/`,
@@ -157,29 +129,21 @@ export class OidcService implements OnModuleInit {
     const id_token = req.user ? req.user.id_token : undefined;
     req.logout();
     req.session.destroy(async (error: any) => {
-      const end_session_endpoint = this.idpInfos[
-        this.getIdpInfosKey(params.tenantId, params.channelType)
-      ].trustIssuer.metadata.end_session_endpoint;
+      const end_session_endpoint = this.idpInfos[this.getIdpInfosKey(params.tenantId, params.channelType)].trustIssuer
+        .metadata.end_session_endpoint;
 
       if (end_session_endpoint) {
         res.redirect(
           `${end_session_endpoint}?post_logout_redirect_uri=${
-            this.options.redirectUriLogout
-              ? this.options.redirectUriLogout
-              : this.options.origin
-          }&client_id=${this.options.clientMetadata.client_id}${
-            id_token ? '&id_token_hint=' + id_token : ''
-          }`,
+            this.options.redirectUriLogout ? this.options.redirectUriLogout : this.options.origin
+          }&client_id=${this.options.clientMetadata.client_id}${id_token ? '&id_token_hint=' + id_token : ''}`,
         );
       } else {
         // Save logged out state for 15 min
         res.cookie(SESSION_STATE_COOKIE, 'logged out', {
           maxAge: 15 * 1000 * 60,
         });
-        let prefix =
-          params.tenantId && params.channelType
-            ? `/${params.tenantId}/${params.channelType}`
-            : '';
+        let prefix = params.tenantId && params.channelType ? `/${params.tenantId}/${params.channelType}` : '';
         let suffix =
           req.query.tenantId && req.query.channelType
             ? `?tenantId=${req.query.tenantId}&channelType=${req.query.channelType}`
@@ -208,9 +172,7 @@ export class OidcService implements OnModuleInit {
   }
 
   loggedOut(@Req() req, @Res() res: Response, @Param() params) {
-    let data = readFileSync(
-      join(__dirname, '../assets/loggedout.html'),
-    ).toString();
+    let data = readFileSync(join(__dirname, '../assets/loggedout.html')).toString();
     let prefix =
       req.query.tenantId && req.query.channelType
         ? `/${req.query.tenantId}/${req.query.channelType}`
@@ -221,18 +183,12 @@ export class OidcService implements OnModuleInit {
   }
 
   tenantSwitchWarn(@Res() res: Response, @Param() params) {
-    let data = readFileSync(
-      join(__dirname, '../assets/tenant-switch.html'),
-    ).toString();
+    let data = readFileSync(join(__dirname, '../assets/tenant-switch.html')).toString();
     res.send(data);
   }
 
   async _refreshToken(authToken: IdentityProviderOptions) {
-    if (
-      !authToken.accessToken ||
-      !authToken.refreshToken ||
-      !authToken.tokenEndpoint
-    ) {
+    if (!authToken.accessToken || !authToken.refreshToken || !authToken.tokenEndpoint) {
       throw new Error('Missing token endpoint');
     }
 
@@ -272,9 +228,7 @@ export class OidcService implements OnModuleInit {
         refreshToken: response.data.refresh_token,
         expiresAt:
           Number(response.data.expires_at) ||
-          (response.data.expires_in
-            ? Date.now() / 1000 + Number(response.data.expires_in)
-            : null),
+          (response.data.expires_in ? Date.now() / 1000 + Number(response.data.expires_in) : null),
       };
     } else {
       throw new Error(response.data);

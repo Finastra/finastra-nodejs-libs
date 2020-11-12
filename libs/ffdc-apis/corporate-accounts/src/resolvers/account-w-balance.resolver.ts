@@ -37,13 +37,6 @@ export class AccountwBalanceResolver {
     }
 
     const { id } = account;
-    return this.accountsService.getAccountStatement(
-      user,
-      id,
-      fromDate,
-      toDate,
-      statementLimit,
-      statementOffset,
-    );
+    return this.accountsService.getAccountStatement(user, id, fromDate, toDate, statementLimit, statementOffset);
   }
 }

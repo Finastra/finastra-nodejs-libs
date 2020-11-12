@@ -12,9 +12,7 @@ describe('OidcModule', () => {
     beforeEach(async () => {
       const IssuerMock = MOCK_ISSUER_INSTANCE;
       IssuerMock.keystore = jest.fn();
-      jest
-        .spyOn(Issuer, 'discover')
-        .mockImplementation(() => Promise.resolve(IssuerMock));
+      jest.spyOn(Issuer, 'discover').mockImplementation(() => Promise.resolve(IssuerMock));
       module = await Test.createTestingModule({
         imports: [OidcModule.forRoot(MOCK_OIDC_MODULE_OPTIONS)],
       }).compile();
@@ -31,9 +29,7 @@ describe('OidcModule', () => {
     beforeEach(async () => {
       const IssuerMock = MOCK_ISSUER_INSTANCE;
       IssuerMock.keystore = jest.fn();
-      jest
-        .spyOn(Issuer, 'discover')
-        .mockImplementation(() => Promise.resolve(IssuerMock));
+      jest.spyOn(Issuer, 'discover').mockImplementation(() => Promise.resolve(IssuerMock));
       module = await Test.createTestingModule({
         imports: [
           OidcModule.forRootAsync({
@@ -62,9 +58,7 @@ describe('OidcModule', () => {
     beforeEach(async () => {
       const IssuerMock = MOCK_ISSUER_INSTANCE;
       IssuerMock.keystore = jest.fn();
-      jest
-        .spyOn(Issuer, 'discover')
-        .mockImplementation(() => Promise.resolve(IssuerMock));
+      jest.spyOn(Issuer, 'discover').mockImplementation(() => Promise.resolve(IssuerMock));
       module = await Test.createTestingModule({
         imports: [
           OidcModule.forRootAsync({

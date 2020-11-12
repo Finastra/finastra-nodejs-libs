@@ -23,8 +23,7 @@ export async function authenticateExternalIdps(externalIdps: ExternalIdps) {
 }
 
 export async function clientCredentialsAuth(idp: IdentityProviderOptions) {
-  const tokenEndpoint = (await Issuer.discover(idp.issuer)).metadata
-    .token_endpoint;
+  const tokenEndpoint = (await Issuer.discover(idp.issuer)).metadata.token_endpoint;
   const reqBody = {
     client_id: idp.clientId,
     client_secret: idp.clientSecret,
@@ -42,9 +41,7 @@ export async function clientCredentialsAuth(idp: IdentityProviderOptions) {
   const accessToken = response.data.access_token;
   idp.accessToken = accessToken;
   idp.expiresAt =
-    response.data.expires_at || response.data.expires_in
-      ? Date.now() / 1000 + Number(response.data.expires_in)
-      : null;
+    response.data.expires_at || response.data.expires_in ? Date.now() / 1000 + Number(response.data.expires_in) : null;
   idp.tokenEndpoint = tokenEndpoint;
   return idp;
 }

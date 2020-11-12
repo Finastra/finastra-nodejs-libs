@@ -15,12 +15,6 @@ export class AccountsBalanceResolver {
     @Args('offset') offset = 0,
     @Args('equivalentCurrency') equivalentCurrency: string,
   ) {
-    return this.accountsService.getAccountsDetails(
-      user,
-      accountType,
-      limit,
-      offset,
-      equivalentCurrency,
-    );
+    return this.accountsService.getAccountsDetails(user, accountType, limit, offset, equivalentCurrency);
   }
 }
