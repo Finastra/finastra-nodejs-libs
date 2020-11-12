@@ -13,8 +13,7 @@ export class GqlConfigService implements GqlOptionsFactory {
     return {
       typePaths: ['./**/*.graphql'],
       include: [CorporateAccountsModule],
-      playground:
-        process.env.NODE_ENV === 'production' ? false : playgroundDevOptions,
+      playground: process.env.NODE_ENV === 'production' ? false : playgroundDevOptions,
     };
   }
 }

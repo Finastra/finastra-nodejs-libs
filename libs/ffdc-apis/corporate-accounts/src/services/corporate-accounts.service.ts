@@ -10,10 +10,7 @@ import {
   User,
   CorpAccountsModuleOptions,
 } from '../interfaces';
-import {
-  CORPORATE_ACCOUNTS_API,
-  CORP_ACCOUNTS_MODULE_OPTIONS,
-} from '../constants';
+import { CORPORATE_ACCOUNTS_API, CORP_ACCOUNTS_MODULE_OPTIONS } from '../constants';
 import { RequestService } from './request.service';
 
 @Injectable()
@@ -23,8 +20,7 @@ export class CorporateAccountsService extends RequestService {
     private moduleOptions: CorpAccountsModuleOptions,
   ) {
     super(
-      `${moduleOptions.ffdcApi ||
-        'https://api.fusionfabric.cloud'}/${CORPORATE_ACCOUNTS_API}`,
+      `${moduleOptions.ffdcApi || 'https://api.fusionfabric.cloud'}/${CORPORATE_ACCOUNTS_API}`,
       CorporateAccountsService.name,
     );
   }
@@ -49,11 +45,8 @@ export class CorporateAccountsService extends RequestService {
 
     const accounts = await this.get<FFDCItems<AccountwBalance[]>>(url, user);
 
-    accounts.items = accounts.items.map(account => {
-      return this.sanitizeProperties<AccountwBalance>(account, [
-        'availableBalance',
-        'availableBalanceEquivalent',
-      ]);
+    accounts.items = accounts.items.map((account) => {
+      return this.sanitizeProperties<AccountwBalance>(account, ['availableBalance', 'availableBalanceEquivalent']);
     });
 
     return accounts;
@@ -62,10 +55,7 @@ export class CorporateAccountsService extends RequestService {
   async getAccountBalance(user: User, id: string): Promise<AccountBalance> {
     const url = `/${id}/balances`;
     const account = await this.get<AccountBalance>(url, user);
-    return this.sanitizeProperties<AccountBalance>(account, [
-      'availableBalance',
-      'ledgerBalance',
-    ]);
+    return this.sanitizeProperties<AccountBalance>(account, ['availableBalance', 'ledgerBalance']);
   }
 
   async getAccountDetail(user: User, id: string): Promise<AccountDetail> {
@@ -88,18 +78,15 @@ export class CorporateAccountsService extends RequestService {
     if (offset || offset === 0) url += `&offset=${offset}`;
 
     const statement = await this.get<FFDCItems<AccountStatement[]>>(url, user);
-    statement.items = statement.items.map(transaction => {
-      return this.sanitizeProperties<AccountStatement>(transaction, [
-        'amount',
-        'balance',
-      ]);
+    statement.items = statement.items.map((transaction) => {
+      return this.sanitizeProperties<AccountStatement>(transaction, ['amount', 'balance']);
     });
     return statement;
   }
 
   private sanitizeProperties<T>(object: Object, props: string[]) {
     const newObj = { ...object };
-    props.forEach(property => {
+    props.forEach((property) => {
       newObj[property] = this.sanitizeNumber(object[property]);
     });
     return newObj as T;

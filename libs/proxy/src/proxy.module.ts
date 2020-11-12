@@ -4,16 +4,8 @@ import * as queryString from 'querystring';
 import { concatPath } from './utils';
 import { ProxyService } from './services';
 import { ProxyController } from './controllers';
-import {
-  defaultProxyOptions,
-  PROXY_MODULE_OPTIONS,
-  HTTP_PROXY,
-} from './proxy.constants';
-import {
-  ProxyModuleOptions,
-  ProxyModuleAsyncOptions,
-  ProxyModuleOptionsFactory,
-} from './interfaces';
+import { defaultProxyOptions, PROXY_MODULE_OPTIONS, HTTP_PROXY } from './proxy.constants';
+import { ProxyModuleOptions, ProxyModuleAsyncOptions, ProxyModuleOptionsFactory } from './interfaces';
 
 const proxyFactory = {
   provide: HTTP_PROXY,
@@ -24,7 +16,7 @@ const proxyFactory = {
       ...options.config,
     });
 
-    proxy.on('proxyReq', function(proxyReq, req, res, options) {
+    proxy.on('proxyReq', function (proxyReq, req, res, options) {
       const url = concatPath(proxyReq.getHeader('host'), req.url);
       logger.log(`Sending ${req.method} ${url}`, 'Proxy');
 
@@ -49,7 +41,7 @@ const proxyFactory = {
       }
     });
 
-    proxy.on('proxyRes', function(proxyRes, req, res) {
+    proxy.on('proxyRes', function (proxyRes, req, res) {
       const url = concatPath(proxyRes.req.getHeader('host'), req.url);
       logger.log(`Received ${req.method} ${url}`, 'Proxy');
     });
@@ -83,9 +75,7 @@ export class ProxyModule {
     };
   }
 
-  private static createAsyncProviders(
-    options: ProxyModuleAsyncOptions,
-  ): Provider[] {
+  private static createAsyncProviders(options: ProxyModuleAsyncOptions): Provider[] {
     if (options.useExisting || options.useFactory) {
       return [this.createAsyncOptionsProvider(options)];
     }
@@ -98,9 +88,7 @@ export class ProxyModule {
     ];
   }
 
-  private static createAsyncOptionsProvider(
-    options: ProxyModuleAsyncOptions,
-  ): Provider {
+  private static createAsyncOptionsProvider(options: ProxyModuleAsyncOptions): Provider {
     if (options.useFactory) {
       return {
         provide: PROXY_MODULE_OPTIONS,
@@ -110,8 +98,7 @@ export class ProxyModule {
     }
     return {
       provide: PROXY_MODULE_OPTIONS,
-      useFactory: async (optionsFactory: ProxyModuleOptionsFactory) =>
-        await optionsFactory.createModuleConfig(),
+      useFactory: async (optionsFactory: ProxyModuleOptionsFactory) => await optionsFactory.createModuleConfig(),
       inject: [options.useExisting || options.useClass],
     };
   }

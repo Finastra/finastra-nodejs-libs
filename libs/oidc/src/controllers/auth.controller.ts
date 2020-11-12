@@ -3,6 +3,8 @@ import { Response, Request } from 'express';
 import { Public } from '../decorators/public.decorator';
 import { OidcService } from '../services';
 import { isAvailableRouteForMultitenant } from '../decorators';
+import { UserInfo } from '../interfaces';
+import { UserinfoResponse } from 'openid-client';
 
 @isAvailableRouteForMultitenant(false)
 @Controller()
@@ -10,29 +12,25 @@ export class AuthController {
   constructor(public oidcService: OidcService) {}
 
   @Get('/user')
-  user(@Req() req) {
-    return req.user.userinfo;
+  user(@Req() req: Request): UserInfo | UserinfoResponse {
+    if (req.user) {
+      return req.user['userinfo'];
+    }
+
+    return {
+      isAuthenticated: false,
+    };
   }
 
   @Public()
   @Get('/login')
-  login(
-    @Req() req: Request,
-    @Res() res: Response,
-    @Next() next: Function,
-    @Param() params,
-  ) {
+  login(@Req() req: Request, @Res() res: Response, @Next() next: Function, @Param() params) {
     this.oidcService.login(req, res, next, params);
   }
 
   @Public()
   @Get('/login/callback')
-  loginCallback(
-    @Req() req: Request,
-    @Res() res: Response,
-    @Next() next: Function,
-    @Param() params,
-  ) {
+  loginCallback(@Req() req: Request, @Res() res: Response, @Next() next: Function, @Param() params) {
     this.oidcService.login(req, res, next, params);
   }
 
@@ -43,13 +41,13 @@ export class AuthController {
   }
 
   @Get('/refresh-token')
-  refreshTokens(@Req() req, @Res() res, @Next() next: Function) {
+  refreshTokens(@Req() req: Request, @Res() res, @Next() next: Function) {
     this.oidcService.refreshTokens(req, res, next);
   }
 
   @Public()
   @Get('/loggedout')
-  loggedOut(@Req() req, @Res() res: Response, @Param() params) {
+  loggedOut(@Req() req: Request, @Res() res: Response, @Param() params) {
     this.oidcService.loggedOut(req, res, params);
   }
 }

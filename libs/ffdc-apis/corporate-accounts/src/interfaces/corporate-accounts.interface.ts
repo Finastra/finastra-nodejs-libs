@@ -5,17 +5,12 @@ export interface CorpAccountsModuleOptions {
 }
 
 export interface CorpAccountsModuleOptionsFactory {
-  createModuleConfig():
-    | Promise<CorpAccountsModuleOptions>
-    | CorpAccountsModuleOptions;
+  createModuleConfig(): Promise<CorpAccountsModuleOptions> | CorpAccountsModuleOptions;
 }
 
-export interface CorpAccountsModuleAsyncOptions
-  extends Pick<ModuleMetadata, 'imports'> {
+export interface CorpAccountsModuleAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
   useExisting?: Type<CorpAccountsModuleOptionsFactory>;
   useClass?: Type<CorpAccountsModuleOptionsFactory>;
-  useFactory?: (
-    ...args: any[]
-  ) => Promise<CorpAccountsModuleOptions> | CorpAccountsModuleOptions;
+  useFactory?: (...args: any[]) => Promise<CorpAccountsModuleOptions> | CorpAccountsModuleOptions;
   inject?: any[];
 }

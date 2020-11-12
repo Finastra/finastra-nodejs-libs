@@ -1,8 +1,7 @@
 import { createMock } from '@golevelup/nestjs-testing';
+import { Test, TestingModule } from '@nestjs/testing';
 import { Request, Response } from 'express';
-import { TestingModule, Test } from '@nestjs/testing';
 import { LoginMiddleware } from './login.middleware';
-const utils = require('../utils');
 
 describe('Login Middleware', () => {
   let middleware: LoginMiddleware;

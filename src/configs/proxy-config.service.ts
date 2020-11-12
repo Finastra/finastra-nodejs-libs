@@ -1,9 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { Injectable } from '@nestjs/common';
-import {
-  ProxyModuleOptions,
-  ProxyModuleOptionsFactory,
-} from '@ffdc/nestjs-proxy';
+import { ProxyModuleOptions, ProxyModuleOptionsFactory } from '@ffdc/nestjs-proxy';
 
 @Injectable()
 export class ProxyConfigService implements ProxyModuleOptionsFactory {

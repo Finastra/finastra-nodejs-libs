@@ -12,11 +12,7 @@ export function concatPath(...args: any[]) {
       continue;
     }
     path += arguments[i];
-    if (
-      i < arguments.length - 1 &&
-      !this.isAbsolute(arguments[i + 1]) &&
-      !endsWith(path, '/')
-    ) {
+    if (i < arguments.length - 1 && !this.isAbsolute(arguments[i + 1]) && !endsWith(path, '/')) {
       path += '/';
     }
   }

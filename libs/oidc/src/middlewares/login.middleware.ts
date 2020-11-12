@@ -4,8 +4,6 @@ import * as cookie from 'cookie';
 
 @Injectable()
 export class LoginMiddleware implements NestMiddleware {
-  options = {};
-
   async use(@Request() req, @Res() res, @Next() next) {
     const cookies = req.headers.cookie ? cookie.parse(req.headers.cookie) : {};
     const sessionState = cookies.SESSION_STATE;

@@ -34,9 +34,7 @@ describe('CorporateAccountsService', () => {
   describe('getAccounts', () => {
     it('should make a request', async () => {
       const mockAccounts = [];
-      jest
-        .spyOn(axios, 'request')
-        .mockReturnValue(Promise.resolve({ data: mockAccounts }));
+      jest.spyOn(axios, 'request').mockReturnValue(Promise.resolve({ data: mockAccounts }));
       expect(await service.getAccounts(user, 10, 0)).toBe(mockAccounts);
     });
   });
@@ -56,21 +54,10 @@ describe('CorporateAccountsService', () => {
           },
         }),
       );
-      let accounts = await service.getAccountsDetails(
-        user,
-        AccountType.CURRENT,
-        10,
-        0,
-      );
+      let accounts = await service.getAccountsDetails(user, AccountType.CURRENT, 10, 0);
       expect(accounts.items[0].availableBalance).toBe('55456.72');
 
-      accounts = await service.getAccountsDetails(
-        user,
-        AccountType.CURRENT,
-        10,
-        0,
-        'EUR',
-      );
+      accounts = await service.getAccountsDetails(user, AccountType.CURRENT, 10, 0, 'EUR');
       expect(accounts.items[0].availableBalanceEquivalent).toBe('55456.72');
     });
   });
@@ -81,24 +68,16 @@ describe('CorporateAccountsService', () => {
         availableBalance: '123',
         ledgerBalance: '456',
       };
-      jest
-        .spyOn(axios, 'request')
-        .mockReturnValue(Promise.resolve({ data: mockAccount }));
-      expect(await service.getAccountBalance(user, '123')).toStrictEqual(
-        mockAccount,
-      );
+      jest.spyOn(axios, 'request').mockReturnValue(Promise.resolve({ data: mockAccount }));
+      expect(await service.getAccountBalance(user, '123')).toStrictEqual(mockAccount);
     });
   });
 
   describe('getAccountDetail', () => {
     it('should make a request', async () => {
       const mockAccount = {};
-      jest
-        .spyOn(axios, 'request')
-        .mockReturnValue(Promise.resolve({ data: mockAccount }));
-      expect(await service.getAccountDetail(user, '123')).toStrictEqual(
-        mockAccount,
-      );
+      jest.spyOn(axios, 'request').mockReturnValue(Promise.resolve({ data: mockAccount }));
+      expect(await service.getAccountDetail(user, '123')).toStrictEqual(mockAccount);
     });
   });
 
@@ -117,24 +96,10 @@ describe('CorporateAccountsService', () => {
           },
         }),
       );
-      let statement = await service.getAccountStatement(
-        user,
-        '123',
-        'fromDate',
-        'toDate',
-        10,
-        0,
-      );
+      let statement = await service.getAccountStatement(user, '123', 'fromDate', 'toDate', 10, 0);
       expect(statement.items).toStrictEqual(mockStatement);
 
-      statement = await service.getAccountStatement(
-        user,
-        '123',
-        'fromDate',
-        'toDate',
-        undefined,
-        undefined,
-      );
+      statement = await service.getAccountStatement(user, '123', 'fromDate', 'toDate', undefined, undefined);
       expect(statement.items).toStrictEqual(mockStatement);
     });
   });

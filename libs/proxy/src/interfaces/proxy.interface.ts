@@ -16,12 +16,9 @@ export interface ProxyModuleOptionsFactory {
   createModuleConfig(): Promise<ProxyModuleOptions> | ProxyModuleOptions;
 }
 
-export interface ProxyModuleAsyncOptions
-  extends Pick<ModuleMetadata, 'imports'> {
+export interface ProxyModuleAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
   useExisting?: Type<ProxyModuleOptionsFactory>;
   useClass?: Type<ProxyModuleOptionsFactory>;
-  useFactory?: (
-    ...args: any[]
-  ) => Promise<ProxyModuleOptions> | ProxyModuleOptions;
+  useFactory?: (...args: any[]) => Promise<ProxyModuleOptions> | ProxyModuleOptions;
   inject?: any[];
 }

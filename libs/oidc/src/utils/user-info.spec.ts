@@ -1,10 +1,6 @@
 import { getUserInfo } from './user-info';
 import { JWKS } from 'jose';
-import {
-  MOCK_OIDC_MODULE_OPTIONS,
-  MOCK_CLIENT_INSTANCE,
-  MOCK_TRUST_ISSUER,
-} from '../mocks';
+import { MOCK_OIDC_MODULE_OPTIONS, MOCK_CLIENT_INSTANCE, MOCK_TRUST_ISSUER } from '../mocks';
 import { UserInfoMethod } from '../interfaces';
 import { OidcService } from '../services';
 
@@ -26,16 +22,18 @@ describe('OidcStrategy', () => {
   describe('getUserInfo', () => {
     it('should return user info with token user info method', async () => {
       service.options.userInfoMethod = UserInfoMethod.token;
-      service.options.userInfoCallback = userId => {
+      service.options.userInfoCallback = (userId) => {
         return {
           username: userId,
           groups: ['admin'],
         };
       };
-      expect(await getUserInfo(MOCK_ACCESS_TOKEN, service, idpKey)).toEqual({
-        username: 'John Doe',
-        groups: ['admin'],
-      });
+      expect(await getUserInfo(MOCK_ACCESS_TOKEN, service, idpKey)).toEqual(
+        expect.objectContaining({
+          username: 'John Doe',
+          groups: ['admin'],
+        }),
+      );
     });
 
     it('should return user info with remote user info method', async () => {
@@ -48,7 +46,7 @@ describe('OidcStrategy', () => {
           }),
         );
       };
-      service.options.userInfoCallback = userId => {
+      service.options.userInfoCallback = (userId) => {
         return {
           username: userId,
           groups: ['admin'],
@@ -67,9 +65,11 @@ describe('OidcStrategy', () => {
       service.idpInfos[idpKey].client.userinfo = () => {
         return new Promise((resolve, reject) => reject('no user info'));
       };
-      expect(await getUserInfo(MOCK_ACCESS_TOKEN, service, idpKey)).toEqual({
-        username: '1234567890',
-      });
+      expect(await getUserInfo(MOCK_ACCESS_TOKEN, service, idpKey)).toEqual(
+        expect.objectContaining({
+          username: '1234567890',
+        }),
+      );
     });
   });
 });

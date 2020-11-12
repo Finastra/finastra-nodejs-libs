@@ -32,20 +32,12 @@ export class ProxyService {
 
     if (serviceId) {
       const services = new Map(
-        this.options.services
-          ? this.options.services.map(service => [service.id, service])
-          : [],
+        this.options.services ? this.options.services.map((service) => [service.id, service]) : [],
       );
       if (services.has(serviceId)) {
         const service = services.get(serviceId);
         const baseUrl = service.url;
-        return this.doProxy(
-          req,
-          res,
-          target ? concatPath(baseUrl, prefix, target) : baseUrl,
-          token,
-          service.config,
-        );
+        return this.doProxy(req, res, target ? concatPath(baseUrl, prefix, target) : baseUrl, token, service.config);
       } else {
         const error = `Could not find serviceId ${serviceId}`;
         this.logger.warn(error);
@@ -84,12 +76,10 @@ export class ProxyService {
       ...(options && options.headers),
     }; // To deep extend headers
 
-    this.proxy.web(req, res, requestOptions, err => {
+    this.proxy.web(req, res, requestOptions, (err) => {
       if (err.code === 'ECONNRESET') return;
 
-      this.logger.error(
-        `Error ${err.code} while proxying ${req.method} ${req.url}`,
-      );
+      this.logger.error(`Error ${err.code} while proxying ${req.method} ${req.url}`);
 
       res.writeHead(500, {
         'Content-Type': 'text/plain',

@@ -8,10 +8,10 @@ export class CatsService {
   async findAll(): Promise<Cat[]> {
     return [
       {
-        breed:'Cat',
+        breed: 'Cat',
         name: 'Garfield',
-        age: 12
-      }
+        age: 12,
+      },
     ];
   }
 }
