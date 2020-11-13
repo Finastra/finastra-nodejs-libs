@@ -11,6 +11,7 @@ import { UserinfoResponse } from 'openid-client';
 export class AuthController {
   constructor(public oidcService: OidcService) {}
 
+  @Public()
   @Get('/user')
   user(@Req() req: Request): UserInfo | UserinfoResponse {
     if (req.user) {

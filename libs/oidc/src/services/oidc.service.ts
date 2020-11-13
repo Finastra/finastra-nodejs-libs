@@ -122,13 +122,9 @@ export class OidcService implements OnModuleInit {
   }
 
   async logout(@Req() req: Request, @Res() res: Response, @Param() params) {
-    if (!req.isAuthenticated()) {
-      res.sendStatus(404);
-      return;
-    }
     const id_token = req.user ? req.user['id_token'] : undefined;
     req.logout();
-    req.session.destroy(async (error: any) => {
+    req.session.destroy(async () => {
       const end_session_endpoint = this.idpInfos[this.getIdpInfosKey(params.tenantId, params.channelType)].trustIssuer
         .metadata.end_session_endpoint;
 
@@ -179,8 +175,11 @@ export class OidcService implements OnModuleInit {
         : params.tenantId && params.channelType
         ? `/${params.tenantId}/${params.channelType}`
         : '';
-    const postLogoutUri = this.options.postLogoutUri || 'login';
-    res.send(data.replace('rootUrl', `${prefix}/${postLogoutUri}`));
+    let postLogoutUri = this.options.postLogoutUri || '/login';
+    if (!postLogoutUri.startsWith('/')) {
+      postLogoutUri = `/${postLogoutUri}`;
+    }
+    res.send(data.replace('rootUrl', `${prefix}${postLogoutUri}`));
   }
 
   tenantSwitchWarn(@Res() res: Response, @Param() params) {
