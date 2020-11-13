@@ -199,12 +199,6 @@ describe('OidcService', () => {
       jest.clearAllMocks();
     });
 
-    it('should send 404 if the user is not authenticated', async () => {
-      req.isAuthenticated = jest.fn().mockReturnValue(false);
-      await service.logout(req, res, params);
-      expect(res.statusCode).toEqual(404);
-    });
-
     it('should call logout', () => {
       (req.session as any) = {
         destroy: cb => {

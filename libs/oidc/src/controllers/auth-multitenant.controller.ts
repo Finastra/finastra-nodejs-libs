@@ -33,13 +33,13 @@ export class AuthMultitenantController {
   }
 
   @Get('/refresh-token')
-  async refreshTokens(@Req() req, @Res() res, @Next() next: Function) {
+  async refreshTokens(@Req() req: Request, @Res() res: Response, @Next() next: Function) {
     this.oidcService.refreshTokens(req, res, next);
   }
 
   @Public()
   @Get('/loggedout')
-  loggedOut(@Req() req, @Res() res: Response, @Param() params) {
+  loggedOut(@Req() req: Request, @Res() res: Response, @Param() params) {
     this.oidcService.loggedOut(req, res, params);
   }
 }
