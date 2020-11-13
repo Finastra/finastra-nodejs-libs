@@ -1,8 +1,8 @@
 import { Logger } from '@nestjs/common';
-import { UserInfo, UserInfoMethod } from '../interfaces';
 import { JWT } from 'jose';
-import { OidcService } from '../services';
 import { UserinfoResponse } from 'openid-client';
+import { UserInfo, UserInfoMapping, UserInfoMethod } from '../interfaces';
+import { OidcService } from '../services';
 
 const logger = new Logger('UserInfo');
 
@@ -12,7 +12,7 @@ export async function getUserInfo(
   idpKey: string,
 ): Promise<UserInfo | UserinfoResponse> {
   let userInfoData = await (oidcService.options.userInfoMethod === UserInfoMethod.token
-    ? userInfo(token)
+    ? userInfo(token, oidcService.options.userInfoMapping)
     : userInfoRemote(token, oidcService, idpKey));
   if (oidcService.options.userInfoCallback) {
     userInfoData = {
@@ -34,15 +34,16 @@ async function userInfoRemote(
   } catch (err) {
     const msg = `Error accessing user information`;
     logger.error(msg);
-    return userInfo(token, 'sub', 'sub');
+    return userInfo(token, { id: 'sub', username: 'sub' });
   }
 }
 
-function userInfo(token: string, idMapping?: string, usernameMapping?: string): UserInfo {
+function userInfo(token: string, userInfoMapping?: UserInfoMapping): UserInfo {
   const identity: any = JWT.decode(token);
+  const { id, username } = userInfoMapping || {};
   return {
-    id: identity[idMapping] || identity.sub,
-    username: identity[usernameMapping] || identity.name || identity.username,
+    id: identity[id] || identity.sub,
+    username: identity[username] || identity.name || identity.username,
     tenant: identity.tenant,
     isAuthenticated: true,
   };

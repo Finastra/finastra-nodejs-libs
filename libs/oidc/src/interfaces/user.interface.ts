@@ -7,6 +7,11 @@ export type UserInfo = {
   isAuthenticated: boolean;
 };
 
+export type UserInfoMapping = {
+  id?: string;
+  username?: string;
+};
+
 export type AuthTokens = {
   accessToken: string;
   refreshToken: string;

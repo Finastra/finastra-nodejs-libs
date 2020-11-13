@@ -179,7 +179,8 @@ export class OidcService implements OnModuleInit {
         : params.tenantId && params.channelType
         ? `/${params.tenantId}/${params.channelType}`
         : '';
-    res.send(data.replace('rootUrl', `${prefix}/login`));
+    const postLogoutUri = this.options.postLogoutUri || 'login';
+    res.send(data.replace('rootUrl', `${prefix}/${postLogoutUri}`));
   }
 
   tenantSwitchWarn(@Res() res: Response, @Param() params) {
