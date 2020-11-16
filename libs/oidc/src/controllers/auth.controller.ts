@@ -42,7 +42,7 @@ export class AuthController {
   }
 
   @Get('/refresh-token')
-  refreshTokens(@Req() req: Request, @Res() res, @Next() next: Function) {
+  refreshTokens(@Req() req: Request, @Res() res: Response, @Next() next: Function) {
     this.oidcService.refreshTokens(req, res, next);
   }
 
