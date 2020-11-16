@@ -79,7 +79,16 @@
 
 ### Bugfixes
 
+Strong(er) typing (i.e. all functions that return a value should be typed)
+Prefer `name` to `username` for fallback user name mapping
+Remove 404 response from `/logout` endpoint
+
 ### Features
+
+New user info related type interfaces
+Special treatment of `/user` endpoint: make it public + returns userinfo if authenticated or `{ isGuest: true }` otherwise
+Add config options for custom mappings of user id and user name: `userInfoMapping`
+Add config option for post logout uri redirection: `postLogoutRedirectUri`
 
 
 ## 0.13.1 (2020-10-15)
