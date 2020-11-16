@@ -1,10 +1,11 @@
-import { Controller, Get, Req, Res, Param, Next } from '@nestjs/common';
-import { Response, Request } from 'express';
-import { Public } from '../decorators/public.decorator';
-import { OidcService } from '../services';
-import { isAvailableRouteForMultitenant } from '../decorators';
-import { UserInfo } from '../interfaces';
+import { Controller, Get, Next, Param, Req, Res } from '@nestjs/common';
+import { Request, Response } from 'express';
 import { UserinfoResponse } from 'openid-client';
+import { isAvailableRouteForMultitenant } from '../decorators';
+import { CurrentUser } from '../decorators/current-user.decorator';
+import { Public } from '../decorators/public.decorator';
+import { UserInfo } from '../interfaces';
+import { OidcService } from '../services';
 
 @isAvailableRouteForMultitenant(false)
 @Controller()
@@ -13,14 +14,12 @@ export class AuthController {
 
   @Public()
   @Get('/user')
-  user(@Req() req: Request): UserInfo | UserinfoResponse {
-    if (req.isAuthenticated()) {
-      return req.user['userinfo'];
-    }
-
-    return {
-      isGuest: true,
-    };
+  user(@CurrentUser() user: Express.User): UserInfo | UserinfoResponse {
+    return user
+      ? user['userinfo']
+      : {
+          isGuest: true,
+        };
   }
 
   @Public()

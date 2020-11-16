@@ -35,7 +35,7 @@ describe('AuthController', () => {
   describe('user', () => {
     it('should return userinfo', () => {
       const req = MOCK_REQ;
-      expect(controller.user(req)).toBe(req.user['userinfo']);
+      expect(controller.user(req.user)).toBe(req.user['userinfo']);
     });
   });
 

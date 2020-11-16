@@ -1,9 +1,10 @@
 {
   "name": "@ffdc/nestjs-oidc",
-  "version": "0.13.1",
+  "version": "0.14.0",
   "contributors": [
     "David Boclé <david.bocle@finastra.com>",
-    "Francine Ong <francine.ong@finastra.com>"
+    "Francine Ong <francine.ong@finastra.com>",
+    "Răzvan Bordeanu <razvan.bordeanu@finastra.com>"
   ],
   "main": "index.js",
   "license": "MIT",
