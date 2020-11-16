@@ -1,15 +1,18 @@
 import { ModuleMetadata, Type } from '@nestjs/common/interfaces';
 import { AuthorizationParameters, ClientMetadata, HttpOptions } from 'openid-client';
+import { UserInfoMapping } from './user.interface';
 
 export type OidcModuleOptions = {
   origin: string;
   authParams: AuthorizationParameters;
   redirectUriLogout?: string;
+  postLogoutRedirectUri?: string;
   usePKCE?: boolean;
   defaultHttpOptions?: HttpOptions;
   externalIdps?: ExternalIdps;
   userInfoCallback?: any;
   userInfoMethod?: UserInfoMethod;
+  userInfoMapping?: UserInfoMapping;
 } & XOR<
   {
     issuer: string;

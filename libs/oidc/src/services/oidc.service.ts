@@ -1,16 +1,16 @@
-import { Injectable, Inject, Logger, Res, Next, Param, Req, OnModuleInit, HttpStatus } from '@nestjs/common';
-import { OidcModuleOptions, ChannelType, IdentityProviderOptions } from '../interfaces';
-import { JWKS } from 'jose';
-import { Client, Issuer, custom } from 'openid-client';
-import { OIDC_MODULE_OPTIONS, SESSION_STATE_COOKIE } from '../oidc.constants';
-import { v4 as uuid } from 'uuid';
-import { OidcStrategy } from '../strategies';
-import passport = require('passport');
-import { Response, Request } from 'express';
+import { HttpStatus, Inject, Injectable, Logger, Next, OnModuleInit, Param, Req, Res } from '@nestjs/common';
+import axios from 'axios';
+import { Request, Response } from 'express';
 import { readFileSync } from 'fs';
+import { JWKS } from 'jose';
+import { Client, custom, Issuer } from 'openid-client';
 import { join } from 'path';
 import { stringify } from 'querystring';
-import axios from 'axios';
+import { v4 as uuid } from 'uuid';
+import { ChannelType, IdentityProviderOptions, OidcModuleOptions } from '../interfaces';
+import { OIDC_MODULE_OPTIONS, SESSION_STATE_COOKIE } from '../oidc.constants';
+import { OidcStrategy } from '../strategies';
+import passport = require('passport');
 
 const logger = new Logger('OidcService');
 @Injectable()
@@ -99,7 +99,7 @@ export class OidcService implements OnModuleInit {
     return `${tenantId}.${channelType}`;
   }
 
-  isExpired(expiresAt: number) {
+  isExpired(expiresAt: number): boolean {
     if (expiresAt != null) {
       let remainingTime = expiresAt - Date.now() / 1000;
       return remainingTime <= 0;
@@ -121,14 +121,10 @@ export class OidcService implements OnModuleInit {
     }
   }
 
-  async logout(@Req() req, @Res() res: Response, @Param() params) {
-    if (!req.isAuthenticated()) {
-      res.sendStatus(404);
-      return;
-    }
-    const id_token = req.user ? req.user.id_token : undefined;
+  async logout(@Req() req: Request, @Res() res: Response, @Param() params) {
+    const id_token = req.user ? req.user['id_token'] : undefined;
     req.logout();
-    req.session.destroy(async (error: any) => {
+    req.session.destroy(async () => {
       const end_session_endpoint = this.idpInfos[this.getIdpInfosKey(params.tenantId, params.channelType)].trustIssuer
         .metadata.end_session_endpoint;
 
@@ -153,9 +149,9 @@ export class OidcService implements OnModuleInit {
     });
   }
 
-  async refreshTokens(@Req() req, @Res() res, @Next() next: Function) {
-    const { authTokens } = req.user;
-    authTokens.channel = req.user.userinfo.channel;
+  async refreshTokens(@Req() req: Request, @Res() res: Response, @Next() next: Function) {
+    const authTokens = req.user['authTokens'];
+    authTokens.channel = req.user['userinfo'].channel;
     if (this.isExpired(authTokens.expiresAt)) {
       authTokens.channel = req.user['userinfo'].channel;
       return await this._refreshToken(authTokens)
@@ -179,7 +175,11 @@ export class OidcService implements OnModuleInit {
         : params.tenantId && params.channelType
         ? `/${params.tenantId}/${params.channelType}`
         : '';
-    res.send(data.replace('rootUrl', `${prefix}/login`));
+    let postLogoutRedirectUri = this.options.postLogoutRedirectUri || '/login';
+    if (!postLogoutRedirectUri.startsWith('/')) {
+      postLogoutRedirectUri = `/${postLogoutRedirectUri}`;
+    }
+    res.send(data.replace('rootUrl', `${prefix}${postLogoutRedirectUri}`));
   }
 
   tenantSwitchWarn(@Res() res: Response, @Param() params) {

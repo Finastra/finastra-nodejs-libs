@@ -16,7 +16,7 @@ const proxyFactory = {
       ...options.config,
     });
 
-    proxy.on('proxyReq', function(proxyReq, req, res, options) {
+    proxy.on('proxyReq', function (proxyReq, req, res, options) {
       const url = concatPath(proxyReq.getHeader('host'), req.url);
       logger.log(`Sending ${req.method} ${url}`, 'Proxy');
 
@@ -41,7 +41,7 @@ const proxyFactory = {
       }
     });
 
-    proxy.on('proxyRes', function(proxyRes, req, res) {
+    proxy.on('proxyRes', function (proxyRes, req, res) {
       const url = concatPath(proxyRes.req.getHeader('host'), req.url);
       logger.log(`Received ${req.method} ${url}`, 'Proxy');
     });

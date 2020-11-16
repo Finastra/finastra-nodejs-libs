@@ -1,7 +1,7 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, TokenSet } from 'openid-client';
 import { getUserInfo, authenticateExternalIdps } from '../utils';
-import { ChannelType } from '../interfaces';
+import { ChannelType, OidcUser } from '../interfaces';
 import { OidcService } from '../services';
 
 export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
@@ -16,7 +16,7 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
     this.userInfoCallback = oidcService.options.userInfoCallback;
   }
 
-  async validate(tokenset: TokenSet): Promise<any> {
+  async validate(tokenset: TokenSet): Promise<OidcUser> {
     const externalIdps = await authenticateExternalIdps(this.oidcService.options.externalIdps);
     const id_token = tokenset.id_token;
     let userinfo = await getUserInfo(id_token, this.oidcService, this.idpKey);
@@ -31,7 +31,7 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
       tokenEndpoint: this.oidcService.idpInfos[this.idpKey].trustIssuer.metadata.token_endpoint,
       expiresAt,
     };
-    const user = {
+    const user: OidcUser = {
       id_token,
       userinfo,
       authTokens,

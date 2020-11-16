@@ -5,11 +5,7 @@ Here are some helpers for the [Accounts & Balances APIs](https://developer.fusio
 ## Interfaces for frontend usage
 
 ```typescript
-import {
-  AccountDetail,
-  AccountType,
-  AccountStatement,
-} from '@ffdc/api_corporate-accounts/interfaces';
+import { AccountDetail, AccountType, AccountStatement } from '@ffdc/api_corporate-accounts/interfaces';
 ```
 
 When the importing the interfaces from a frontend only application, be sure to preprend by `/interfaces`.
@@ -34,8 +30,7 @@ export class GqlConfigService implements GqlOptionsFactory {
     return {
       typePaths: ['./node_modules/@ffdc/api_corporate-accounts/**/*.graphql'],
       include: [CorporateAccountsModule],
-      playground:
-        process.env.NODE_ENV === 'production' ? false : playgroundDevOptions,
+      playground: process.env.NODE_ENV === 'production' ? false : playgroundDevOptions,
     };
   }
 }
@@ -66,13 +61,7 @@ export class AppModule {}
 
 ```graphql
 query {
-  accounts(
-    limit: 10
-    offset: 7
-    fromDate: "2018-01-03"
-    toDate: "2020-03-05"
-    statementLimit: 1
-  ) {
+  accounts(limit: 10, offset: 7, fromDate: "2018-01-03", toDate: "2020-03-05", statementLimit: 1) {
     items {
       id
       number
@@ -98,12 +87,7 @@ query {
 
 ```graphql
 query {
-  accountsBalance(
-    accountType: CURRENT
-    equivalentCurrency: "EUR"
-    fromDate: "2018-01-03"
-    toDate: "2020-03-05"
-  ) {
+  accountsBalance(accountType: CURRENT, equivalentCurrency: "EUR", fromDate: "2018-01-03", toDate: "2020-03-05") {
     items {
       id
       type
@@ -157,11 +141,7 @@ query($accountId: ID!) {
 
 ```graphql
 query($accountId: ID!) {
-  accountStatement(
-    id: $accountId
-    fromDate: "2018-01-03"
-    toDate: "2020-03-05"
-  ) {
+  accountStatement(id: $accountId, fromDate: "2018-01-03", toDate: "2020-03-05") {
     items {
       currency
       balance

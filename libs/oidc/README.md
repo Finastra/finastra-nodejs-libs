@@ -57,7 +57,9 @@ export class AppModule {}
 > [defaultHttpOptions](https://github.com/panva/node-openid-client/blob/master/docs/README.md#customizing-http-requests) can be used to customize all options that openid-client sets for all requests. \
 > `externalIdps` is an object where keys are a label for the IDP and the value format is described [here](src\interfaces\oidc-module-options.interface.ts). \
 > During authentication, the application will authenticate to those identity providers and the identity providers information are then forwarded in `userInfoCallback`. So that, you're able to call any API with a valid token. \
-> `userInfoCallback` can be used to customize user information returned in user object on authentication.
+> `userInfoCallback` can be used to customize user information returned in user object on authentication. \
+> `postLogoutRedirectUri` is used to specify custom endpoint to redirect to after logout (default is `/login`). \
+> `userInfoMapping` can be used to map different claims to user id and and user name (defaults mappings are [here](src\utils\user-info.ts)).
 
 ### Example with externalIdps
 

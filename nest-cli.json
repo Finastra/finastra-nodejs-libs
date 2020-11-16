@@ -9,10 +9,7 @@
       "sourceRoot": "libs/oidc",
       "compilerOptions": {
         "tsConfigPath": "libs/oidc/tsconfig.lib.json",
-        "assets": [
-          "package.json",
-          "README.md"
-        ],
+        "assets": ["package.json", "README.md"],
         "deleteOutDir": true
       }
     },
@@ -23,10 +20,7 @@
       "sourceRoot": "libs/proxy",
       "compilerOptions": {
         "tsConfigPath": "libs/proxy/tsconfig.lib.json",
-        "assets": [
-          "package.json",
-          "README.md"
-        ],
+        "assets": ["package.json", "README.md"],
         "deleteOutDir": true
       }
     },
@@ -37,11 +31,7 @@
       "sourceRoot": "libs/ffdc-apis/corporate-accounts",
       "compilerOptions": {
         "tsConfigPath": "libs/ffdc-apis/corporate-accounts/tsconfig.lib.json",
-        "assets": [
-          "src/corporate-accounts.graphql",
-          "package.json",
-          "README.md"
-        ],
+        "assets": ["src/corporate-accounts.graphql", "package.json", "README.md"],
         "deleteOutDir": true
       }
     }

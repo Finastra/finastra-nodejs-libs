@@ -32,7 +32,10 @@ import { TenantSwitchController } from './controllers';
 })
 export class OidcModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(UserMiddleware).forRoutes({ path: '*', method: RequestMethod.ALL });
+    consumer
+      .apply(UserMiddleware)
+      .exclude({ path: '/user', method: RequestMethod.GET })
+      .forRoutes({ path: '*', method: RequestMethod.ALL });
 
     consumer
       .apply(LoginMiddleware)
