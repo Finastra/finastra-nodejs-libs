@@ -16,9 +16,7 @@
       "@ffdc/nestjs-proxy": ["libs/proxy/src"],
       "@ffdc/nestjs-proxy/*": ["libs/proxy/src/*"],
       "@ffdc/api_corporate-accounts": ["libs/ffdc-apis/corporate-accounts/src"],
-      "@ffdc/api_corporate-accounts/*": [
-        "libs/ffdc-apis/corporate-accounts/src/*"
-      ]
+      "@ffdc/api_corporate-accounts/*": ["libs/ffdc-apis/corporate-accounts/src/*"]
     }
   },
   "exclude": ["node_modules", "dist"]

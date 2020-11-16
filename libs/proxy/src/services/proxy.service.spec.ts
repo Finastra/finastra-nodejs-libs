@@ -116,9 +116,7 @@ describe('ProxyService', () => {
 
       const spy = jest.spyOn(proxy, 'web');
       service.proxyRequest(req, res);
-      expect((spy.mock.calls[0][2] as any).headers).toHaveProperty(
-        'authorization',
-      );
+      expect((spy.mock.calls[0][2] as any).headers).toHaveProperty('authorization');
     });
 
     it('should send a 500 if error comes from proxy', done => {
@@ -129,15 +127,13 @@ describe('ProxyService', () => {
         target: services[0].url,
       };
 
-      proxy.web = jest
-        .fn()
-        .mockImplementation(async (req, res, options, callback) => {
-          callback({ code: '' });
-          expect(res.writeHead).toHaveBeenCalledWith(500, {
-            'Content-Type': 'text/plain',
-          });
-          done();
+      proxy.web = jest.fn().mockImplementation(async (req, res, options, callback) => {
+        callback({ code: '' });
+        expect(res.writeHead).toHaveBeenCalledWith(500, {
+          'Content-Type': 'text/plain',
         });
+        done();
+      });
       service.proxyRequest(req, res);
     });
 
@@ -149,14 +145,12 @@ describe('ProxyService', () => {
         target: services[0].url,
       };
 
-      proxy.web = jest
-        .fn()
-        .mockImplementation(async (req, res, options, callback) => {
-          expect(() => {
-            callback({ code: 'ECONNRESET' });
-          }).not.toThrow();
-          done();
-        });
+      proxy.web = jest.fn().mockImplementation(async (req, res, options, callback) => {
+        expect(() => {
+          callback({ code: 'ECONNRESET' });
+        }).not.toThrow();
+        done();
+      });
       service.proxyRequest(req, res);
     });
 
@@ -176,9 +170,7 @@ describe('ProxyService', () => {
 
       const spy = jest.spyOn(proxy, 'web');
       service.proxyRequest(req, res, MOCK_PARAMS);
-      expect((spy.mock.calls[0][2] as any).headers).toHaveProperty(
-        'authorization',
-      );
+      expect((spy.mock.calls[0][2] as any).headers).toHaveProperty('authorization');
     });
   });
 });

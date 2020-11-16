@@ -7,11 +7,7 @@ export class CorporateAccountResolver {
   constructor(private readonly accountsService: CorporateAccountsService) {}
 
   @Query()
-  async accounts(
-    @CurrentUser() user: any,
-    @Args('limit') limit = 10,
-    @Args('offset') offset = 0,
-  ) {
+  async accounts(@CurrentUser() user: any, @Args('limit') limit = 10, @Args('offset') offset = 0) {
     return this.accountsService.getAccounts(user, limit, offset);
   }
 }

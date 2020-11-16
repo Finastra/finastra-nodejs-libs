@@ -1,20 +1,9 @@
-import {
-  Module,
-  DynamicModule,
-  Provider,
-  NestModule,
-  MiddlewareConsumer,
-  RequestMethod,
-} from '@nestjs/common';
+import { Module, DynamicModule, Provider, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
 import { SessionSerializer } from './utils/session.serializer';
 import { AuthController } from './controllers/auth.controller';
 import { AuthMultitenantController } from './controllers/auth-multitenant.controller';
 import { JwtModule } from '@nestjs/jwt';
-import {
-  OidcModuleOptions,
-  OidcModuleAsyncOptions,
-  OidcOptionsFactory,
-} from './interfaces';
+import { OidcModuleOptions, OidcModuleAsyncOptions, OidcOptionsFactory } from './interfaces';
 import { OIDC_MODULE_OPTIONS } from './oidc.constants';
 import { mergeDefaults } from './utils';
 import { UserMiddleware, LoginMiddleware } from './middlewares';
@@ -26,11 +15,7 @@ import { TenantSwitchController } from './controllers';
 
 @Module({
   imports: [JwtModule.register({})],
-  controllers: [
-    AuthController,
-    AuthMultitenantController,
-    TenantSwitchController,
-  ],
+  controllers: [AuthController, AuthMultitenantController, TenantSwitchController],
   providers: [
     SessionSerializer,
     TokenGuard,
@@ -49,6 +34,7 @@ export class OidcModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(UserMiddleware)
+      .exclude({ path: '/user', method: RequestMethod.GET })
       .forRoutes({ path: '*', method: RequestMethod.ALL });
 
     consumer
@@ -80,9 +66,7 @@ export class OidcModule implements NestModule {
     };
   }
 
-  private static createAsyncProviders(
-    options: OidcModuleAsyncOptions,
-  ): Provider[] {
+  private static createAsyncProviders(options: OidcModuleAsyncOptions): Provider[] {
     if (options.useExisting || options.useFactory) {
       return [this.createAsyncOptionsProvider(options)];
     }
@@ -95,14 +79,11 @@ export class OidcModule implements NestModule {
     ];
   }
 
-  private static createAsyncOptionsProvider(
-    options: OidcModuleAsyncOptions,
-  ): Provider {
+  private static createAsyncOptionsProvider(options: OidcModuleAsyncOptions): Provider {
     if (options.useFactory) {
       return {
         provide: OIDC_MODULE_OPTIONS,
-        useFactory: async (...args: any[]) =>
-          mergeDefaults(await options.useFactory(...args)),
+        useFactory: async (...args: any[]) => mergeDefaults(await options.useFactory(...args)),
         inject: options.inject || [],
       };
     }

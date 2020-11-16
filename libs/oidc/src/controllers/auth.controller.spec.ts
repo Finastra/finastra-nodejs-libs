@@ -35,7 +35,7 @@ describe('AuthController', () => {
   describe('user', () => {
     it('should return userinfo', () => {
       const req = MOCK_REQ;
-      expect(controller.user(req)).toBe(req.user['userinfo']);
+      expect(controller.user(req.user)).toBe(req.user['userinfo']);
     });
   });
 
@@ -43,30 +43,15 @@ describe('AuthController', () => {
     it('should call oidcService login', async () => {
       const spy = jest.spyOn(oidcService, 'login').mockReturnThis();
       await controller.login(MOCK_REQ, MOCK_RES, MOCK_NEXT, MOCK_PARAMS);
-      expect(spy).toHaveBeenCalledWith(
-        MOCK_REQ,
-        MOCK_RES,
-        MOCK_NEXT,
-        MOCK_PARAMS,
-      );
+      expect(spy).toHaveBeenCalledWith(MOCK_REQ, MOCK_RES, MOCK_NEXT, MOCK_PARAMS);
     });
   });
 
   describe('loginCallback', () => {
     it('should call oidcService login', async () => {
       const spy = jest.spyOn(oidcService, 'login').mockReturnThis();
-      await controller.loginCallback(
-        MOCK_REQ,
-        MOCK_RES,
-        MOCK_NEXT,
-        MOCK_PARAMS,
-      );
-      expect(spy).toHaveBeenCalledWith(
-        MOCK_REQ,
-        MOCK_RES,
-        MOCK_NEXT,
-        MOCK_PARAMS,
-      );
+      await controller.loginCallback(MOCK_REQ, MOCK_RES, MOCK_NEXT, MOCK_PARAMS);
+      expect(spy).toHaveBeenCalledWith(MOCK_REQ, MOCK_RES, MOCK_NEXT, MOCK_PARAMS);
     });
   });
 

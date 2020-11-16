@@ -1,16 +1,15 @@
 import { getUserInfo } from './user-info';
 import { JWKS } from 'jose';
-import {
-  MOCK_OIDC_MODULE_OPTIONS,
-  MOCK_CLIENT_INSTANCE,
-  MOCK_TRUST_ISSUER,
-} from '../mocks';
+import { MOCK_OIDC_MODULE_OPTIONS, MOCK_CLIENT_INSTANCE, MOCK_TRUST_ISSUER } from '../mocks';
 import { UserInfoMethod } from '../interfaces';
 import { OidcService } from '../services';
 
 describe('OidcStrategy', () => {
   const MOCK_ACCESS_TOKEN =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
+
+  const MOCK_ACCESS_TOKEN_ONLY_SUB =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dozjgNryP4J3jVmNHl0w5N_XgL0n3I9PlFUP0THsR8U';
 
   const idpKey = 'idpKey';
   let service;
@@ -32,10 +31,12 @@ describe('OidcStrategy', () => {
           groups: ['admin'],
         };
       };
-      expect(await getUserInfo(MOCK_ACCESS_TOKEN, service, idpKey)).toEqual({
-        username: 'John Doe',
-        groups: ['admin'],
-      });
+      expect(await getUserInfo(MOCK_ACCESS_TOKEN, service, idpKey)).toEqual(
+        expect.objectContaining({
+          username: 'John Doe',
+          groups: ['admin'],
+        }),
+      );
     });
 
     it('should return user info with remote user info method', async () => {
@@ -67,9 +68,11 @@ describe('OidcStrategy', () => {
       service.idpInfos[idpKey].client.userinfo = () => {
         return new Promise((resolve, reject) => reject('no user info'));
       };
-      expect(await getUserInfo(MOCK_ACCESS_TOKEN, service, idpKey)).toEqual({
-        username: '1234567890',
-      });
+      expect(await getUserInfo(MOCK_ACCESS_TOKEN_ONLY_SUB, service, idpKey)).toEqual(
+        expect.objectContaining({
+          username: '1234567890',
+        }),
+      );
     });
   });
 });

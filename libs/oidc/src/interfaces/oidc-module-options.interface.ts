@@ -1,28 +1,24 @@
 import { ModuleMetadata, Type } from '@nestjs/common/interfaces';
-import {
-  AuthorizationParameters,
-  ClientMetadata,
-  HttpOptions,
-} from 'openid-client';
+import { AuthorizationParameters, ClientMetadata, HttpOptions } from 'openid-client';
+import { UserInfoMapping } from './user.interface';
 
 export type OidcModuleOptions = {
   origin: string;
   authParams: AuthorizationParameters;
   redirectUriLogout?: string;
+  postLogoutRedirectUri?: string;
   usePKCE?: boolean;
   defaultHttpOptions?: HttpOptions;
   externalIdps?: ExternalIdps;
   userInfoCallback?: any;
   userInfoMethod?: UserInfoMethod;
+  userInfoMapping?: UserInfoMapping;
 } & XOR<
   {
     issuer: string;
     clientMetadata: ClientMetadata;
   },
-  { issuerOrigin: string } & (
-    | { b2c: OidcChannelOptions }
-    | { b2e: OidcChannelOptions }
-  )
+  { issuerOrigin: string } & ({ b2c: OidcChannelOptions } | { b2e: OidcChannelOptions })
 >;
 
 interface OidcChannelOptions {
@@ -30,21 +26,16 @@ interface OidcChannelOptions {
 }
 
 type Without<T, U> = { [P in Exclude<keyof T, keyof U>]?: never };
-type XOR<T, U> = T | U extends object
-  ? (Without<T, U> & U) | (Without<U, T> & T)
-  : T | U;
+type XOR<T, U> = T | U extends object ? (Without<T, U> & U) | (Without<U, T> & T) : T | U;
 
 export interface OidcOptionsFactory {
   createModuleConfig(): Promise<OidcModuleOptions> | OidcModuleOptions;
 }
 
-export interface OidcModuleAsyncOptions
-  extends Pick<ModuleMetadata, 'imports'> {
+export interface OidcModuleAsyncOptions extends Pick<ModuleMetadata, 'imports'> {
   useExisting?: Type<OidcOptionsFactory>;
   useClass?: Type<OidcOptionsFactory>;
-  useFactory?: (
-    ...args: any[]
-  ) => Promise<OidcModuleOptions> | OidcModuleOptions;
+  useFactory?: (...args: any[]) => Promise<OidcModuleOptions> | OidcModuleOptions;
   inject?: any[];
 }
 

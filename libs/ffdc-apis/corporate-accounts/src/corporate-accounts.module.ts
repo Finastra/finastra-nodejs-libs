@@ -50,9 +50,7 @@ export class CorporateAccountsModule {
     };
   }
 
-  private static createAsyncProviders(
-    options: CorpAccountsModuleAsyncOptions,
-  ): Provider[] {
+  private static createAsyncProviders(options: CorpAccountsModuleAsyncOptions): Provider[] {
     if (options.useExisting || options.useFactory) {
       return [this.createAsyncOptionsProvider(options)];
     }
@@ -65,9 +63,7 @@ export class CorporateAccountsModule {
     ];
   }
 
-  private static createAsyncOptionsProvider(
-    options: CorpAccountsModuleAsyncOptions,
-  ): Provider {
+  private static createAsyncOptionsProvider(options: CorpAccountsModuleAsyncOptions): Provider {
     if (options.useFactory) {
       return {
         provide: CORP_ACCOUNTS_MODULE_OPTIONS,
@@ -77,8 +73,7 @@ export class CorporateAccountsModule {
     }
     return {
       provide: CORP_ACCOUNTS_MODULE_OPTIONS,
-      useFactory: async (optionsFactory: CorpAccountsModuleOptionsFactory) =>
-        await optionsFactory.createModuleConfig(),
+      useFactory: async (optionsFactory: CorpAccountsModuleOptionsFactory) => await optionsFactory.createModuleConfig(),
       inject: [options.useExisting || options.useClass],
     };
   }

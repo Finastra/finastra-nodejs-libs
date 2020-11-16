@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Res,
-  Logger,
-  Request as NestRequest,
-  All,
-  Param,
-} from '@nestjs/common';
+import { Controller, Res, Logger, Request as NestRequest, All, Param } from '@nestjs/common';
 import { ProxyService } from '../services';
 import { Response, Request } from 'express';
 
@@ -16,11 +9,7 @@ export class ProxyController {
   constructor(private proxyService: ProxyService) {}
 
   @All('')
-  async proxy(
-    @Res() response: Response,
-    @NestRequest() request: Request,
-    @Param() params,
-  ) {
+  async proxy(@Res() response: Response, @NestRequest() request: Request, @Param() params) {
     try {
       this.proxyService.proxyRequest(request, response, params);
     } catch (err) {

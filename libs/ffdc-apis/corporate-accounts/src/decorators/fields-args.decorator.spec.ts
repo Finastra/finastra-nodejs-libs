@@ -47,9 +47,7 @@ describe('getArgsFromQuery', () => {
       fromDate: '2018-01-03',
       toDate: '2020-03-05',
     };
-    expect(getArgsFromQuery(sampleQuery, 'accountsBalance')).toStrictEqual(
-      args,
-    );
+    expect(getArgsFromQuery(sampleQuery, 'accountsBalance')).toStrictEqual(args);
   });
 
   it('should return nothing if bad resolver', () => {

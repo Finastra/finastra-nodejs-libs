@@ -2,17 +2,12 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
-export const FieldsArgs = createParamDecorator(
-  (resolver: string, context: ExecutionContext) => {
-    const ctx = GqlExecutionContext.create(context);
-    return getArgsFromQuery(ctx.getContext().req.body.query, resolver);
-  },
-);
+export const FieldsArgs = createParamDecorator((resolver: string, context: ExecutionContext) => {
+  const ctx = GqlExecutionContext.create(context);
+  return getArgsFromQuery(ctx.getContext().req.body.query, resolver);
+});
 
-export function getArgsFromQuery(
-  query: string,
-  resolver: string,
-): { [key: string]: string } {
+export function getArgsFromQuery(query: string, resolver: string): { [key: string]: string } {
   const matches = new RegExp(`${resolver}\((.*)\)`, 'g').exec(query);
   if (!matches) return {};
 

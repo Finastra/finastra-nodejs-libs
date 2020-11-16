@@ -1,10 +1,5 @@
 import { OidcService } from './oidc.service';
-import {
-  MOCK_OIDC_MODULE_OPTIONS,
-  MOCK_ISSUER_INSTANCE,
-  MOCK_CLIENT_INSTANCE,
-  MOCK_TRUST_ISSUER,
-} from '../mocks';
+import { MOCK_OIDC_MODULE_OPTIONS, MOCK_ISSUER_INSTANCE, MOCK_CLIENT_INSTANCE, MOCK_TRUST_ISSUER } from '../mocks';
 import { OidcModuleOptions, ChannelType } from '../interfaces';
 import { Issuer } from 'openid-client';
 import { createRequest, createResponse } from 'node-mocks-http';
@@ -22,9 +17,7 @@ describe('OidcService', () => {
     beforeEach(async () => {
       const IssuerMock = MOCK_ISSUER_INSTANCE;
       IssuerMock.keystore = jest.fn();
-      jest
-        .spyOn(Issuer, 'discover')
-        .mockImplementation(() => Promise.resolve(IssuerMock));
+      jest.spyOn(Issuer, 'discover').mockImplementation(() => Promise.resolve(IssuerMock));
     });
     it('should create strategy when app is single tenant', async () => {
       let strategy = await service.createStrategy();
@@ -69,11 +62,9 @@ describe('OidcService', () => {
       IssuerMock.keystore = jest.fn();
       jest.spyOn(Issuer, 'discover').mockImplementation(() => Promise.reject());
 
-      let mockExit = jest
-        .spyOn(process, 'exit')
-        .mockImplementation((code?: number): never => {
-          return undefined as never;
-        });
+      let mockExit = jest.spyOn(process, 'exit').mockImplementation((code?: number): never => {
+        return undefined as never;
+      });
       service.isMultitenant = false;
       await service.createStrategy('tenant', ChannelType.b2c);
       expect(mockExit).toHaveBeenCalled();
@@ -84,9 +75,7 @@ describe('OidcService', () => {
       IssuerMock.keystore = jest.fn();
       jest.spyOn(Issuer, 'discover').mockImplementation(() => Promise.reject());
       service.isMultitenant = true;
-      await expect(
-        service.createStrategy('tenant', ChannelType.b2c),
-      ).rejects.toThrow();
+      await expect(service.createStrategy('tenant', ChannelType.b2c)).rejects.toThrow();
     });
   });
 
@@ -95,18 +84,14 @@ describe('OidcService', () => {
       jest.clearAllMocks();
     });
     it('should do nothing when app is multitenant', async () => {
-      const createStrategySpy = jest
-        .spyOn(service, 'createStrategy')
-        .mockReturnValue(Promise.resolve({}));
+      const createStrategySpy = jest.spyOn(service, 'createStrategy').mockReturnValue(Promise.resolve({}));
       service.isMultitenant = true;
       service.onModuleInit();
       expect(createStrategySpy).toHaveBeenCalledTimes(0);
     });
 
     it('should call createStrategy when app is single tenant', async () => {
-      const spy = jest
-        .spyOn(service, 'createStrategy')
-        .mockReturnValue(Promise.resolve({}));
+      const spy = jest.spyOn(service, 'createStrategy').mockReturnValue(Promise.resolve({}));
       service.isMultitenant = false;
       service.onModuleInit();
       expect(spy).toHaveBeenCalled();
@@ -154,11 +139,9 @@ describe('OidcService', () => {
 
     it('should call passport authenticate for single tenant login', async () => {
       service.strategy = new OidcStrategy(service, idpKey);
-      const spy = jest
-        .spyOn(passport, 'authenticate')
-        .mockImplementation(() => {
-          return (req, res, next) => {};
-        });
+      const spy = jest.spyOn(passport, 'authenticate').mockImplementation(() => {
+        return (req, res, next) => {};
+      });
       await service.login(req, res, next, params);
       expect(spy).toHaveBeenCalled();
     });
@@ -169,11 +152,9 @@ describe('OidcService', () => {
         tenantId: 'tenant',
         channelType: 'b2c',
       };
-      const spy = jest
-        .spyOn(passport, 'authenticate')
-        .mockImplementation(() => {
-          return (req, res, next) => {};
-        });
+      const spy = jest.spyOn(passport, 'authenticate').mockImplementation(() => {
+        return (req, res, next) => {};
+      });
       await service.login(req, res, next, params);
       expect(spy).toHaveBeenCalled();
     });
@@ -218,12 +199,6 @@ describe('OidcService', () => {
       jest.clearAllMocks();
     });
 
-    it('should send 404 if the user is not authenticated', async () => {
-      req.isAuthenticated = jest.fn().mockReturnValue(false);
-      await service.logout(req, res, params);
-      expect(res.statusCode).toEqual(404);
-    });
-
     it('should call logout', () => {
       (req.session as any) = {
         destroy: cb => {
@@ -240,9 +215,7 @@ describe('OidcService', () => {
       (req.session as any) = {
         destroy: jest.fn().mockImplementation(callback => {
           callback().then(() => {
-            expect(spyResponse).toHaveBeenCalledWith(
-              expect.not.stringContaining('id_token_hint'),
-            );
+            expect(spyResponse).toHaveBeenCalledWith(expect.not.stringContaining('id_token_hint'));
             done();
           });
         }),
@@ -257,9 +230,7 @@ describe('OidcService', () => {
       (req.session as any) = {
         destroy: jest.fn().mockImplementation(callback => {
           callback().then(() => {
-            expect(spyResponse).toHaveBeenCalledWith(
-              expect.stringContaining('id_token_hint'),
-            );
+            expect(spyResponse).toHaveBeenCalledWith(expect.stringContaining('id_token_hint'));
             done();
           });
         }),
@@ -276,9 +247,7 @@ describe('OidcService', () => {
       (req.session as any) = {
         destroy: jest.fn().mockImplementation(callback => {
           callback().then(() => {
-            expect(spyResponse).toHaveBeenCalledWith(
-              expect.stringContaining(mockRedirectLogout),
-            );
+            expect(spyResponse).toHaveBeenCalledWith(expect.stringContaining(mockRedirectLogout));
             done();
           });
         }),
@@ -310,9 +279,7 @@ describe('OidcService', () => {
       (req.session as any) = {
         destroy: jest.fn().mockImplementation(callback => {
           callback().then(() => {
-            expect(spyResponse).toHaveBeenCalledWith(
-              `/${params.tenantId}/${params.channelType}/loggedout`,
-            );
+            expect(spyResponse).toHaveBeenCalledWith(`/${params.tenantId}/${params.channelType}/loggedout`);
             done();
           });
         }),

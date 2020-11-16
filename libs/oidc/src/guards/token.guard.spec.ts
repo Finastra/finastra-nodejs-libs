@@ -63,9 +63,7 @@ describe('OIDCGuard', () => {
       isAuthenticated: () => false,
     });
 
-    await expect(guard.canActivate(context)).rejects.toThrow(
-      UnauthorizedException,
-    );
+    await expect(guard.canActivate(context)).rejects.toThrow(UnauthorizedException);
   });
 
   it('should handle graphQL context', async () => {
@@ -83,9 +81,7 @@ describe('OIDCGuard', () => {
       }),
     );
 
-    await expect(guard.canActivate(context)).rejects.toThrow(
-      UnauthorizedException,
-    );
+    await expect(guard.canActivate(context)).rejects.toThrow(UnauthorizedException);
 
     jest.spyOn(GqlExecutionContext, 'create').mockReturnValue(
       createMock<GqlExecutionContext>({

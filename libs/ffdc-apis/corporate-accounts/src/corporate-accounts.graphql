@@ -23,13 +23,7 @@ type Query {
 
   accountBalance(id: ID!): AccountBalance
 
-  accountStatement(
-    id: ID!
-    fromDate: String!
-    toDate: String!
-    limit: Int
-    offset: Int
-  ): AccountStatementRes
+  accountStatement(id: ID!, fromDate: String!, toDate: String!, limit: Int, offset: Int): AccountStatementRes
 }
 
 interface Account {

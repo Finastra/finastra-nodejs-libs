@@ -1,7 +1,7 @@
 import { OidcModuleOptions } from '../interfaces';
 import { defaultModuleOptions } from '../oidc.constants';
 
-export function mergeDefaults(options: OidcModuleOptions) {
+export function mergeDefaults(options: OidcModuleOptions): OidcModuleOptions {
   const newOptions = {
     ...defaultModuleOptions,
     ...options,
