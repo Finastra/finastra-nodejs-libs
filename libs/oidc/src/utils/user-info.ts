@@ -34,7 +34,7 @@ async function userInfoRemote(
   } catch (err) {
     const msg = `Error accessing user information`;
     logger.error(msg);
-    return userInfo(token, { id: 'sub', username: 'sub' });
+    return userInfo(token);
   }
 }
 
