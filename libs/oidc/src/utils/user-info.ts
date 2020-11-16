@@ -43,7 +43,7 @@ function userInfo(token: string, userInfoMapping?: UserInfoMapping): UserInfo {
   const { id, username } = userInfoMapping || {};
   return {
     id: identity[id] || identity.sub,
-    username: identity[username] || identity.name || identity.username,
+    username: identity[username] || identity.name || identity.username || identity.sub,
     tenant: identity.tenant,
   };
 }
