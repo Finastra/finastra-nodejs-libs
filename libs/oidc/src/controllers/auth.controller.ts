@@ -14,12 +14,12 @@ export class AuthController {
   @Public()
   @Get('/user')
   user(@Req() req: Request): UserInfo | UserinfoResponse {
-    if (req.user) {
+    if (req.isAuthenticated()) {
       return req.user['userinfo'];
     }
 
     return {
-      isAuthenticated: false,
+      isGuest: true,
     };
   }
 

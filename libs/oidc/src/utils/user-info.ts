@@ -45,6 +45,5 @@ function userInfo(token: string, userInfoMapping?: UserInfoMapping): UserInfo {
     id: identity[id] || identity.sub,
     username: identity[username] || identity.name || identity.username,
     tenant: identity.tenant,
-    isAuthenticated: true,
   };
 }

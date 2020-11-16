@@ -6,7 +6,7 @@ export type OidcModuleOptions = {
   origin: string;
   authParams: AuthorizationParameters;
   redirectUriLogout?: string;
-  postLogoutUri?: string;
+  postLogoutRedirectUri?: string;
   usePKCE?: boolean;
   defaultHttpOptions?: HttpOptions;
   externalIdps?: ExternalIdps;

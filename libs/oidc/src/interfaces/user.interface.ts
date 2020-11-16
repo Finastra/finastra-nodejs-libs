@@ -4,7 +4,7 @@ export type UserInfo = {
   id?: string;
   tenant?: string;
   username?: string;
-  isAuthenticated: boolean;
+  isGuest?: boolean;
 };
 
 export type UserInfoMapping = {
