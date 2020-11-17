@@ -39,8 +39,8 @@ jobs:
           libName="${packagePath##*/}"
           echo "Artifact name : ${artifactName}"
           echo "Library name : ${libName}"
-          echo "::set-env name=artifactName::$artifactName"
-          echo "::set-env name=libName::$libName"
+          echo "artifactName=$artifactName" >> $GITHUB_ENV
+          echo "libName=$libName" >> $GITHUB_ENV
         env:
           packagePath: ${{ matrix.package }}
       - name: Build Package
