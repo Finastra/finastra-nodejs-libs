@@ -21,12 +21,6 @@ export class AuthMultitenantController {
   }
 
   @Public()
-  @Get('/login/callback')
-  loginCallback(@Req() req: Request, @Res() res: Response, @Next() next: Function, @Param() params) {
-    this.oidcService.login(req, res, next, params);
-  }
-
-  @Public()
   @Get('/logout')
   async logout(@Req() req: Request, @Res() res: Response, @Param() params) {
     this.oidcService.logout(req, res, params);
