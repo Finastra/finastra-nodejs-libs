@@ -15,11 +15,7 @@ export class AuthController {
   @Public()
   @Get('/user')
   user(@CurrentUser() user: Express.User): UserInfo | UserinfoResponse {
-    return user
-      ? user['userinfo']
-      : {
-          isGuest: true,
-        };
+    return user ? user['userinfo'] : { isGuest: true };
   }
 
   @Public()
