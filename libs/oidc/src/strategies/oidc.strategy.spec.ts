@@ -17,6 +17,7 @@ describe('OidcStrategy', () => {
       client: MOCK_CLIENT_INSTANCE,
       tokenStore: new JWKS.KeyStore([]),
       trustIssuer: MOCK_TRUST_ISSUER,
+      strategy: null,
     };
     strategy = new OidcStrategy(mockOidcService, idpKey);
   });
