@@ -22,6 +22,7 @@ export class OidcService implements OnModuleInit {
       trustIssuer: Issuer<Client>;
       tokenStore: JWKS.KeyStore;
       client: Client;
+      strategy: OidcStrategy;
     };
   } = {};
   constructor(@Inject(OIDC_MODULE_OPTIONS) public options: OidcModuleOptions) {
@@ -48,7 +49,7 @@ export class OidcService implements OnModuleInit {
         clientMetadata = this.options.clientMetadata;
       } else {
         issuer = `${this.options['issuerOrigin']}/${tenantId}/.well-known/openid-configuration`;
-        redirectUri = `${this.options.origin}/${tenantId}/${channelType}/login/callback`;
+        redirectUri = `${this.options.origin}/login/callback`;
         switch (channelType.toLowerCase()) {
           case ChannelType.b2e:
             clientMetadata = this.options[ChannelType.b2e].clientMetadata;
@@ -68,11 +69,14 @@ export class OidcService implements OnModuleInit {
         trustIssuer,
         client,
         tokenStore,
+        strategy,
       };
       this.options.authParams.redirect_uri = redirectUri;
       this.options.authParams.nonce = this.options.authParams.nonce === 'true' ? uuid() : this.options.authParams.nonce;
 
       strategy = new OidcStrategy(this, key, channelType);
+      this.idpInfos[key].strategy = strategy;
+
       return strategy;
     } catch (err) {
       if (this.isMultitenant) {
@@ -109,8 +113,20 @@ export class OidcService implements OnModuleInit {
 
   async login(@Req() req: Request, @Res() res: Response, @Next() next: Function, @Param() params) {
     try {
-      const strategy = this.strategy || (await this.createStrategy(params.tenantId, params.channelType));
-      let prefix = params.tenantId && params.channelType ? `/${params.tenantId}/${params.channelType}` : '';
+      const tenantId = params.tenantId || req.session.tenant;
+      const channel = params.channelType || req.session.channel;
+
+      const strategy =
+        this.strategy ||
+        (this.idpInfos[this.getIdpInfosKey(tenantId, channel)] &&
+          this.idpInfos[this.getIdpInfosKey(tenantId, channel)].strategy) ||
+        (await this.createStrategy(tenantId, channel));
+
+      const prefix = channel && tenantId ? `/${tenantId}/${channel}` : '';
+
+      req.session.tenant = tenantId;
+      req.session.channel = channel;
+
       passport.authenticate(strategy, {
         ...req['options'],
         successRedirect: `${prefix}/`,

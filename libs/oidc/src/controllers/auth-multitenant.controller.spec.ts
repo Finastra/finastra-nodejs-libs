@@ -47,14 +47,6 @@ describe('AuthMultitenantController', () => {
     });
   });
 
-  describe('loginCallback', () => {
-    it('should call oidcService login', async () => {
-      const spy = jest.spyOn(oidcService, 'login').mockReturnThis();
-      await controller.loginCallback(MOCK_REQ, MOCK_RES, MOCK_NEXT, MOCK_PARAMS);
-      expect(spy).toHaveBeenCalledWith(MOCK_REQ, MOCK_RES, MOCK_NEXT, MOCK_PARAMS);
-    });
-  });
-
   describe('logout', () => {
     it('should call oidcService logout', async () => {
       const spy = jest.spyOn(oidcService, 'logout').mockReturnThis();
