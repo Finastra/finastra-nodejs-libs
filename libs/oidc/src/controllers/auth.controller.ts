@@ -15,22 +15,12 @@ export class AuthController {
   @Public()
   @Get('/user')
   user(@CurrentUser() user: Express.User): UserInfo | UserinfoResponse {
-    return user
-      ? user['userinfo']
-      : {
-          isGuest: true,
-        };
+    return user ? user['userinfo'] : { isGuest: true };
   }
 
   @Public()
   @Get('/login')
   login(@Req() req: Request, @Res() res: Response, @Next() next: Function, @Param() params) {
-    this.oidcService.login(req, res, next, params);
-  }
-
-  @Public()
-  @Get('/login/callback')
-  loginCallback(@Req() req: Request, @Res() res: Response, @Next() next: Function, @Param() params) {
     this.oidcService.login(req, res, next, params);
   }
 

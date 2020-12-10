@@ -2,6 +2,7 @@ import { Module, DynamicModule, Provider, NestModule, MiddlewareConsumer, Reques
 import { SessionSerializer } from './utils/session.serializer';
 import { AuthController } from './controllers/auth.controller';
 import { AuthMultitenantController } from './controllers/auth-multitenant.controller';
+import { LoginCallbackController } from './controllers/login-callback.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { OidcModuleOptions, OidcModuleAsyncOptions, OidcOptionsFactory } from './interfaces';
 import { OIDC_MODULE_OPTIONS } from './oidc.constants';
@@ -15,7 +16,7 @@ import { TenantSwitchController } from './controllers';
 
 @Module({
   imports: [JwtModule.register({})],
-  controllers: [AuthController, AuthMultitenantController, TenantSwitchController],
+  controllers: [AuthController, AuthMultitenantController, LoginCallbackController, TenantSwitchController],
   providers: [
     SessionSerializer,
     TokenGuard,

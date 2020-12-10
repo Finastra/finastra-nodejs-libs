@@ -119,6 +119,7 @@ describe('OidcService', () => {
     const IssuerMock = MOCK_ISSUER_INSTANCE;
     beforeEach(() => {
       req = createRequest();
+      req.session = {};
       res = createResponse();
       next = jest.fn();
       params = {};
@@ -127,6 +128,7 @@ describe('OidcService', () => {
           client: MOCK_CLIENT_INSTANCE,
           trustIssuer: MOCK_TRUST_ISSUER,
           tokenStore: new JWKS.KeyStore(),
+          strategy: null,
         },
       };
       service.options = MOCK_OIDC_MODULE_OPTIONS;
@@ -185,6 +187,7 @@ describe('OidcService', () => {
           client: MOCK_CLIENT_INSTANCE,
           trustIssuer: MOCK_TRUST_ISSUER,
           tokenStore: new JWKS.KeyStore([]),
+          strategy: null,
         },
       };
       service.getIdpInfosKey = jest.fn().mockReturnValue(idpKey);
@@ -350,6 +353,23 @@ describe('OidcService', () => {
         tenantId: 'tenant',
         channelType: ChannelType.b2c,
       };
+      service.loggedOut(req, res, params);
+      expect(spy).toHaveBeenCalled();
+    });
+
+    it('should set prefix with query content before sending loggedout file and adding postLogoutRedirectUri', () => {
+      req.query = {
+        tenantId: 'tenant',
+        channelType: 'b2c',
+      };
+      const res = createResponse();
+      res.send = jest.fn();
+      const spy = jest.spyOn(res, 'send');
+      params = {
+        tenantId: 'tenant',
+        channelType: ChannelType.b2c,
+      };
+      options.postLogoutRedirectUri = 'post-logout-redirect-uri';
       service.loggedOut(req, res, params);
       expect(spy).toHaveBeenCalled();
     });
