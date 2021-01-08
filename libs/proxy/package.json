@@ -6,6 +6,11 @@
   ],
   "main": "index.js",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fusionfabric/finastra-nodejs-libs.git",
+    "directory": "libs/proxy"
+  },
   "dependencies": {
     "http-proxy": "^1.18.0"
   }
