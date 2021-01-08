@@ -1,17 +1,18 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { CatsModule } from './cats/cats.module';
+import { CorporateAccountsModule } from '@ffdc/api_corporate-accounts';
+import { LoggerModule } from '@ffdc/logger';
 import { OidcModule } from '@ffdc/nestjs-oidc';
 import { ProxyModule } from '@ffdc/nestjs-proxy';
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
-import { CorporateAccountsModule } from '@ffdc/api_corporate-accounts';
-
-import { ProxyConfigService } from './configs/proxy-config.service';
+import { CatsModule } from './cats/cats.module';
 import { GqlConfigService } from './configs/graphql-config.service';
 import { OidcConfigService } from './configs/oidc-config.service';
+import { ProxyConfigService } from './configs/proxy-config.service';
 
 @Module({
   imports: [
+    LoggerModule,
     OidcModule.forRootAsync({
       useClass: OidcConfigService,
       imports: [ConfigModule],

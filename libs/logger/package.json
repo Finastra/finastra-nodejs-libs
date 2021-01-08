@@ -1,0 +1,12 @@
+{
+  "name": "@ffdc/logger",
+  "version": "0.1.0",
+  "contributors": [
+    "Razvan Bordeanu <razvan.bordeanu@finastra.com>",
+    "David Boclé <david.bocle@finastra.com>"
+  ],
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+  }
+}

@@ -1,4 +1,10 @@
 {
   "debug.node.autoAttach": "on",
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": true
+  },
+  "conventionalCommits.scopes": [
+    "logger"
+  ]
 }
