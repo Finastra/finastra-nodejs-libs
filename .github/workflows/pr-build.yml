@@ -41,6 +41,7 @@ jobs:
           retention-days: 1
 
   build:
+    needs: setup
     name: Build packages
     runs-on: ubuntu-latest
 
