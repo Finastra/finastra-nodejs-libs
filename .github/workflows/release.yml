@@ -57,3 +57,4 @@ jobs:
         with:
           token: ${{ secrets.FFDC_BOT_NPM_AUTH_TOKEN }}
           package: ./dist/libs/${{ matrix.package }}/package.json
+          access: public
