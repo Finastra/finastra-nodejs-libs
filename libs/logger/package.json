@@ -1,12 +1,17 @@
 {
   "name": "@ffdc/logger",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "contributors": [
     "Razvan Bordeanu <razvan.bordeanu@finastra.com>",
     "David Boclé <david.bocle@finastra.com>"
   ],
   "main": "index.js",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fusionfabric/finastra-nodejs-libs.git",
+    "directory": "libs/logger"
+  },
   "dependencies": {
   }
 }
