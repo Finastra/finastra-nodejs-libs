@@ -14,6 +14,7 @@ export class OMSLogger extends Logger {
       msg: message,
       logger: currentContext,
     };
+
     console.log(JSON.stringify(logEntry));
   }
 
