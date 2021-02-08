@@ -1,7 +1,6 @@
 import { CallHandler, ExecutionContext, Injectable, Logger, NestInterceptor } from '@nestjs/common';
-import { GqlExecutionContext } from '@nestjs/graphql';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { from, Observable } from 'rxjs';
+import { switchMap, tap } from 'rxjs/operators';
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
@@ -10,19 +9,33 @@ export class LoggingInterceptor implements NestInterceptor {
   }
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    let req = context.switchToHttp().getRequest();
-    if (context['contextType'] === 'graphql') {
-      req = GqlExecutionContext.create(context).getContext().req;
-    }
+    const reqPromise = new Promise<Request>(resolve => {
+      let req = context.switchToHttp().getRequest();
+      if (context['contextType'] === 'graphql') {
+        import('@nestjs/graphql').then(module => {
+          resolve(module.GqlExecutionContext.create(context).getContext().req);
+        });
+      } else {
+        resolve(req);
+      }
+    });
+    const req$ = from(reqPromise);
 
-    this.logger.log(`START: ${context.getClass().name}.${context.getHandler().name}(): ${req.method} ${req.url}`);
-
-    return next
-      .handle()
-      .pipe(
-        tap(() =>
-          this.logger.log(`STOP: ${context.getClass().name}.${context.getHandler().name}(): ${req.method} ${req.url}`),
-        ),
-      );
+    return req$.pipe(
+      tap(req =>
+        this.logger.log(`START: ${context.getClass().name}.${context.getHandler().name}(): ${req.method} ${req.url}`),
+      ),
+      switchMap(req => {
+        return next
+          .handle()
+          .pipe(
+            tap(() =>
+              this.logger.log(
+                `STOP: ${context.getClass().name}.${context.getHandler().name}(): ${req.method} ${req.url}`,
+              ),
+            ),
+          );
+      }),
+    );
   }
 }
