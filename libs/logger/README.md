@@ -30,5 +30,13 @@ const app = await NestFactory.create(AppModule, {
   logger: omsLogger,
 });
 app.useLogger(omsLogger);
-app.useGlobalInterceptors(new LoggingInterceptor(omsLogger));
+app.useGlobalInterceptors(new HttpLoggingInterceptor());
+```
+
+### GraphQL
+
+If you're using GraphQL in your application, there's another interceptor for you :
+
+```typescript
+app.useGlobalInterceptors(new GraphQLLoggingInterceptor());
 ```
