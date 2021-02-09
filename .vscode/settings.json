@@ -5,6 +5,8 @@
     "source.organizeImports": true
   },
   "conventionalCommits.scopes": [
-    "logger"
+    "logger",
+    "oidc",
+    "proxy"
   ]
 }
