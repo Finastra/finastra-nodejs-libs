@@ -1,1 +1,1 @@
-export * from './misdirected.filter';
+export * from './http-exception.filter';

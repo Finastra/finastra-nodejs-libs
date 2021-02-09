@@ -1,0 +1,41 @@
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
+import { Response } from 'express';
+import { MisdirectedStatus } from '../interfaces/misdirected-status.enum';
+@Catch()
+export class HttpExceptionFilter implements ExceptionFilter {
+  catch(exception: any, host: ArgumentsHost) {
+    const ctx = host.switchToHttp();
+    const response = ctx.getResponse<Response>();
+    const request = ctx.getRequest();
+    const status = exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
+    switch (status) {
+      case MisdirectedStatus.MISDIRECTED:
+        const requestedTenant = request.params.tenantId;
+        const requestedChannel = request.params.channelType;
+        const originalTenant = request.user.userinfo.tenant;
+        const originalChannel = request.user.userinfo.channel;
+        response.redirect(
+          `/tenant-switch-warn?requestedTenant=${requestedTenant}&requestedChannel=${requestedChannel}&originalTenant=${originalTenant}&originalChannel=${originalChannel}`,
+        );
+        break;
+      case HttpStatus.INTERNAL_SERVER_ERROR:
+      case HttpStatus.NOT_IMPLEMENTED:
+      case HttpStatus.BAD_GATEWAY:
+      case HttpStatus.SERVICE_UNAVAILABLE:
+      case HttpStatus.GATEWAY_TIMEOUT:
+      case HttpStatus.HTTP_VERSION_NOT_SUPPORTED:
+        request.session.msgPageOpts = {
+          title: `Error ${status}`,
+          subtitle: '',
+          description: exception.message,
+          redirectLink: '/',
+          redirectLabel: 'Retry',
+        };
+        response.redirect('/message');
+        break;
+      default:
+        response.status(status).json(exception['response']);
+        break;
+    }
+  }
+}

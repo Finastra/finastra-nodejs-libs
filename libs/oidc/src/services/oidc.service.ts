@@ -127,11 +127,23 @@ export class OidcService implements OnModuleInit {
       req.session.tenant = tenantId;
       req.session.channel = channel;
 
+      const successRedirect = `${prefix}/`;
+
       passport.authenticate(strategy, {
         ...req['options'],
-        successRedirect: `${prefix}/`,
-        failureRedirect: `${prefix}/login`,
-      })(req, res, next);
+        successRedirect,
+        failureRedirect: `/message`,
+      }
+        , (err, user, info) => {
+          if (err || !user) {
+            return next(err || info)
+          }
+          req.logIn(user, function (err) {
+            if (err) { return next(err); }
+            return res.redirect(successRedirect);
+          });
+        }
+      )(req, res, next);
     } catch (err) {
       res.status(HttpStatus.NOT_FOUND).send();
     }
@@ -146,8 +158,7 @@ export class OidcService implements OnModuleInit {
 
       if (end_session_endpoint) {
         res.redirect(
-          `${end_session_endpoint}?post_logout_redirect_uri=${
-            this.options.redirectUriLogout ? this.options.redirectUriLogout : this.options.origin
+          `${end_session_endpoint}?post_logout_redirect_uri=${this.options.redirectUriLogout ? this.options.redirectUriLogout : this.options.origin
           }&client_id=${this.options.clientMetadata.client_id}${id_token ? '&id_token_hint=' + id_token : ''}`,
         );
       } else {
@@ -189,8 +200,8 @@ export class OidcService implements OnModuleInit {
       req.query.tenantId && req.query.channelType
         ? `/${req.query.tenantId}/${req.query.channelType}`
         : params.tenantId && params.channelType
-        ? `/${params.tenantId}/${params.channelType}`
-        : '';
+          ? `/${params.tenantId}/${params.channelType}`
+          : '';
     let postLogoutRedirectUri = this.options.postLogoutRedirectUri || '/login';
     if (!postLogoutRedirectUri.startsWith('/')) {
       postLogoutRedirectUri = `/${postLogoutRedirectUri}`;
@@ -255,5 +266,15 @@ export class OidcService implements OnModuleInit {
     req.user.authTokens.accessToken = data.accessToken;
     req.user.authTokens.refreshToken = data.refreshToken;
     req.user.authTokens.expiresAt = data.expiresAt;
+  }
+
+  messagePage(req, @Res() res: Response, @Param() params) {
+    let data = readFileSync(join(__dirname, '../assets/message.html')).toString();
+    data = data.replace('{{title}}', req.session.msgPageOpts.title);
+    data = data.replace('{{subtitle}}', req.session.msgPageOpts.subtitle);
+    data = data.replace('{{description}}', req.session.msgPageOpts.description);
+    data = data.replace('{{redirectLink}}', req.session.msgPageOpts.redirectLink);
+    data = data.replace('{{redirectLabel}}', req.session.msgPageOpts.redirectLabel);
+    res.send(data);
   }
 }

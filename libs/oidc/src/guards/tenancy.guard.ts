@@ -1,12 +1,12 @@
-import { Injectable, CanActivate, ExecutionContext, HttpException, NotFoundException } from '@nestjs/common';
+import { CanActivate, ExecutionContext, HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { HttpStatus } from '../interfaces';
+import { MisdirectedStatus } from '../interfaces';
 import { OidcService } from '../services';
 
 @Injectable()
 export class TenancyGuard implements CanActivate {
-  constructor(private reflector: Reflector, private oidcService: OidcService) {}
+  constructor(private reflector: Reflector, private oidcService: OidcService) { }
 
   canActivate(context: ExecutionContext): boolean {
     const classIsMultitenant = this.reflector.get<boolean>('isMultitenant', context.getClass());
@@ -37,7 +37,7 @@ export class TenancyGuard implements CanActivate {
           tenantId: req.params.tenantId,
           channelType: req.params.channelType,
         },
-        HttpStatus.MISDIRECTED,
+        MisdirectedStatus.MISDIRECTED,
       );
     }
   }

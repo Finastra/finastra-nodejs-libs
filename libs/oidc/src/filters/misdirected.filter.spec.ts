@@ -1,10 +1,10 @@
-import { ArgumentsHost, HttpException } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
 import { createMock } from '@golevelup/nestjs-testing';
-import { createRequest, createResponse } from 'node-mocks-http';
-import { MisdirectedFilter } from './misdirected.filter';
-import { HttpStatus } from '../interfaces';
+import { ArgumentsHost, HttpException } from '@nestjs/common';
 import { HttpArgumentsHost } from '@nestjs/common/interfaces';
+import { Test, TestingModule } from '@nestjs/testing';
+import { createRequest, createResponse } from 'node-mocks-http';
+import { HttpStatus } from '../interfaces';
+import { MisdirectedFilter } from './http-exception.filter';
 
 describe('MisdirectedFilter', () => {
   let filter: MisdirectedFilter;

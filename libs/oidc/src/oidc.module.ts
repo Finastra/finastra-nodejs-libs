@@ -1,22 +1,23 @@
-import { Module, DynamicModule, Provider, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
-import { SessionSerializer } from './utils/session.serializer';
-import { AuthController } from './controllers/auth.controller';
-import { AuthMultitenantController } from './controllers/auth-multitenant.controller';
-import { LoginCallbackController } from './controllers/login-callback.controller';
-import { JwtModule } from '@nestjs/jwt';
-import { OidcModuleOptions, OidcModuleAsyncOptions, OidcOptionsFactory } from './interfaces';
-import { OIDC_MODULE_OPTIONS } from './oidc.constants';
-import { mergeDefaults } from './utils';
-import { UserMiddleware, LoginMiddleware } from './middlewares';
-import { TokenGuard, TenancyGuard } from './guards';
-import { OidcService } from './services';
+import { DynamicModule, MiddlewareConsumer, Module, NestModule, Provider, RequestMethod } from '@nestjs/common';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
-import { MisdirectedFilter } from './filters';
+import { JwtModule } from '@nestjs/jwt';
 import { TenantSwitchController } from './controllers';
+import { AuthMultitenantController } from './controllers/auth-multitenant.controller';
+import { AuthController } from './controllers/auth.controller';
+import { LoginCallbackController } from './controllers/login-callback.controller';
+import { MessageController } from './controllers/message.controller';
+import { HttpExceptionFilter } from './filters';
+import { TenancyGuard, TokenGuard } from './guards';
+import { OidcModuleAsyncOptions, OidcModuleOptions, OidcOptionsFactory } from './interfaces';
+import { LoginMiddleware, UserMiddleware } from './middlewares';
+import { OIDC_MODULE_OPTIONS } from './oidc.constants';
+import { OidcService } from './services';
+import { mergeDefaults } from './utils';
+import { SessionSerializer } from './utils/session.serializer';
 
 @Module({
   imports: [JwtModule.register({})],
-  controllers: [AuthController, AuthMultitenantController, LoginCallbackController, TenantSwitchController],
+  controllers: [AuthController, AuthMultitenantController, LoginCallbackController, TenantSwitchController, MessageController],
   providers: [
     SessionSerializer,
     TokenGuard,
@@ -27,7 +28,7 @@ import { TenantSwitchController } from './controllers';
     },
     {
       provide: APP_FILTER,
-      useClass: MisdirectedFilter,
+      useClass: HttpExceptionFilter,
     },
   ],
 })
