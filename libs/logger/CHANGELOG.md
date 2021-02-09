@@ -4,20 +4,23 @@
 
 <!-- TOC depthFrom:2 depthTo:3 -->
 
-- [0.1.3 (2021-02-08)](#013-2021-02-08)
-  - [Bug fixes](#bug-fixes)
+- [0.2.0 (2021-02-09)](#020-2021-02-09)
+  - [Features](#features)
 - [0.1.2 (2021-01-28)](#012-2021-01-28)
-  - [Bug fixes](#bug-fixes-1)
+  - [Bug fixes](#bug-fixes)
 - [0.1.1 (2021-01-11)](#011-2021-01-11)
-  - [Bug fixes](#bug-fixes-2)
+  - [Bug fixes](#bug-fixes-1)
 
 <!-- /TOC -->
 
-## 0.1.3 (2021-02-08)
+## 0.2.0 (2021-02-09)
 
-### Bug fixes
+### Features
 
-- Make @nestjs/graphql optionnal
+- New `GraphQLLoggingInterceptor` interceptor
+- `LoggingInterceptor` renamed to `HttpLoggingInterceptor`
+- @nestjs/graphql is now optionnal, only mandatory if you're using `GraphQLLoggingInterceptor`
+- logger is no longer mandatory in constructor
 
 ## 0.1.2 (2021-01-28)
 
