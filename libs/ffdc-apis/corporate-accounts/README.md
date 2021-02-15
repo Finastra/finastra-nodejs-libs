@@ -5,7 +5,7 @@ Here are some helpers for the [Accounts & Balances APIs](https://developer.fusio
 ## Interfaces for frontend usage
 
 ```typescript
-import { AccountDetail, AccountType, AccountStatement } from '@ffdc/api_corporate-accounts/interfaces';
+import { AccountDetail, AccountType, AccountStatement } from '@finastra/api_corporate-accounts/interfaces';
 ```
 
 When the importing the interfaces from a frontend only application, be sure to preprend by `/interfaces`.
@@ -17,7 +17,7 @@ When the importing the interfaces from a frontend only application, be sure to p
 ```typescript
 import { GqlOptionsFactory, GqlModuleOptions } from '@nestjs/graphql';
 import { Injectable } from '@nestjs/common';
-import { CorporateAccountsModule } from '@ffdc/api_corporate-accounts';
+import { CorporateAccountsModule } from '@finastra/api_corporate-accounts';
 
 @Injectable()
 export class GqlConfigService implements GqlOptionsFactory {
@@ -28,7 +28,7 @@ export class GqlConfigService implements GqlOptionsFactory {
       },
     };
     return {
-      typePaths: ['./node_modules/@ffdc/api_corporate-accounts/**/*.graphql'],
+      typePaths: ['./node_modules/@finastra/api_corporate-accounts/**/*.graphql'],
       include: [CorporateAccountsModule],
       playground: process.env.NODE_ENV === 'production' ? false : playgroundDevOptions,
     };
@@ -41,7 +41,7 @@ export class GqlConfigService implements GqlOptionsFactory {
 ```typescript
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { CorporateAccountsModule } from '@ffdc/api_corporate-accounts';
+import { CorporateAccountsModule } from '@finastra/api_corporate-accounts';
 import { GqlConfigService } from './configs/graphql-config.service';
 
 @Module({

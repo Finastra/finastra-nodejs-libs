@@ -1,6 +1,6 @@
-import { OMSLogger } from '@ffdc/logger';
-import { HttpLoggingInterceptor } from '@ffdc/logger/interceptors/common-http.interceptor';
-import { setupSession, TokenGuard } from '@ffdc/nestjs-oidc';
+import { OMSLogger } from '@finastra/logger';
+import { HttpLoggingInterceptor } from '@finastra/logger/interceptors/common-http.interceptor';
+import { setupSession, TokenGuard } from '@finastra/nestjs-oidc';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 

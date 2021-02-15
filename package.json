@@ -112,14 +112,14 @@
       "<rootDir>/libs/"
     ],
     "moduleNameMapper": {
-      "@ffdc/nestjs-oidc/(.*)": "<rootDir>/libs/oidc/src/$1",
-      "@ffdc/nestjs-oidc": "<rootDir>/libs/oidc/src",
-      "@ffdc/nestjs-proxy/(.*)": "<rootDir>/libs/proxy/src/$1",
-      "@ffdc/nestjs-proxy": "<rootDir>/libs/proxy/src",
-      "ffdc/corporate-accounts/(.*)": "<rootDir>/libs/corporate-accounts/src/$1",
-      "ffdc/corporate-accounts": "<rootDir>/libs/corporate-accounts/src",
-      "@ffdc/logger/(.*)": "<rootDir>/libs/logger/src/$1",
-      "@ffdc/logger": "<rootDir>/libs/logger/src"
+      "@finastra/nestjs-oidc/(.*)": "<rootDir>/libs/oidc/src/$1",
+      "@finastra/nestjs-oidc": "<rootDir>/libs/oidc/src",
+      "@finastra/nestjs-proxy/(.*)": "<rootDir>/libs/proxy/src/$1",
+      "@finastra/nestjs-proxy": "<rootDir>/libs/proxy/src",
+      "finastra/corporate-accounts/(.*)": "<rootDir>/libs/corporate-accounts/src/$1",
+      "finastra/corporate-accounts": "<rootDir>/libs/corporate-accounts/src",
+      "@finastra/logger/(.*)": "<rootDir>/libs/logger/src/$1",
+      "@finastra/logger": "<rootDir>/libs/logger/src"
     }
   }
 }

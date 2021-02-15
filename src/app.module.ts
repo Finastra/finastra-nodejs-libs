@@ -1,7 +1,7 @@
-import { CorporateAccountsModule } from '@ffdc/api_corporate-accounts';
-import { LoggerModule } from '@ffdc/logger';
-import { OidcModule } from '@ffdc/nestjs-oidc';
-import { ProxyModule } from '@ffdc/nestjs-proxy';
+import { CorporateAccountsModule } from '@finastra/api_corporate-accounts';
+import { LoggerModule } from '@finastra/logger';
+import { OidcModule } from '@finastra/nestjs-oidc';
+import { ProxyModule } from '@finastra/nestjs-proxy';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';

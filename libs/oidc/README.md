@@ -16,7 +16,7 @@ And also a `TokenGuard`
 `app.module.ts`
 
 ```typescript
-import { OidcModule } from '@ffdc/nestjs-oidc';
+import { OidcModule } from '@finastra/nestjs-oidc';
 
 @Module({
   imports: [
@@ -98,7 +98,7 @@ Here is the sample of config to add:
 `main.ts`
 
 ```typescript
-import { setupSession } from '@ffdc/nestjs-oidc';
+import { setupSession } from '@finastra/nestjs-oidc';
 
 setupSession(app, 'name-of-cookie');
 ```
@@ -123,7 +123,7 @@ app.useGlobalGuards(app.get(TokenGuard));
 `*.controller.ts`
 
 ```typescript
-import { TokenGuard } from '@ffdc/nestjs-oidc';
+import { TokenGuard } from '@finastra/nestjs-oidc';
 
 @UseGuards(TokenGuard)
 @Controller('')
@@ -163,7 +163,7 @@ If your application handles single and multi tenancy, you can use `@isAvailableR
 `app.module.ts`
 
 ```typescript
-import { OidcModule } from '@ffdc/nestjs-oidc';
+import { OidcModule } from '@finastra/nestjs-oidc';
 
 @Module({
   imports: [

@@ -1,7 +1,7 @@
-import { Controller, Get, Req, Param } from '@nestjs/common';
+import { isAvailableRouteForMultitenant } from '@finastra/nestjs-oidc';
+import { Controller, Get, Param, Req } from '@nestjs/common';
 import { CatsService } from './cats.service';
 import { Cat } from './interfaces/cat.interface';
-import { isAvailableRouteForMultitenant } from '@ffdc/nestjs-oidc';
 
 @Controller('')
 export class CatsController {

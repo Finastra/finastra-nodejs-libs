@@ -11,28 +11,28 @@
     "baseUrl": "./",
     "incremental": true,
     "paths": {
-      "@ffdc/nestjs-oidc": [
+      "@finastra/nestjs-oidc": [
         "libs/oidc/src"
       ],
-      "@ffdc/nestjs-oidc/*": [
+      "@finastra/nestjs-oidc/*": [
         "libs/oidc/src/*"
       ],
-      "@ffdc/nestjs-proxy": [
+      "@finastra/nestjs-proxy": [
         "libs/proxy/src"
       ],
-      "@ffdc/nestjs-proxy/*": [
+      "@finastra/nestjs-proxy/*": [
         "libs/proxy/src/*"
       ],
-      "@ffdc/api_corporate-accounts": [
+      "@finastra/api_corporate-accounts": [
         "libs/ffdc-apis/corporate-accounts/src"
       ],
-      "@ffdc/api_corporate-accounts/*": [
+      "@finastra/api_corporate-accounts/*": [
         "libs/ffdc-apis/corporate-accounts/src/*"
       ],
-      "@ffdc/logger": [
+      "@finastra/logger": [
         "libs/logger/src"
       ],
-      "@ffdc/logger/*": [
+      "@finastra/logger/*": [
         "libs/logger/src/*"
       ]
     }
