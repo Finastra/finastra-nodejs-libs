@@ -1,5 +1,5 @@
 {
-  "name": "@ffdc/nestjs-oidc",
+  "name": "@finastra/nestjs-oidc",
   "version": "0.15.1",
   "contributors": [
     "David Boclé <david.bocle@finastra.com>",
