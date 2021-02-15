@@ -38,7 +38,7 @@ ProxyModule.forRootAsync({
 ```typescript
 import { ConfigService } from '@nestjs/config';
 import { Injectable, Logger } from '@nestjs/common';
-import { ProxyModuleOptions, ProxyModuleOptionsFactory } from '@ffdc/nestjs-proxy';
+import { ProxyModuleOptions, ProxyModuleOptionsFactory } from '@finastra/nestjs-proxy';
 
 @Injectable()
 export class ProxyConfigService implements ProxyModuleOptionsFactory {

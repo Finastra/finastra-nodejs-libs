@@ -1,5 +1,5 @@
 {
-  "name": "@ffdc/logger",
+  "name": "@finastra/logger",
   "version": "0.2.0",
   "contributors": [
     "Razvan Bordeanu <razvan.bordeanu@finastra.com>",
