@@ -25,8 +25,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
       case HttpStatus.GATEWAY_TIMEOUT:
       case HttpStatus.HTTP_VERSION_NOT_SUPPORTED:
         request.session.msgPageOpts = {
-          title: `Error ${status}`,
-          subtitle: '',
+          title: `We are sorry, we have encountered an error`,
+          subtitle: 'Error ${status}',
           description: exception.message,
           redirectLink: '/',
           redirectLabel: 'Retry',

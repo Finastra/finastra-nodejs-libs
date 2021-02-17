@@ -194,24 +194,23 @@ export class OidcService implements OnModuleInit {
     }
   }
 
-  loggedOut(@Req() req, @Res() res: Response, @Param() params) {
-    let data = readFileSync(join(__dirname, '../assets/loggedout.html')).toString();
-    let prefix =
-      req.query.tenantId && req.query.channelType
-        ? `/${req.query.tenantId}/${req.query.channelType}`
-        : params.tenantId && params.channelType
-          ? `/${params.tenantId}/${params.channelType}`
-          : '';
+  loggedOut(@Req() req: Request, @Res() res: Response, @Param() params) {
+    let prefix = this._getPrefix(req, params);
     let postLogoutRedirectUri = this.options.postLogoutRedirectUri || '/login';
     if (!postLogoutRedirectUri.startsWith('/')) {
       postLogoutRedirectUri = `/${postLogoutRedirectUri}`;
     }
-    res.send(data.replace('rootUrl', `${prefix}${postLogoutRedirectUri}`));
-  }
 
-  tenantSwitchWarn(@Res() res: Response, @Param() params) {
-    let data = readFileSync(join(__dirname, '../assets/tenant-switch.html')).toString();
-    res.send(data);
+    req.session.msgPageOpts = {
+      title: "You've been signed out",
+      subtitle: `You will be redirected in a moment`,
+      description: "Be patient, the page will refresh itself, if not click on the following button.",
+      svg: 'exit',
+      redirectLink: `${prefix}${postLogoutRedirectUri}`,
+      redirectLabel: 'Logout',
+      autoRedirect: true
+    }
+    res.redirect('/message');
   }
 
   async _refreshToken(authToken: IdentityProviderOptions) {
@@ -268,13 +267,24 @@ export class OidcService implements OnModuleInit {
     req.user.authTokens.expiresAt = data.expiresAt;
   }
 
-  messagePage(req, @Res() res: Response, @Param() params) {
+  messagePage(@Req() req: Request, @Res() res: Response) {
     let data = readFileSync(join(__dirname, '../assets/message.html')).toString();
-    data = data.replace('{{title}}', req.session.msgPageOpts.title);
-    data = data.replace('{{subtitle}}', req.session.msgPageOpts.subtitle);
-    data = data.replace('{{description}}', req.session.msgPageOpts.description);
-    data = data.replace('{{redirectLink}}', req.session.msgPageOpts.redirectLink);
-    data = data.replace('{{redirectLabel}}', req.session.msgPageOpts.redirectLabel);
+    data = data.replace('{{title}}', req.session.msgPageOpts.title || '');
+    data = data.replace('{{subtitle}}', req.session.msgPageOpts.subtitle || '');
+    data = data.replace('{{description}}', req.session.msgPageOpts.description || '');
+    data = data.replace(/{{redirectLink}}/gi, req.session.msgPageOpts.redirectLink || '');
+    data = data.replace(/{{backLabel}}/gi, req.session.msgPageOpts.backLabel || '');
+    data = data.replace(/{{redirectLabel}}/gi, req.session.msgPageOpts.redirectLabel || '');
+    data = data.replace('{{autoRedirect}}', req.session.msgPageOpts.autoRedirect || 'false');
+    data = data.replace('{{svg}}', `message/${req.session.msgPageOpts.svg}`);
     res.send(data);
+  }
+
+  _getPrefix(@Req() req: Request, params) {
+    return req.query.tenantId && req.query.channelType
+      ? `/${req.query.tenantId}/${req.query.channelType}`
+      : params.tenantId && params.channelType
+        ? `/${params.tenantId}/${params.channelType}`
+        : '';
   }
 }

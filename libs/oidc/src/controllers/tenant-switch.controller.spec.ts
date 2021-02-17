@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { TenantSwitchController } from './tenant-switch.controller';
-import { createResponse, createRequest } from 'node-mocks-http';
+import { createRequest, createResponse } from 'node-mocks-http';
 import { MockOidcService, MOCK_REQUEST } from '../mocks';
 import { OidcService } from '../services';
+import { TenantSwitchController } from './tenant-switch.controller';
 
 describe('TenantSwitchController', () => {
   let controller: TenantSwitchController;
@@ -33,9 +33,19 @@ describe('TenantSwitchController', () => {
 
   describe('getTenantSwitchWarn', () => {
     it('should call oidcService getTenantSwitchWarn', async () => {
-      const spy = jest.spyOn(oidcService, 'tenantSwitchWarn').mockReturnThis();
-      await controller.getTenantSwitchWarn(MOCK_RES, MOCK_PARAMS);
-      expect(spy).toHaveBeenCalledWith(MOCK_RES, MOCK_PARAMS);
+      const req = {
+        session: {},
+        query: {
+          originalTenant: 'originalTenant',
+          originalChannel: 'originalChannel',
+          requestedTenant: 'requestedTenant',
+          requestedChannel: 'requestedChannel',
+
+        }
+      }
+      const spy = jest.spyOn(oidcService, 'messagePage').mockReturnThis();
+      await controller.getTenantSwitchWarn(req, MOCK_RES);
+      expect(spy).toHaveBeenCalledWith(req, MOCK_RES);
     });
   });
 
