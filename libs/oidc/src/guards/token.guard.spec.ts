@@ -1,15 +1,20 @@
-import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { createMock } from '@golevelup/nestjs-testing';
-import { TokenGuard } from './token.guard';
+import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { JWT, JWK } from 'jose';
 import { GqlExecutionContext } from '@nestjs/graphql';
+import { Test, TestingModule } from '@nestjs/testing';
+import { JWK, JWT } from 'jose';
+import { MockOidcService } from '../mocks';
+import { OidcService } from '../services';
+import { TokenGuard } from './token.guard';
 
 describe('OIDCGuard', () => {
   let guard: TokenGuard;
   let token: string;
+  let reflector: Reflector;
+  let oidcService: OidcService;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     const key = JWK.asKey({
       kty: 'oct',
       k: 'hJtXIZ2uSN5kbQfbtTNWbpdmhkV8FJG-Onbc6mxCcYg',
@@ -19,6 +24,20 @@ describe('OIDCGuard', () => {
       'urn:example:claim': 'foo',
     };
 
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        TokenGuard,
+        {
+          provide: Reflector,
+          useValue: createMock<Reflector>(),
+        },
+        {
+          provide: OidcService,
+          useValue: MockOidcService,
+        },
+      ],
+    }).compile();
+
     token = JWT.sign(payload, key, {
       audience: ['urn:example:client'],
       issuer: 'https://op.example.com',
@@ -27,7 +46,9 @@ describe('OIDCGuard', () => {
         typ: 'JWT',
       },
     });
-    guard = new TokenGuard(createMock<Reflector>());
+    guard = module.get<TokenGuard>(TokenGuard);
+    reflector = module.get<Reflector>(Reflector);
+    oidcService = module.get<OidcService>(OidcService);
   });
 
   it('should be defined', () => {
@@ -47,9 +68,14 @@ describe('OIDCGuard', () => {
     context.switchToHttp().getRequest.mockReturnValue({
       user: {
         username: 'test',
+        authTokens: {
+          expiresAt: Date.now() + 10000
+        }
+
       },
       isAuthenticated: () => true,
     });
+    jest.spyOn(oidcService, 'isExpired').mockReturnValue(false);
 
     expect(await guard.canActivate(context)).toBeTruthy();
   });
@@ -88,6 +114,13 @@ describe('OIDCGuard', () => {
         getContext: () => ({
           req: {
             isAuthenticated: () => true,
+            user: {
+              username: 'test',
+              authTokens: {
+                expiresAt: Date.now() + 10000
+              }
+
+            },
           },
         }),
       }),

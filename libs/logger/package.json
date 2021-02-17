@@ -1,6 +1,6 @@
 {
-  "name": "@ffdc/logger",
-  "version": "0.1.2",
+  "name": "@finastra/logger",
+  "version": "0.2.0",
   "contributors": [
     "Razvan Bordeanu <razvan.bordeanu@finastra.com>",
     "David Boclé <david.bocle@finastra.com>"
@@ -12,5 +12,7 @@
     "url": "https://github.com/fusionfabric/finastra-nodejs-libs.git",
     "directory": "libs/logger"
   },
-  "dependencies": {}
+  "optionalDependencies": {
+    "@nestjs/graphql": "^7.3.5"
+  }
 }
