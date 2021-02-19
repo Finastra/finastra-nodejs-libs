@@ -2,7 +2,7 @@ import { createMock } from '@golevelup/nestjs-testing';
 import { JWKS } from 'jose';
 import { TokenSet } from 'openid-client';
 import { MOCK_CLIENT_INSTANCE, MOCK_OIDC_MODULE_OPTIONS, MOCK_TRUST_ISSUER } from '../mocks';
-import { HtmlErrorPagesService, OidcService } from '../services';
+import { OidcService, SSRPagesService } from '../services';
 import { OidcStrategy } from './oidc.strategy';
 
 const utils = require('../utils');
@@ -11,7 +11,7 @@ describe('OidcStrategy', () => {
   let strategy;
 
   beforeEach(() => {
-    const mockOidcService = new OidcService(MOCK_OIDC_MODULE_OPTIONS, new HtmlErrorPagesService());
+    const mockOidcService = new OidcService(MOCK_OIDC_MODULE_OPTIONS, new SSRPagesService());
     const idpKey = 'idpKey';
     mockOidcService.idpInfos[idpKey] = {
       client: MOCK_CLIENT_INSTANCE,

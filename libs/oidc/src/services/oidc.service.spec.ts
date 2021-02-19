@@ -5,12 +5,12 @@ import { Issuer } from 'openid-client';
 import { ChannelType, OidcModuleOptions } from '../interfaces';
 import { MOCK_CLIENT_INSTANCE, MOCK_ISSUER_INSTANCE, MOCK_OIDC_MODULE_OPTIONS, MOCK_TRUST_ISSUER } from '../mocks';
 import { OidcStrategy } from '../strategies';
-import { HtmlErrorPagesService } from './html-error-pages.service';
 import { OidcService } from './oidc.service';
+import { SSRPagesService } from './ssr-pages.service';
 import passport = require('passport');
 
 describe('OidcService', () => {
-  let service = new OidcService(MOCK_OIDC_MODULE_OPTIONS, new HtmlErrorPagesService());
+  let service = new OidcService(MOCK_OIDC_MODULE_OPTIONS, new SSRPagesService());
   let options: OidcModuleOptions = MOCK_OIDC_MODULE_OPTIONS;
   const idpKey = 'idpKey';
 
@@ -417,7 +417,7 @@ describe('OidcService', () => {
       const res = createResponse();
       res.send = jest.fn();
       const resSpy = jest.spyOn(res, 'send');
-      const spy = jest.spyOn(service['htmlErrorPagesService'], 'build');
+      const spy = jest.spyOn(service['ssrPagesService'], 'build');
       service.loggedOut(req, res, params);
       expect(spy).toHaveBeenCalled();
       expect(resSpy).toHaveBeenCalled();
@@ -428,7 +428,7 @@ describe('OidcService', () => {
       const res = createResponse();
       res.send = jest.fn();
       const resSpy = jest.spyOn(res, 'send');
-      const spy = jest.spyOn(service['htmlErrorPagesService'], 'build');
+      const spy = jest.spyOn(service['ssrPagesService'], 'build');
       service.loggedOut(req, res, params);
       expect(spy).toHaveBeenCalled();
       expect(resSpy).toHaveBeenCalled();
@@ -439,7 +439,7 @@ describe('OidcService', () => {
       const res = createResponse();
       res.send = jest.fn();
       const resSpy = jest.spyOn(res, 'send');
-      const spy = jest.spyOn(service['htmlErrorPagesService'], 'build');
+      const spy = jest.spyOn(service['ssrPagesService'], 'build');
       service.loggedOut(req, res, params);
       expect(spy).toHaveBeenCalled();
       expect(resSpy).toHaveBeenCalled();

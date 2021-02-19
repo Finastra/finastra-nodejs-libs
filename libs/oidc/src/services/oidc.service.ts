@@ -8,7 +8,7 @@ import { v4 as uuid } from 'uuid';
 import { ChannelType, IdentityProviderOptions, OidcModuleOptions } from '../interfaces';
 import { OIDC_MODULE_OPTIONS, SESSION_STATE_COOKIE } from '../oidc.constants';
 import { OidcStrategy } from '../strategies';
-import { HtmlErrorPagesService } from './html-error-pages.service';
+import { SSRPagesService } from './ssr-pages.service';
 import passport = require('passport');
 
 const logger = new Logger('OidcService');
@@ -26,7 +26,7 @@ export class OidcService implements OnModuleInit {
   } = {};
   constructor(
     @Inject(OIDC_MODULE_OPTIONS) public options: OidcModuleOptions,
-    private htmlErrorPagesService: HtmlErrorPagesService,
+    private ssrPagesService: SSRPagesService,
   ) {
     this.isMultitenant = !!this.options.issuerOrigin;
   }
@@ -219,7 +219,7 @@ export class OidcService implements OnModuleInit {
         label: 'Logout',
       },
     };
-    const loggedOutPage = this.htmlErrorPagesService.build(msgPageOpts);
+    const loggedOutPage = this.ssrPagesService.build(msgPageOpts);
     res.send(loggedOutPage);
   }
 

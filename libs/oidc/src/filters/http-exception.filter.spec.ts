@@ -4,7 +4,7 @@ import { HttpArgumentsHost } from '@nestjs/common/interfaces';
 import { Test, TestingModule } from '@nestjs/testing';
 import { createRequest, createResponse } from 'node-mocks-http';
 import { MisdirectedStatus } from '../interfaces';
-import { HtmlErrorPagesService } from '../services';
+import { SSRPagesService } from '../services';
 import { HttpExceptionFilter } from './http-exception.filter';
 
 describe('HttpExceptionFilter', () => {
@@ -12,7 +12,7 @@ describe('HttpExceptionFilter', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [HttpExceptionFilter, HtmlErrorPagesService],
+      providers: [HttpExceptionFilter, SSRPagesService],
     }).compile();
     filter = module.get<HttpExceptionFilter>(HttpExceptionFilter);
   });
@@ -54,7 +54,7 @@ describe('HttpExceptionFilter', () => {
       let exception = new HttpException('', HttpStatus.HTTP_VERSION_NOT_SUPPORTED);
       jest.spyOn(exception, 'getStatus').mockReturnValue(HttpStatus.HTTP_VERSION_NOT_SUPPORTED);
       const resSpy = jest.spyOn(res, 'send');
-      const spy = jest.spyOn(filter['htmlErrorPagesService'], 'build').mockReturnValue('');
+      const spy = jest.spyOn(filter['ssrPagesService'], 'build').mockReturnValue('');
       filter.catch(exception, host);
       expect(spy).toHaveBeenCalled();
       expect(resSpy).toHaveBeenCalled();
@@ -63,7 +63,7 @@ describe('HttpExceptionFilter', () => {
     it('should redirect to message page if it s not a http exception', () => {
       let exception = 'ERROR';
       const resSpy = jest.spyOn(res, 'send');
-      const spy = jest.spyOn(filter['htmlErrorPagesService'], 'build').mockReturnValue('');
+      const spy = jest.spyOn(filter['ssrPagesService'], 'build').mockReturnValue('');
       filter.catch(exception, host);
       expect(spy).toHaveBeenCalled();
       expect(resSpy).toHaveBeenCalled();

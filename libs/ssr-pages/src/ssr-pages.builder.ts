@@ -2,9 +2,9 @@ import { readFileSync } from 'fs';
 import * as handlebars from 'handlebars';
 import { join } from 'path';
 import inlineSVG from './helpers/inlineSVG.helper';
-import { MessagePageOptions } from './html-error-pages.interface';
+import { MessagePageOptions } from './ssr-pages.interface';
 
-export class HtmlErrorPage {
+export class SSRPages {
   private templateMessagePage: HandlebarsTemplateDelegate;
 
   constructor() {

@@ -2,12 +2,12 @@ import { Controller, Get, Param, Req, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { isAvailableRouteForMultitenant } from '../decorators';
 import { Public } from '../decorators/public.decorator';
-import { HtmlErrorPagesService, OidcService } from '../services';
+import { OidcService, SSRPagesService } from '../services';
 
 @isAvailableRouteForMultitenant(true)
 @Controller()
 export class TenantSwitchController {
-  constructor(public oidcService: OidcService, private htmlErrorPagesService: HtmlErrorPagesService) {}
+  constructor(public oidcService: OidcService, private ssrPagesService: SSRPagesService) {}
 
   @Get('/tenant-switch-warn')
   @Public()
@@ -25,7 +25,7 @@ export class TenantSwitchController {
       backLabel: 'Cancel',
     };
 
-    return this.htmlErrorPagesService.build(msgPageOpts);
+    return this.ssrPagesService.build(msgPageOpts);
   }
 
   @Get('/:tenantId/:channelType/tenant-switch')

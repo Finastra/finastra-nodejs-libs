@@ -35,11 +35,11 @@
       "@finastra/nestjs-logger/*": [
         "libs/logger/src/*"
       ],
-      "@finastra/html-error-pages": [
-        "libs/html-error-pages/src"
+      "@finastra/ssr-pages": [
+        "libs/ssr-pages/src"
       ],
-      "@finastra/html-error-pages/*": [
-        "libs/html-error-pages/src/*"
+      "@finastra/ssr-pages/*": [
+        "libs/ssr-pages/src/*"
       ]
     }
   },

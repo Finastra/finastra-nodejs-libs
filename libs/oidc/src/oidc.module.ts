@@ -10,7 +10,7 @@ import { TenancyGuard, TokenGuard } from './guards';
 import { OidcModuleAsyncOptions, OidcModuleOptions, OidcOptionsFactory } from './interfaces';
 import { LoginMiddleware, UserMiddleware } from './middlewares';
 import { OIDC_MODULE_OPTIONS } from './oidc.constants';
-import { HtmlErrorPagesService, OidcService } from './services';
+import { OidcService, SSRPagesService } from './services';
 import { mergeDefaults } from './utils';
 import { SessionSerializer } from './utils/session.serializer';
 
@@ -22,7 +22,7 @@ import { SessionSerializer } from './utils/session.serializer';
     SessionSerializer,
     TokenGuard,
     OidcService,
-    HtmlErrorPagesService,
+    SSRPagesService,
     {
       provide: APP_GUARD,
       useClass: TenancyGuard,
@@ -32,7 +32,7 @@ import { SessionSerializer } from './utils/session.serializer';
       useClass: HttpExceptionFilter,
     },
   ],
-  exports: [HtmlErrorPagesService],
+  exports: [SSRPagesService],
 })
 export class OidcModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

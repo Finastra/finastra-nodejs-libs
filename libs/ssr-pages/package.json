@@ -1,5 +1,5 @@
 {
-  "name": "@finastra/html-error-pages",
+  "name": "@finastra/ssr-pages",
   "version": "0.1.0",
   "contributors": [
     "David Boclé <david.bocle@finastra.com>",
@@ -10,7 +10,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/fusionfabric/finastra-nodejs-libs.git",
-    "directory": "libs/html-error-pages"
+    "directory": "libs/ssr-pages"
   },
   "dependencies": {
     "handlebars": "^4.7.7"

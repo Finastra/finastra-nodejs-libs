@@ -1,2 +1,2 @@
-export * from './html-error-pages.service';
 export * from './oidc.service';
+export * from './ssr-pages.service';

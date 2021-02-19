@@ -1,11 +1,11 @@
-import { HtmlErrorPagesService, isAvailableRouteForMultitenant, Public } from '@finastra/nestjs-oidc';
+import { isAvailableRouteForMultitenant, Public, SSRPagesService } from '@finastra/nestjs-oidc';
 import { Controller, Get, Param, Req } from '@nestjs/common';
 import { CatsService } from './cats.service';
 import { Cat } from './interfaces/cat.interface';
 
 @Controller('')
 export class CatsController {
-  constructor(private readonly catsService: CatsService, private htmlErrorPagesService: HtmlErrorPagesService) {}
+  constructor(private readonly catsService: CatsService, private ssrPagesService: SSRPagesService) {}
 
   @isAvailableRouteForMultitenant(false)
   @Get('/')
@@ -20,19 +20,19 @@ export class CatsController {
   }
 
   @Public()
-  @Get('/msg')
-  async testMessage(@Req() req): Promise<string> {
+  @Get('/ssr')
+  async ssr(): Promise<string> {
     const msgPageOpts = {
-      title: "You've been signed out",
-      subtitle: `You will be redirected in a moment`,
-      description: 'Be patient, the page will refresh itself, if not click on the following button.',
+      title: 'SSR example',
+      subtitle: `This is an example of a server-side rendered content`,
+      description: 'Built with our @finastra/ssr-pages library',
       svg: 'exit' as const,
       redirect: {
         auto: false,
         link: '/user',
-        label: 'Logout',
+        label: 'Check your user',
       },
     };
-    return this.htmlErrorPagesService.build(msgPageOpts);
+    return this.ssrPagesService.build(msgPageOpts);
   }
 }

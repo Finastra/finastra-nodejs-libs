@@ -1,7 +1,7 @@
 import { JWKS } from 'jose';
 import { UserInfoMethod } from '../interfaces';
 import { MOCK_CLIENT_INSTANCE, MOCK_OIDC_MODULE_OPTIONS, MOCK_TRUST_ISSUER } from '../mocks';
-import { HtmlErrorPagesService, OidcService } from '../services';
+import { OidcService, SSRPagesService } from '../services';
 import { getUserInfo } from './user-info';
 
 describe('OidcStrategy', () => {
@@ -15,7 +15,7 @@ describe('OidcStrategy', () => {
   let service;
 
   beforeEach(() => {
-    service = new OidcService(MOCK_OIDC_MODULE_OPTIONS, new HtmlErrorPagesService());
+    service = new OidcService(MOCK_OIDC_MODULE_OPTIONS, new SSRPagesService());
     service.idpInfos[idpKey] = {
       client: MOCK_CLIENT_INSTANCE,
       tokenStore: new JWKS.KeyStore([]),

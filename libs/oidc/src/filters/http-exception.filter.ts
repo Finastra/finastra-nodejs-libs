@@ -1,11 +1,11 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 import { Response } from 'express';
 import { MisdirectedStatus } from '../interfaces/misdirected-status.enum';
-import { HtmlErrorPagesService } from '../services';
+import { SSRPagesService } from '../services';
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
-  constructor(private htmlErrorPagesService: HtmlErrorPagesService) {}
+  constructor(private ssrPagesService: SSRPagesService) {}
 
   catch(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
@@ -39,7 +39,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
             label: 'Retry',
           },
         };
-        const errorPage = this.htmlErrorPagesService.build(msgPageOpts);
+        const errorPage = this.ssrPagesService.build(msgPageOpts);
         response.send(errorPage);
         break;
 
