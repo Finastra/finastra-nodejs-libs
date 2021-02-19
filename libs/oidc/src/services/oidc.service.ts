@@ -1,15 +1,14 @@
 import { HttpStatus, Inject, Injectable, Logger, Next, OnModuleInit, Param, Req, Res } from '@nestjs/common';
 import axios from 'axios';
 import { Request, Response } from 'express';
-import { readFileSync } from 'fs';
 import { JWKS } from 'jose';
 import { Client, custom, Issuer } from 'openid-client';
-import { join } from 'path';
 import { stringify } from 'querystring';
 import { v4 as uuid } from 'uuid';
 import { ChannelType, IdentityProviderOptions, OidcModuleOptions } from '../interfaces';
 import { OIDC_MODULE_OPTIONS, SESSION_STATE_COOKIE } from '../oidc.constants';
 import { OidcStrategy } from '../strategies';
+import { HtmlErrorPagesService } from './html-error-pages.service';
 import passport = require('passport');
 
 const logger = new Logger('OidcService');
@@ -25,7 +24,10 @@ export class OidcService implements OnModuleInit {
       strategy: OidcStrategy;
     };
   } = {};
-  constructor(@Inject(OIDC_MODULE_OPTIONS) public options: OidcModuleOptions) {
+  constructor(
+    @Inject(OIDC_MODULE_OPTIONS) public options: OidcModuleOptions,
+    private htmlErrorPagesService: HtmlErrorPagesService,
+  ) {
     this.isMultitenant = !!this.options.issuerOrigin;
   }
 
@@ -129,20 +131,24 @@ export class OidcService implements OnModuleInit {
 
       const successRedirect = `${prefix}/`;
 
-      passport.authenticate(strategy, {
-        ...req['options'],
-        successRedirect,
-        failureRedirect: `/message`,
-      }
-        , (err, user, info) => {
+      passport.authenticate(
+        strategy,
+        {
+          ...req['options'],
+          successRedirect,
+          failureRedirect: `${prefix}/login`,
+        },
+        (err, user, info) => {
           if (err || !user) {
-            return next(err || info)
+            return next(err || info);
           }
           req.logIn(user, function (err) {
-            if (err) { return next(err); }
+            if (err) {
+              return next(err);
+            }
             return res.redirect(successRedirect);
           });
-        }
+        },
       )(req, res, next);
     } catch (err) {
       res.status(HttpStatus.NOT_FOUND).send();
@@ -158,7 +164,8 @@ export class OidcService implements OnModuleInit {
 
       if (end_session_endpoint) {
         res.redirect(
-          `${end_session_endpoint}?post_logout_redirect_uri=${this.options.redirectUriLogout ? this.options.redirectUriLogout : this.options.origin
+          `${end_session_endpoint}?post_logout_redirect_uri=${
+            this.options.redirectUriLogout ? this.options.redirectUriLogout : this.options.origin
           }&client_id=${this.options.clientMetadata.client_id}${id_token ? '&id_token_hint=' + id_token : ''}`,
         );
       } else {
@@ -201,16 +208,19 @@ export class OidcService implements OnModuleInit {
       postLogoutRedirectUri = `/${postLogoutRedirectUri}`;
     }
 
-    req.session.msgPageOpts = {
+    const msgPageOpts = {
       title: "You've been signed out",
       subtitle: `You will be redirected in a moment`,
-      description: "Be patient, the page will refresh itself, if not click on the following button.",
-      svg: 'exit',
-      redirectLink: `${prefix}${postLogoutRedirectUri}`,
-      redirectLabel: 'Logout',
-      autoRedirect: true
-    }
-    res.redirect('/message');
+      description: 'Be patient, the page will refresh itself, if not click on the following button.',
+      svg: 'exit' as const,
+      redirect: {
+        auto: true,
+        link: `${prefix}${postLogoutRedirectUri}`,
+        label: 'Logout',
+      },
+    };
+    const loggedOutPage = this.htmlErrorPagesService.build(msgPageOpts);
+    res.send(loggedOutPage);
   }
 
   async _refreshToken(authToken: IdentityProviderOptions) {
@@ -267,24 +277,11 @@ export class OidcService implements OnModuleInit {
     req.user.authTokens.expiresAt = data.expiresAt;
   }
 
-  messagePage(@Req() req: Request, @Res() res: Response) {
-    let data = readFileSync(join(__dirname, '../assets/message.html')).toString();
-    data = data.replace('{{title}}', req.session.msgPageOpts.title || '');
-    data = data.replace('{{subtitle}}', req.session.msgPageOpts.subtitle || '');
-    data = data.replace('{{description}}', req.session.msgPageOpts.description || '');
-    data = data.replace(/{{redirectLink}}/gi, req.session.msgPageOpts.redirectLink || '');
-    data = data.replace(/{{backLabel}}/gi, req.session.msgPageOpts.backLabel || '');
-    data = data.replace(/{{redirectLabel}}/gi, req.session.msgPageOpts.redirectLabel || '');
-    data = data.replace('{{autoRedirect}}', req.session.msgPageOpts.autoRedirect || 'false');
-    data = data.replace('{{svg}}', `message/${req.session.msgPageOpts.svg}`);
-    res.send(data);
-  }
-
   _getPrefix(@Req() req: Request, params) {
     return req.query.tenantId && req.query.channelType
       ? `/${req.query.tenantId}/${req.query.channelType}`
       : params.tenantId && params.channelType
-        ? `/${params.tenantId}/${params.channelType}`
-        : '';
+      ? `/${params.tenantId}/${params.channelType}`
+      : '';
   }
 }

@@ -1,0 +1,18 @@
+{
+  "name": "@finastra/html-error-pages",
+  "version": "0.1.0",
+  "contributors": [
+    "David Boclé <david.bocle@finastra.com>",
+    "Francine Ong <francine.ong@finastra.com>"
+  ],
+  "main": "index.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fusionfabric/finastra-nodejs-libs.git",
+    "directory": "libs/html-error-pages"
+  },
+  "dependencies": {
+    "handlebars": "^4.7.7"
+  }
+}

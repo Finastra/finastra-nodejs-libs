@@ -5,11 +5,12 @@ import { Issuer } from 'openid-client';
 import { ChannelType, OidcModuleOptions } from '../interfaces';
 import { MOCK_CLIENT_INSTANCE, MOCK_ISSUER_INSTANCE, MOCK_OIDC_MODULE_OPTIONS, MOCK_TRUST_ISSUER } from '../mocks';
 import { OidcStrategy } from '../strategies';
+import { HtmlErrorPagesService } from './html-error-pages.service';
 import { OidcService } from './oidc.service';
 import passport = require('passport');
 
 describe('OidcService', () => {
-  let service = new OidcService(MOCK_OIDC_MODULE_OPTIONS);
+  let service = new OidcService(MOCK_OIDC_MODULE_OPTIONS, new HtmlErrorPagesService());
   let options: OidcModuleOptions = MOCK_OIDC_MODULE_OPTIONS;
   const idpKey = 'idpKey';
 
@@ -142,7 +143,7 @@ describe('OidcService', () => {
     it('should call passport authenticate for single tenant login', async () => {
       service.strategy = new OidcStrategy(service, idpKey);
       const spy = jest.spyOn(passport, 'authenticate').mockImplementation(() => {
-        return (req, res, next) => { };
+        return (req, res, next) => {};
       });
       await service.login(req, res, next, params);
       expect(spy).toHaveBeenCalled();
@@ -155,7 +156,7 @@ describe('OidcService', () => {
         channelType: 'b2c',
       };
       const spy = jest.spyOn(passport, 'authenticate').mockImplementation(() => {
-        return (req, res, next) => { };
+        return (req, res, next) => {};
       });
       await service.login(req, res, next, params);
       expect(spy).toHaveBeenCalled();
@@ -185,7 +186,7 @@ describe('OidcService', () => {
 
       const spy = jest.spyOn(passport, 'authenticate').mockImplementation((strategy, options, cb) => {
         cb();
-        return (req, res, next) => { };
+        return (req, res, next) => {};
       });
 
       await service.login(req, res, next, params);
@@ -205,9 +206,9 @@ describe('OidcService', () => {
       });
 
       const spy = jest.spyOn(passport, 'authenticate').mockImplementation((strategy, options, cb) => {
-        const user = {}
+        const user = {};
         cb(null, user, null);
-        return (req, res, next) => { };
+        return (req, res, next) => {};
       });
 
       await service.login(req, res, next, params);
@@ -228,7 +229,7 @@ describe('OidcService', () => {
 
       const spy = jest.spyOn(passport, 'authenticate').mockImplementation((strategy, options, cb) => {
         cb(null, {}, null);
-        return (req, res, next) => { };
+        return (req, res, next) => {};
       });
 
       await service.login(req, res, next, params);
@@ -249,7 +250,7 @@ describe('OidcService', () => {
 
       const spy = jest.spyOn(passport, 'authenticate').mockImplementation((strategy, options, cb) => {
         cb(null, {}, null);
-        return (req, res, next) => { };
+        return (req, res, next) => {};
       });
 
       const spyRes = jest.spyOn(res, 'redirect');
@@ -404,41 +405,44 @@ describe('OidcService', () => {
       req = createRequest({
         query: {
           tenantId: 'tenantId',
-          channelType: 'b2c'
+          channelType: 'b2c',
         },
-        session: {}
+        session: {},
       });
       res = createResponse();
       params = {};
     });
 
-    it('should send message file and redirect to login page', () => {
+    it('should send build error page and redirect to login page', () => {
       const res = createResponse();
       res.send = jest.fn();
-      const spy = jest.spyOn(res, 'redirect');
+      const resSpy = jest.spyOn(res, 'send');
+      const spy = jest.spyOn(service['htmlErrorPagesService'], 'build');
       service.loggedOut(req, res, params);
-      expect(spy).toHaveBeenCalledWith('/message');
-      expect(req.session.msgPageOpts).toBeTruthy();
+      expect(spy).toHaveBeenCalled();
+      expect(resSpy).toHaveBeenCalled();
     });
 
-    it('should send message file', () => {
+    it('should builg loggout page', () => {
       options.postLogoutRedirectUri = 'redirectUri';
       const res = createResponse();
       res.send = jest.fn();
-      const spy = jest.spyOn(res, 'redirect');
+      const resSpy = jest.spyOn(res, 'send');
+      const spy = jest.spyOn(service['htmlErrorPagesService'], 'build');
       service.loggedOut(req, res, params);
-      expect(spy).toHaveBeenCalledWith('/message');
-      expect(req.session.msgPageOpts).toBeTruthy();
+      expect(spy).toHaveBeenCalled();
+      expect(resSpy).toHaveBeenCalled();
     });
 
-    it('should send message file', () => {
+    it('should builg loggout page', () => {
       options.postLogoutRedirectUri = '/redirectUri';
       const res = createResponse();
       res.send = jest.fn();
-      const spy = jest.spyOn(res, 'redirect');
+      const resSpy = jest.spyOn(res, 'send');
+      const spy = jest.spyOn(service['htmlErrorPagesService'], 'build');
       service.loggedOut(req, res, params);
-      expect(spy).toHaveBeenCalledWith('/message');
-      expect(req.session.msgPageOpts).toBeTruthy();
+      expect(spy).toHaveBeenCalled();
+      expect(resSpy).toHaveBeenCalled();
     });
   });
 
@@ -680,25 +684,6 @@ describe('OidcService', () => {
     });
   });
 
-  describe('messagePage', () => {
-    let req, res;
-    beforeEach(() => {
-      req = createRequest({
-        session: {
-          msgPageOpts: ""
-        }
-      })
-      res = createResponse();
-    });
-
-    it('should send message page html', async () => {
-      const spy = jest.spyOn(res, 'send');
-      service.messagePage(req, res);
-      expect(spy).toHaveBeenCalled();
-    });
-
-  });
-
   describe('_getPrefix', () => {
     let req, params;
     beforeEach(() => {
@@ -713,7 +698,7 @@ describe('OidcService', () => {
     it('should get prefix from query', () => {
       req.query = {
         tenantId: 'tenantId',
-        channelType: 'channelType'
+        channelType: 'channelType',
       };
       expect(service._getPrefix(req, params)).toBe(`/${req.query.tenantId}/${req.query.channelType}`);
     });
@@ -722,8 +707,8 @@ describe('OidcService', () => {
       req.query = {};
       params = {
         tenantId: 'tenantId',
-        channelType: 'channelType'
-      }
+        channelType: 'channelType',
+      };
       expect(service._getPrefix(req, params)).toBe(`/${params.tenantId}/${params.channelType}`);
     });
   });

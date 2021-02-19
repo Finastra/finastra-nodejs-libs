@@ -4,6 +4,7 @@ import { HttpArgumentsHost } from '@nestjs/common/interfaces';
 import { Test, TestingModule } from '@nestjs/testing';
 import { createRequest, createResponse } from 'node-mocks-http';
 import { MisdirectedStatus } from '../interfaces';
+import { HtmlErrorPagesService } from '../services';
 import { HttpExceptionFilter } from './http-exception.filter';
 
 describe('HttpExceptionFilter', () => {
@@ -11,7 +12,7 @@ describe('HttpExceptionFilter', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [HttpExceptionFilter],
+      providers: [HttpExceptionFilter, HtmlErrorPagesService],
     }).compile();
     filter = module.get<HttpExceptionFilter>(HttpExceptionFilter);
   });
@@ -35,37 +36,41 @@ describe('HttpExceptionFilter', () => {
           user: {
             userinfo: {},
           },
-          session: {}
+          session: {},
         };
       },
     } as HttpArgumentsHost;
     jest.spyOn(host, 'switchToHttp').mockReturnValue(ctx);
 
     it('should catch 421 and redirect', () => {
-      let exception = new HttpException("", MisdirectedStatus.MISDIRECTED);
+      let exception = new HttpException('', MisdirectedStatus.MISDIRECTED);
       jest.spyOn(exception, 'getStatus').mockReturnValue(MisdirectedStatus.MISDIRECTED);
       const spy = jest.spyOn(res, 'redirect');
       filter.catch(exception, host);
       expect(spy).toHaveBeenCalled();
     });
 
-    it('should redirect to message page', () => {
-      let exception = new HttpException("", HttpStatus.HTTP_VERSION_NOT_SUPPORTED);
+    it('should send error page', () => {
+      let exception = new HttpException('', HttpStatus.HTTP_VERSION_NOT_SUPPORTED);
       jest.spyOn(exception, 'getStatus').mockReturnValue(HttpStatus.HTTP_VERSION_NOT_SUPPORTED);
-      const spy = jest.spyOn(res, 'redirect');
+      const resSpy = jest.spyOn(res, 'send');
+      const spy = jest.spyOn(filter['htmlErrorPagesService'], 'build').mockReturnValue('');
       filter.catch(exception, host);
-      expect(spy).toHaveBeenCalledWith('/message');
+      expect(spy).toHaveBeenCalled();
+      expect(resSpy).toHaveBeenCalled();
     });
 
     it('should redirect to message page if it s not a http exception', () => {
-      let exception = "ERROR";
-      const spy = jest.spyOn(res, 'redirect');
+      let exception = 'ERROR';
+      const resSpy = jest.spyOn(res, 'send');
+      const spy = jest.spyOn(filter['htmlErrorPagesService'], 'build').mockReturnValue('');
       filter.catch(exception, host);
-      expect(spy).toHaveBeenCalledWith('/message');
+      expect(spy).toHaveBeenCalled();
+      expect(resSpy).toHaveBeenCalled();
     });
 
     it('should return exception otherwise', () => {
-      let exception = new HttpException("", HttpStatus.NOT_FOUND);
+      let exception = new HttpException('', HttpStatus.NOT_FOUND);
       jest.spyOn(exception, 'getStatus').mockReturnValue(HttpStatus.NOT_FOUND);
       const spy = jest.spyOn(res, 'status');
       filter.catch(exception, host);

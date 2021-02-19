@@ -34,6 +34,12 @@
       ],
       "@finastra/logger/*": [
         "libs/logger/src/*"
+      ],
+      "@finastra/html-error-pages": [
+        "libs/html-error-pages/src"
+      ],
+      "@finastra/html-error-pages/*": [
+        "libs/html-error-pages/src/*"
       ]
     }
   },

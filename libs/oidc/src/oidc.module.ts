@@ -1,27 +1,28 @@
-import { DynamicModule, MiddlewareConsumer, Module, NestModule, Provider, RequestMethod } from '@nestjs/common';
+import { DynamicModule, Global, MiddlewareConsumer, Module, NestModule, Provider, RequestMethod } from '@nestjs/common';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { TenantSwitchController } from './controllers';
 import { AuthMultitenantController } from './controllers/auth-multitenant.controller';
 import { AuthController } from './controllers/auth.controller';
 import { LoginCallbackController } from './controllers/login-callback.controller';
-import { MessageController } from './controllers/message.controller';
 import { HttpExceptionFilter } from './filters';
 import { TenancyGuard, TokenGuard } from './guards';
 import { OidcModuleAsyncOptions, OidcModuleOptions, OidcOptionsFactory } from './interfaces';
 import { LoginMiddleware, UserMiddleware } from './middlewares';
 import { OIDC_MODULE_OPTIONS } from './oidc.constants';
-import { OidcService } from './services';
+import { HtmlErrorPagesService, OidcService } from './services';
 import { mergeDefaults } from './utils';
 import { SessionSerializer } from './utils/session.serializer';
 
+@Global()
 @Module({
   imports: [JwtModule.register({})],
-  controllers: [AuthController, AuthMultitenantController, LoginCallbackController, TenantSwitchController, MessageController],
+  controllers: [AuthController, AuthMultitenantController, LoginCallbackController, TenantSwitchController],
   providers: [
     SessionSerializer,
     TokenGuard,
     OidcService,
+    HtmlErrorPagesService,
     {
       provide: APP_GUARD,
       useClass: TenancyGuard,
@@ -31,6 +32,7 @@ import { SessionSerializer } from './utils/session.serializer';
       useClass: HttpExceptionFilter,
     },
   ],
+  exports: [HtmlErrorPagesService],
 })
 export class OidcModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

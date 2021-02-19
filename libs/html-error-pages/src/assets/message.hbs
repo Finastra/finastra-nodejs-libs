@@ -2,13 +2,14 @@
 <html>
 
 <head>
-    <title>Message</title>
-    <div class="redirect">
-    </div>
+    <title>{{title}}</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimal-ui" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta http-equiv="content-language" content="en" />
+    {{#if redirect.auto}}
+    <meta http-equiv='refresh' content="3; url = '{{redirect.link}}'" />
+    {{/if}}
     <link href=“https://use.typekit.net/qwi6aba.css” rel=“stylesheet” />
 
     <style type="text/css">
@@ -48,9 +49,13 @@
             font-weight: 500;
         }
 
+        #actions {
+            margin-top: 32px;
+        }
+
         .action-button {
             margin-left: 32px;
-            background-color: #707070;
+            background-color: #694ed6;
             color: white;
             border-radius: 18px;
             min-width: 64px;
@@ -60,7 +65,12 @@
             cursor: pointer;
         }
 
-        .icon-msg {
+        .action-button.secondary {
+            background-color: #c137a2;
+        }
+
+        .icon-msg,
+        .icon-msg svg {
             height: 30vh;
         }
     </style>
@@ -68,7 +78,9 @@
 
 <body>
     <div class="container">
-        <img class="icon-msg" src="{{svg}}" alt="icon" type="image/svg+xml">
+        {{#if svg}}
+        <div class="icon-msg">{{{inlineSvg svg}}}</div>
+        {{/if}}
         <div class="text">
             <p class="title">{{title}}</p>
             <p class="subtitle">
@@ -76,38 +88,42 @@
             </p>
             <p class="description">
                 {{description}}
-            </p>
-            </p>
-            <br />
+                <br />
             <div id="actions" style="display: flex;flex-direction: row-reverse;">
+                {{#if backLabel}}
+                <button class='action-button secondary' onclick='back()'>{{backLabel}}</button>
+                {{/if}}
+                {{#if redirect.label}}
+                <button class='action-button' onclick='proceed()'>{{redirect.label}}</button>
+                {{/if}}
             </div>
         </div>
     </div>
-    <script>
-        if (`{{autoRedirect}}` === `true`) {
-            document.getElementById('actions').insertAdjacentHTML('afterbegin', `<meta http-equiv='refresh' content="3; url = '{{redirectLink}}'" /> `);
-        }
-        if (`{{backLabel}}` !== '') {
-            document.getElementById('actions').insertAdjacentHTML('afterbegin', "<button class = 'action-button' onclick='back()'>{{backLabel}}</button>");
-        }
-        if (`{{redirectLabel}}` !== '') {
-            document.getElementById('actions').insertAdjacentHTML('afterbegin', "<button class = 'action-button' onclick='proceed()'>{{redirectLabel}}</button>");
-        }
-        function proceed() {
-            window.location.href = '{{redirectLink}}';
-        }
+    {{!-- <div class="ribbons">{{{inlineSvg 'patterns/curve'}}}</div> --}}
 
+    {{#if backLabel}}
+    <script>
         function back() {
             window.history.go(-1);
             return false;
         }
     </script>
+    {{/if}}
+
+    {{#if redirect}}
+    <script>
+        function proceed() {
+            window.location.href = '{{redirect.link}}';
+        }
+    </script>
+    {{/if}}
+    {{!--
     <script type="text/javascript" id="webfont-loader-js-after">
         WebFont.load({ google: { families: ['Roboto:400'] } });
     </script>
     <script type="text/javascript" id="webfont-loader-js-after">
         WebFont.load({ google: { families: ['future-pt:400'] } });
-    </script>
+    </script> --}}
 </body>
 
 </html>

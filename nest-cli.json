@@ -58,6 +58,15 @@
         ],
         "deleteOutDir": true
       }
+    },
+    "html-error-pages": {
+      "type": "library",
+      "root": "libs/html-error-pages",
+      "entryFile": "index",
+      "sourceRoot": "libs/html-error-pages/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/html-error-pages/tsconfig.lib.json"
+      }
     }
   },
   "compilerOptions": {

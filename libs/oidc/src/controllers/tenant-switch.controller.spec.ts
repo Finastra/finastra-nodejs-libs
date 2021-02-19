@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { createRequest, createResponse } from 'node-mocks-http';
 import { MockOidcService, MOCK_REQUEST } from '../mocks';
-import { OidcService } from '../services';
+import { HtmlErrorPagesService, OidcService } from '../services';
 import { TenantSwitchController } from './tenant-switch.controller';
 
 describe('TenantSwitchController', () => {
@@ -20,6 +20,7 @@ describe('TenantSwitchController', () => {
           provide: OidcService,
           useValue: MockOidcService,
         },
+        HtmlErrorPagesService,
       ],
     }).compile();
 
@@ -40,12 +41,11 @@ describe('TenantSwitchController', () => {
           originalChannel: 'originalChannel',
           requestedTenant: 'requestedTenant',
           requestedChannel: 'requestedChannel',
-
-        }
-      }
-      const spy = jest.spyOn(oidcService, 'messagePage').mockReturnThis();
+        },
+      };
+      const spy = jest.spyOn(controller['htmlErrorPagesService'], 'build').mockReturnThis();
       await controller.getTenantSwitchWarn(req, MOCK_RES);
-      expect(spy).toHaveBeenCalledWith(req, MOCK_RES);
+      expect(spy).toHaveBeenCalled();
     });
   });
 

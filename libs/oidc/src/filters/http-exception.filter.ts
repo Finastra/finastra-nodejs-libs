@@ -1,13 +1,18 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 import { Response } from 'express';
 import { MisdirectedStatus } from '../interfaces/misdirected-status.enum';
+import { HtmlErrorPagesService } from '../services';
+
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
+  constructor(private htmlErrorPagesService: HtmlErrorPagesService) {}
+
   catch(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest();
     const status = exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
+
     switch (status) {
       case MisdirectedStatus.MISDIRECTED:
         const requestedTenant = request.params.tenantId;
@@ -18,21 +23,26 @@ export class HttpExceptionFilter implements ExceptionFilter {
           `/tenant-switch-warn?requestedTenant=${requestedTenant}&requestedChannel=${requestedChannel}&originalTenant=${originalTenant}&originalChannel=${originalChannel}`,
         );
         break;
+
       case HttpStatus.INTERNAL_SERVER_ERROR:
       case HttpStatus.NOT_IMPLEMENTED:
       case HttpStatus.BAD_GATEWAY:
       case HttpStatus.SERVICE_UNAVAILABLE:
       case HttpStatus.GATEWAY_TIMEOUT:
       case HttpStatus.HTTP_VERSION_NOT_SUPPORTED:
-        request.session.msgPageOpts = {
+        const msgPageOpts = {
           title: `We are sorry, we have encountered an error`,
-          subtitle: 'Error ${status}',
+          subtitle: `Error ${status}`,
           description: exception.message,
-          redirectLink: '/',
-          redirectLabel: 'Retry',
+          redirect: {
+            link: '/',
+            label: 'Retry',
+          },
         };
-        response.redirect('/message');
+        const errorPage = this.htmlErrorPagesService.build(msgPageOpts);
+        response.send(errorPage);
         break;
+
       default:
         response.status(status).json(exception['response']);
         break;
