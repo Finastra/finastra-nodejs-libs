@@ -119,8 +119,8 @@
       "@finastra/nestjs-proxy": "<rootDir>/libs/proxy/src",
       "finastra/corporate-accounts/(.*)": "<rootDir>/libs/corporate-accounts/src/$1",
       "finastra/corporate-accounts": "<rootDir>/libs/corporate-accounts/src",
-      "@finastra/logger/(.*)": "<rootDir>/libs/logger/src/$1",
-      "@finastra/logger": "<rootDir>/libs/logger/src",
+      "@finastra/nestjs-logger/(.*)": "<rootDir>/libs/logger/src/$1",
+      "@finastra/nestjs-logger": "<rootDir>/libs/logger/src",
       "@finastra/html-error-pages/(.*)": "<rootDir>/libs/html-error-pages/src/$1",
       "@finastra/html-error-pages": "<rootDir>/libs/html-error-pages/src"
     }

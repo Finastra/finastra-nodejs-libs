@@ -1,5 +1,5 @@
 {
-  "name": "@finastra/logger",
+  "name": "@finastra/nestjs-logger",
   "version": "0.2.0",
   "contributors": [
     "Razvan Bordeanu <razvan.bordeanu@finastra.com>",
