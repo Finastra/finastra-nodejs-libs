@@ -16,6 +16,8 @@
         body {
             height: 100vh;
             margin: 0;
+            background: url({{{background 'ribbon'}}}) no-repeat right bottom,
+            url({{{background 'dotted-bg'}}}) no-repeat right;
         }
 
         .container {
@@ -81,14 +83,12 @@
         {{#if svg}}
         <div class="icon-msg">{{{inlineSvg svg}}}</div>
         {{/if}}
+
         <div class="text">
-            <p class="title">{{title}}</p>
-            <p class="subtitle">
-                {{subtitle}}
-            </p>
-            <p class="description">
-                {{description}}
-                <br />
+            <h1 class="title">{{title}}</h1>
+            <h2 class="subtitle">{{subtitle}}</h2>
+            <p class="description">{{description}}</p>
+            <br />
             <div id="actions" style="display: flex;flex-direction: row-reverse;">
                 {{#if backLabel}}
                 <button class='action-button secondary' onclick='back()'>{{backLabel}}</button>
