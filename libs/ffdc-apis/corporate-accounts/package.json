@@ -7,6 +7,11 @@
   ],
   "main": "index.js",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Finastra/finastra-nodejs-libs.git",
+    "directory": "libs/ffdc-apis/corporate-accounts"
+  },
   "dependencies": {
     "@nestjs/jwt": "^7.0.0",
     "@nestjs/passport": "^7.0.0",
