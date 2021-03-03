@@ -24,8 +24,8 @@ export class TenantSwitchController {
       },
       backLabel: 'Cancel',
     };
-
-    return this.ssrPagesService.build(msgPageOpts);
+    const tenantSwitchPage = this.ssrPagesService.build(msgPageOpts);
+    res.send(tenantSwitchPage);
   }
 
   @Get('/:tenantId/:channelType/tenant-switch')
