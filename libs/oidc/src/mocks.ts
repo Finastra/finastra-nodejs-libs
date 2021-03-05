@@ -1,6 +1,5 @@
+import { Client, Issuer } from 'openid-client';
 import { OidcModuleOptions, UserInfoMethod } from './interfaces';
-import { Issuer, Client } from 'openid-client';
-import { JWKS } from 'jose';
 
 export const MOCK_ISSUER = 'http://issuer.io';
 export const CLIENT_ID = '123';

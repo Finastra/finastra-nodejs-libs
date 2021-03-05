@@ -1,5 +1,5 @@
 import { CorporateAccountsModule } from '@finastra/api_corporate-accounts';
-import { LoggerModule } from '@finastra/logger';
+import { LoggerModule } from '@finastra/nestjs-logger';
 import { OidcModule } from '@finastra/nestjs-oidc';
 import { ProxyModule } from '@finastra/nestjs-proxy';
 import { Module } from '@nestjs/common';
