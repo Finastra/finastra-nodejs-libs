@@ -39,7 +39,7 @@ NestJS
 <br/>
 
 <h3> 
-<img src="https://developer.ffdcdev.fusionfabric.cloud/assets/img/ffdc-logo.png" height="20" alt="FFDC Logo" />
+<img src="https://developer.fusionfabric.cloud/assets/img/ffdc-logo.png" height="20" alt="FFDC Logo" />
   APIs
 </h3>
 
