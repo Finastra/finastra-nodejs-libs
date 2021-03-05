@@ -15,13 +15,40 @@
 
 ## Packages
 
+<br/>
+
+<h3> 
+NestJS
+<img src="https://nestjs.com/img/logo-small.svg" height="20" alt="Nest Logo" />
+</h3>
+
+| Project       | Package                                                                        | Version                                                                                                                         | Links                                                                                                                                                                             |
+| ------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **OIDC Auth** | [`@finastra/nestjs-oidc`](https://npmjs.com/package/@finastra/nestjs-oidc)     | [![latest](https://img.shields.io/npm/v/@finastra/nestjs-oidc/latest.svg)](https://npmjs.com/package/@finastra/nestjs-oidc)     | [![README](https://img.shields.io/badge/README--green.svg)](/libs/oidc/README.md) [![changelog](https://img.shields.io/badge/changelog-%20-yellow)](./libs/oidc/CHANGELOG.md)     |
+| **Proxy**     | [`@finastra/nestjs-proxy`](https://npmjs.com/package/@finastra/nestjs-proxy)   | [![latest](https://img.shields.io/npm/v/@finastra/nestjs-proxy/latest.svg)](https://npmjs.com/package/@finastra/nestjs-proxy)   | [![README](https://img.shields.io/badge/README--green.svg)](/libs/proxy/README.md) [![changelog](https://img.shields.io/badge/changelog-%20-yellow)](./libs/proxy/CHANGELOG.md)   |
+| **Logger**    | [`@finastra/nestjs-logger`](https://npmjs.com/package/@finastra/nestjs-logger) | [![latest](https://img.shields.io/npm/v/@finastra/nestjs-logger/latest.svg)](https://npmjs.com/package/@finastra/nestjs-logger) | [![README](https://img.shields.io/badge/README--green.svg)](/libs/logger/README.md) [![changelog](https://img.shields.io/badge/changelog-%20-yellow)](./libs/logger/CHANGELOG.md) |
+
+<br/>
+
+### Vanilla
+
+| Project       | Package                                                                | Version                                                                                                                 | Links                                                                                                                                                                                   |
+| ------------- | ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **SSR Pages** | [`@finastra/ssr-pages`](https://npmjs.com/package/@finastra/ssr-pages) | [![latest](https://img.shields.io/npm/v/@finastra/ssr-pages/latest.svg)](https://npmjs.com/package/@finastra/ssr-pages) | [![README](https://img.shields.io/badge/README--green.svg)](/libs/ssr-pages/README.md) [![changelog](https://img.shields.io/badge/changelog-%20-yellow)](./libs/ssr-pages/CHANGELOG.md) |
+
+<br/>
+
+<h3> 
+<img src="https://developer.ffdcdev.fusionfabric.cloud/assets/img/ffdc-logo.png" height="20" alt="FFDC Logo" />
+  APIs
+</h3>
+
 | Project                                       | Package                                                                                          | Version                                                                                                                                           | Links                                                                                                                                                                                                                                                                                                                                                                                                          |
 | --------------------------------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **OIDC Auth**                                 | [`@finastra/nestjs-oidc`](https://npmjs.com/package/@finastra/nestjs-oidc)                       | [![latest](https://img.shields.io/npm/v/@finastra/nestjs-oidc/latest.svg)](https://npmjs.com/package/@finastra/nestjs-oidc)                       | [![README](https://img.shields.io/badge/README--green.svg)](/libs/oidc/README.md) [![changelog](https://img.shields.io/badge/changelog-%20-yellow)](./libs/oidc/CHANGELOG.md)                                                                                                                                                                                                                                  |
-| **Proxy**                                     | [`@finastra/nestjs-proxy`](https://npmjs.com/package/@finastra/nestjs-proxy)                     | [![latest](https://img.shields.io/npm/v/@finastra/nestjs-proxy/latest.svg)](https://npmjs.com/package/@finastra/nestjs-proxy)                     | [![README](https://img.shields.io/badge/README--green.svg)](/libs/proxy/README.md) [![changelog](https://img.shields.io/badge/changelog-%20-yellow)](./libs/proxy/CHANGELOG.md)                                                                                                                                                                                                                                |
-| **Logger**                                    | [`@finastra/nestjs-logger`](https://npmjs.com/package/@finastra/nestjs-logger)                   | [![latest](https://img.shields.io/npm/v/@finastra/nestjs-logger/latest.svg)](https://npmjs.com/package/@finastra/nestjs-logger)                   | [![README](https://img.shields.io/badge/README--green.svg)](/libs/logger/README.md) [![changelog](https://img.shields.io/badge/changelog-%20-yellow)](./libs/logger/CHANGELOG.md)                                                                                                                                                                                                                              |
 | **Real-time Account Balances and Statements** |                                                                                                  |                                                                                                                                                   | [![devPortal](https://img.shields.io/badge/DevPortal-%20-blue)](https://developer.fusionfabric.cloud/solution/real-time-account-balances-and-statement)                                                                                                                                                                                                                                                        |
 | ↳ **Accounts and Balances API**               | [`@finastra/api_corporate-accounts`](https://npmjs.com/package/@finastra/api_corporate-accounts) | [![latest](https://img.shields.io/npm/v/@finastra/api_corporate-accounts/latest.svg)](https://npmjs.com/package/@finastra/api_corporate-accounts) | [![README](https://img.shields.io/badge/README--green.svg)](/libs/ffdc-apis/corporate-accounts/README.md) [![changelog](https://img.shields.io/badge/changelog-%20-yellow)](./libs/ffdc-apis/corporate-accounts/CHANGELOG.md) [![devPortal](https://img.shields.io/badge/DevPortal-%20-blue)](https://developer.fusionfabric.cloud/api/corporate-accounteinfo-me-v1-831cb09d-cc10-4772-8ed5-8a6b72ec8e01/docs) |
+
+<br/>
 
 ## Installation
 

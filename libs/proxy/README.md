@@ -1,4 +1,7 @@
-# Proxy module
+<h1> 
+NestJS Proxy module
+<img src="https://nestjs.com/img/logo-small.svg" height="20" alt="Nest Logo" />
+</h1>
 
 NestJS module to decorate and proxy calls.\
 It exposes a `/proxy` endpoint.
