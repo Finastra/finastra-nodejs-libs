@@ -93,7 +93,7 @@ export class OidcService implements OnModuleInit {
         logger.error(errorMsg);
         throw new Error();
       }
-      const docUrl = 'https://github.com/fusionfabric/finastra-nodejs-libs/blob/develop/libs/oidc/README.md';
+      const docUrl = 'https://github.com/finastra/finastra-nodejs-libs/blob/develop/libs/oidc/README.md';
       const msg = `Error accessing the issuer/tokenStore. Check if the url is valid or increase the timeout in the defaultHttpOptions : ${docUrl}`;
       logger.error(msg);
       logger.log('Terminating application');
