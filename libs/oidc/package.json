@@ -1,6 +1,6 @@
 {
   "name": "@finastra/nestjs-oidc",
-  "version": "0.15.1",
+  "version": "0.16.0",
   "contributors": [
     "David Boclé <david.bocle@finastra.com>",
     "Francine Ong <francine.ong@finastra.com>",
@@ -10,10 +10,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/fusionfabric/finastra-nodejs-libs.git",
+    "url": "https://github.com/Finastra/finastra-nodejs-libs.git",
     "directory": "libs/oidc"
   },
   "dependencies": {
+    "@finastra/ssr-pages": "^0.1.0",
     "@nestjs/jwt": "^7.0.0",
     "@nestjs/passport": "^7.0.0",
     "cookie": "^0.4.1",

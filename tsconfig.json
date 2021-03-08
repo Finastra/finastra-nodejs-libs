@@ -29,11 +29,17 @@
       "@finastra/api_corporate-accounts/*": [
         "libs/ffdc-apis/corporate-accounts/src/*"
       ],
-      "@finastra/logger": [
+      "@finastra/nestjs-logger": [
         "libs/logger/src"
       ],
-      "@finastra/logger/*": [
+      "@finastra/nestjs-logger/*": [
         "libs/logger/src/*"
+      ],
+      "@finastra/ssr-pages": [
+        "libs/ssr-pages/src"
+      ],
+      "@finastra/ssr-pages/*": [
+        "libs/ssr-pages/src/*"
       ]
     }
   },

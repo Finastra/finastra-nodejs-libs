@@ -1,19 +1,20 @@
-import { Module, DynamicModule, Provider, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
-import { SessionSerializer } from './utils/session.serializer';
-import { AuthController } from './controllers/auth.controller';
-import { AuthMultitenantController } from './controllers/auth-multitenant.controller';
-import { LoginCallbackController } from './controllers/login-callback.controller';
-import { JwtModule } from '@nestjs/jwt';
-import { OidcModuleOptions, OidcModuleAsyncOptions, OidcOptionsFactory } from './interfaces';
-import { OIDC_MODULE_OPTIONS } from './oidc.constants';
-import { mergeDefaults } from './utils';
-import { UserMiddleware, LoginMiddleware } from './middlewares';
-import { TokenGuard, TenancyGuard } from './guards';
-import { OidcService } from './services';
+import { DynamicModule, Global, MiddlewareConsumer, Module, NestModule, Provider, RequestMethod } from '@nestjs/common';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
-import { MisdirectedFilter } from './filters';
+import { JwtModule } from '@nestjs/jwt';
 import { TenantSwitchController } from './controllers';
+import { AuthMultitenantController } from './controllers/auth-multitenant.controller';
+import { AuthController } from './controllers/auth.controller';
+import { LoginCallbackController } from './controllers/login-callback.controller';
+import { HttpExceptionFilter } from './filters';
+import { TenancyGuard, TokenGuard } from './guards';
+import { OidcModuleAsyncOptions, OidcModuleOptions, OidcOptionsFactory } from './interfaces';
+import { LoginMiddleware, UserMiddleware } from './middlewares';
+import { OIDC_MODULE_OPTIONS } from './oidc.constants';
+import { OidcService, SSRPagesService } from './services';
+import { mergeDefaults } from './utils';
+import { SessionSerializer } from './utils/session.serializer';
 
+@Global()
 @Module({
   imports: [JwtModule.register({})],
   controllers: [AuthController, AuthMultitenantController, LoginCallbackController, TenantSwitchController],
@@ -21,15 +22,17 @@ import { TenantSwitchController } from './controllers';
     SessionSerializer,
     TokenGuard,
     OidcService,
+    SSRPagesService,
     {
       provide: APP_GUARD,
       useClass: TenancyGuard,
     },
     {
       provide: APP_FILTER,
-      useClass: MisdirectedFilter,
+      useClass: HttpExceptionFilter,
     },
   ],
+  exports: [SSRPagesService],
 })
 export class OidcModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

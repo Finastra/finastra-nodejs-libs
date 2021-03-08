@@ -1,4 +1,7 @@
-# Logger module
+<h1> 
+NestJS Logger module
+<img src="https://nestjs.com/img/logo-small.svg" height="20" alt="Nest Logo" />
+</h1>
 
 NestJS module to log in specific formats :
 

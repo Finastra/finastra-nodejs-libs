@@ -1,4 +1,7 @@
-# OIDC Auth module
+<h1> 
+NestJS OIDC Auth module
+<img src="https://nestjs.com/img/logo-small.svg" height="20" alt="Nest Logo" />
+</h1>
 
 NestJS module to enable OAuth 2 & OIDC login to your application.\
 It exposes following endpoints :
