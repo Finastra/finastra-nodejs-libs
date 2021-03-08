@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         node-version: [12.x]
-        package: [oidc, proxy, logger, ffdc-apis/corporate-accounts]
+        package: [oidc, proxy, logger, ffdc-apis/corporate-accounts, ssr-pages]
 
     steps:
       # Setup
