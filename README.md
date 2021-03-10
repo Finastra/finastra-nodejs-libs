@@ -8,6 +8,7 @@
   <a href="https://codecov.io/gh/finastra/finastra-nodejs-libs">
   <img src="https://codecov.io/gh/finastra/finastra-nodejs-libs/branch/develop/graph/badge.svg" />
 </a>
+<a href="https://app.fossa.com/projects/git%2Bgithub.com%2FFinastra%2Ffinastra-nodejs-libs?ref=badge_shield" alt="FOSSA Status"><img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2FFinastra%2Ffinastra-nodejs-libs.svg?type=shield"/></a>
   <a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
   <img src="https://img.shields.io/badge/PRs-welcome-green" alt="PRs welcome"/>
   <a href="https://twitter.com/FinastraFS"><img src="https://img.shields.io/twitter/follow/FinastraFS.svg?style=social&label=Follow"></a>
@@ -82,3 +83,5 @@ $ npm run test:cov
 ## License
 
 All libraries in this repo are [MIT licensed](LICENSE).
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FFinastra%2Ffinastra-nodejs-libs.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FFinastra%2Ffinastra-nodejs-libs?ref=badge_large)
