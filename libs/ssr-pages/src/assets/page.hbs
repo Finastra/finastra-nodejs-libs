@@ -18,7 +18,7 @@
             margin: 0;
             background: url({{{background 'ribbon'}}}) no-repeat right bottom,
             url({{{background 'dotted-bg'}}}) no-repeat right bottom;
-            background-size: 50%;
+            background-size: 35%;
         }
 
         .container {
@@ -76,6 +76,13 @@
         .icon-msg,
         .icon-msg svg {
             height: 30vh;
+        }
+
+        @media screen and (max-width: 768px) {
+            body {
+                background: url({{{background 'dotted-bg'}}}) no-repeat right bottom;
+                background-size: 60%;
+            }
         }
     </style>
 </head>
