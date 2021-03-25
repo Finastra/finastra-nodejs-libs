@@ -1,3 +1,9 @@
 {
-  "recommendations": ["alanwalk.markdown-toc"]
+  "recommendations": [
+    "alanwalk.markdown-toc",
+    "vivaxy.vscode-conventional-commits",
+    "orta.vscode-jest",
+    "cssho.vscode-svgviewer",
+    "gruntfuggly.todo-tree"
+  ]
 }
