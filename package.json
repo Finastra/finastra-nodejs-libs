@@ -5,12 +5,14 @@
   "description": "",
   "license": "MIT",
   "scripts": {
-    "prebuild": "rimraf dist",
+    "prebuild": "npm run build:ssr-pages",
     "build": "nest build",
-    "build:oidc": "nest build oidc",
-    "pack:oidc": "npm run build:oidc && cd dist/libs/oidc && npm pack",
+    "build:ssr-pages": "nest build ssr-pages",
+    "postbuild:ssr-pages": "npm run copy:assets",
+    "predev": "npm run copy:assets",
     "dev": "npm run start:debug",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"libs/**/*.ts\"",
+    "prestart": "npm run copy:assets",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
@@ -22,9 +24,6 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "copy:assets": "cpx -v \"libs/ssr-pages/src/assets/**/*\" dist/libs/ssr-pages/src/assets && cpx -v \"libs/ssr-pages/src/assets/**/*\" dist/libs/ssr-pages/assets",
-    "predev": "npm run copy:assets",
-    "postbuild": "npm run copy:assets",
-    "postbuild:oidc": "npm run copy:assets",
     "typings:gen": "ts-node generate-typings"
   },
   "dependencies": {
