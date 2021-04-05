@@ -6,10 +6,10 @@ describe('OMSLogger', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [OMSLogger],
+      imports: [OMSLogger],
     }).compile();
 
-    service = module.get<OMSLogger>(OMSLogger);
+    service = await module.resolve<OMSLogger>(OMSLogger);
     jest.spyOn(console, 'log').mockImplementation(() => 'test');
 
     process.stdout.isTTY = false;
@@ -58,7 +58,7 @@ describe('OMSLogger - with mocked interactive console', () => {
       providers: [OMSLogger],
     }).compile();
 
-    service = module.get<OMSLogger>(OMSLogger);
+    service = await module.resolve<OMSLogger>(OMSLogger);
     jest.spyOn(console, 'log').mockImplementation(() => 'test');
 
     process.stdout.isTTY = true;
