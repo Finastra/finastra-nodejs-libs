@@ -5,7 +5,7 @@
   "description": "",
   "license": "MIT",
   "scripts": {
-    "prebuild": "rimraf dist",
+    "prebuild": "npm run build:ssr-pages",
     "build": "nest build",
     "dev": "npm run start:debug",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"libs/**/*.ts\"",
