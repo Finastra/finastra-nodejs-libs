@@ -34,12 +34,6 @@
       ],
       "@finastra/nestjs-logger/*": [
         "libs/logger/src/*"
-      ],
-      "@finastra/ssr-pages": [
-        "libs/ssr-pages/src"
-      ],
-      "@finastra/ssr-pages/*": [
-        "libs/ssr-pages/src/*"
       ]
     }
   },
