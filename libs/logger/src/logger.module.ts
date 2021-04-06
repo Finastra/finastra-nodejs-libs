@@ -1,15 +1,8 @@
-import { Module, Scope } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { OMSLogger } from './oms/oms.logger.service';
 
 @Module({
-  providers: [
-    OMSLogger,
-    {
-      provide: OMSLogger,
-      useClass: OMSLogger,
-      scope: Scope.TRANSIENT,
-    },
-  ],
-  exports: [OMSLogger],
+  providers: [ OMSLogger ],
+  exports: [ OMSLogger ],
 })
 export class LoggerModule {}
