@@ -2,12 +2,7 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "declaration": true,
-    "outDir": "../../dist/libs/oidc",
-    "paths": {
-      "@finastra/ssr-pages": [
-        "dist/libs/ssr-pages"
-      ]
-    }
+    "outDir": "../../dist/libs/oidc"
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "test", "**/*spec.ts"]

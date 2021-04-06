@@ -45,17 +45,6 @@
         "assets": ["package.json", "README.md"],
         "deleteOutDir": true
       }
-    },
-    "ssr-pages": {
-      "type": "library",
-      "root": "libs/ssr-pages",
-      "entryFile": "src/index",
-      "sourceRoot": "libs/ssr-pages",
-      "compilerOptions": {
-        "tsConfigPath": "libs/ssr-pages/tsconfig.lib.json",
-        "assets": ["package.json", "README.md"],
-        "deleteOutDir": true
-      }
     }
   },
   "compilerOptions": {

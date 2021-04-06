@@ -5,14 +5,10 @@
   "description": "",
   "license": "MIT",
   "scripts": {
-    "prebuild": "npm run build:ssr-pages",
+    "prebuild": "rm -rf dist",
     "build": "nest build",
-    "build:ssr-pages": "nest build ssr-pages",
-    "postbuild:ssr-pages": "npm run copy:assets",
-    "predev": "npm run copy:assets",
     "dev": "npm run start:debug",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"libs/**/*.ts\"",
-    "prestart": "npm run copy:assets",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
@@ -23,10 +19,10 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "copy:assets": "cpx -v \"libs/ssr-pages/src/assets/**/*\" dist/libs/ssr-pages/src/assets && cpx -v \"libs/ssr-pages/src/assets/**/*\" dist/libs/ssr-pages/assets",
     "typings:gen": "ts-node generate-typings"
   },
   "dependencies": {
+    "@finastra/ssr-pages": "0.1.2",
     "@nestjs/common": "^7.0.0",
     "@nestjs/config": "^0.1.0",
     "@nestjs/core": "^7.0.0",
@@ -36,9 +32,6 @@
     "@nestjs/passport": "^6.1.1",
     "@nestjs/platform-express": "^7.0.0",
     "@nestjs/serve-static": "^1.0.2",
-    "@types/express-session": "^1.15.16",
-    "@types/mongoose": "^5.7.0",
-    "@types/passport": "^1.0.2",
     "apollo-server-express": "^2.14.2",
     "axios": "^0.21.1",
     "connect-mongo": "^3.2.0",
@@ -47,7 +40,6 @@
     "express-session": "^1.17.0",
     "graphql": "^15.0.0",
     "graphql-tools": "^5.0.0",
-    "handlebars": "^4.7.7",
     "helmet": "^3.21.2",
     "http-proxy": "^1.18.1",
     "mongoose": "^5.8.11",
@@ -64,12 +56,14 @@
     "@nestjs/schematics": "^7.0.0",
     "@nestjs/testing": "^7.0.0",
     "@types/express": "^4.17.2",
+    "@types/express-session": "^1.15.16",
     "@types/jest": "^24.0.25",
+    "@types/mongoose": "^5.7.0",
     "@types/node": "^13.1.6",
+    "@types/passport": "^1.0.2",
     "@types/supertest": "^2.0.8",
     "@typescript-eslint/eslint-plugin": "^2.12.0",
     "@typescript-eslint/parser": "^2.12.0",
-    "cpx": "^1.5.0",
     "eslint": "^6.7.2",
     "eslint-config-prettier": "^6.7.0",
     "eslint-plugin-import": "^2.19.1",
@@ -119,9 +113,7 @@
       "finastra/corporate-accounts/(.*)": "<rootDir>/libs/corporate-accounts/src/$1",
       "finastra/corporate-accounts": "<rootDir>/libs/corporate-accounts/src",
       "@finastra/nestjs-logger/(.*)": "<rootDir>/libs/logger/src/$1",
-      "@finastra/nestjs-logger": "<rootDir>/libs/logger/src",
-      "@finastra/ssr-pages/(.*)": "<rootDir>/libs/ssr-pages/src/$1",
-      "@finastra/ssr-pages": "<rootDir>/libs/ssr-pages/src"
+      "@finastra/nestjs-logger": "<rootDir>/libs/logger/src"
     }
   }
 }

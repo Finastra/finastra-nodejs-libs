@@ -31,14 +31,6 @@ NestJS
 
 <br/>
 
-### Vanilla
-
-| Project       | Package                                                                | Version                                                                                                                 | Links                                                                                                                                                                                   |
-| ------------- | ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **SSR Pages** | [`@finastra/ssr-pages`](https://npmjs.com/package/@finastra/ssr-pages) | [![latest](https://img.shields.io/npm/v/@finastra/ssr-pages/latest.svg)](https://npmjs.com/package/@finastra/ssr-pages) | [![README](https://img.shields.io/badge/README--green.svg)](/libs/ssr-pages/README.md) [![changelog](https://img.shields.io/badge/changelog-%20-yellow)](./libs/ssr-pages/CHANGELOG.md) |
-
-<br/>
-
 <h3> 
 <img src="https://developer.fusionfabric.cloud/assets/img/ffdc-logo.png" height="20" alt="FFDC Logo" />
   APIs
