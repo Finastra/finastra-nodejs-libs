@@ -1,6 +1,7 @@
-import { Logger } from '@nestjs/common';
+import { Injectable, Logger, Scope } from '@nestjs/common';
 import { OMSLogLevel } from './OMSLog.interface';
 
+@Injectable({scope: Scope.TRANSIENT})
 export class OMSLogger extends Logger {
   private print(logLevel: OMSLogLevel, message: string, context?: string) {
     let currentContext = context;
