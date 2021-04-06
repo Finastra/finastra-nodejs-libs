@@ -7,7 +7,6 @@
   "conventionalCommits.scopes": [
     "logger",
     "oidc",
-    "proxy",
-    "ssr-pages"
+    "proxy"
   ]
 }
