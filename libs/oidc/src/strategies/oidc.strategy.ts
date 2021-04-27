@@ -1,11 +1,15 @@
+import { Logger } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, TokenSet } from 'openid-client';
-import { getUserInfo, authenticateExternalIdps } from '../utils';
 import { ChannelType, OidcUser } from '../interfaces';
 import { OidcService } from '../services';
+import { authenticateExternalIdps, getUserInfo } from '../utils';
 
 export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
+  readonly logger = new Logger(OidcStrategy.name);
+
   userInfoCallback: any;
+
   constructor(private oidcService: OidcService, private idpKey: string, private channelType?: ChannelType) {
     super({
       client: oidcService.idpInfos[idpKey].client,
@@ -17,6 +21,8 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
   }
 
   async validate(tokenset: TokenSet): Promise<OidcUser> {
+    this.logger.debug(`https://jwt.io/#debugger-io?token=${tokenset.access_token}`);
+
     const externalIdps = await authenticateExternalIdps(this.oidcService.options.externalIdps);
     const id_token = tokenset.id_token;
     let userinfo = await getUserInfo(id_token, this.oidcService, this.idpKey);
