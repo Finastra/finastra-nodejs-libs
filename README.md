@@ -77,3 +77,5 @@ $ npm run test:cov
 All libraries in this repo are [MIT licensed](LICENSE).
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FFinastra%2Ffinastra-nodejs-libs.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FFinastra%2Ffinastra-nodejs-libs?ref=badge_large)
+
+[![Brought to you by Finastra](./media/spread-knowledge-readme-banner@2x.png)](https://www.finastra.com/)

@@ -30,7 +30,7 @@ Define which module to use in the bootstrapping of your app :
 ```typescript
 const omsLogger = new OMSLogger();
 const app = await NestFactory.create(AppModule, {
-  logger: omsLogger,
+  logger: ['warn', 'log', 'error'],
 });
 app.useLogger(omsLogger);
 app.useGlobalInterceptors(new HttpLoggingInterceptor());
