@@ -6,8 +6,8 @@ NestJS OIDC Auth module
 NestJS module to enable OAuth 2 & OIDC login to your application.\
 It exposes following endpoints :
 
-- login
-- login/callback
+- login?redirect_url
+- login/callback?redirect_url
 - logout
 - user
 - refresh-token: to request token refresh if the access token is expired. If the token is valid, returns `200`.

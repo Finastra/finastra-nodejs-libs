@@ -117,6 +117,7 @@ export class OidcService implements OnModuleInit {
     try {
       const tenantId = params.tenantId || req.session.tenant;
       const channel = params.channelType || req.session.channel;
+      const prev_url = req.query['redirect_url'] ?? '/';
 
       const strategy =
         this.strategy ||
@@ -129,14 +130,16 @@ export class OidcService implements OnModuleInit {
       req.session.tenant = tenantId;
       req.session.channel = channel;
 
-      const successRedirect = `${prefix}/`;
+      strategy.updateRedirectUri(`${this.options.origin}/login/callback?redirect_url=${prev_url}`);
+
+      const successRedirect = `${prefix}${prev_url}`;
 
       passport.authenticate(
         strategy,
         {
           ...req['options'],
           successRedirect,
-          failureRedirect: `${prefix}/login`,
+          failureRedirect: `${prefix}/login?redirect_url=${prev_url}`,
         },
         (err, user, info) => {
           if (err || !user) {
