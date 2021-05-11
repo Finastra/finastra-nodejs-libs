@@ -259,6 +259,17 @@ describe('OidcService', () => {
       expect(spy).toHaveBeenCalled();
       expect(spyRes).toHaveBeenCalled();
     });
+
+    it('should update the redirect_uri',async () => {
+      service.strategy = new OidcStrategy(service, idpKey);
+      params = {
+        tenantId: 'tenant',
+        channelType: 'b2c',
+      };
+      const spyUpdateUrl = jest.spyOn(service.strategy,'updateRedirectUri')
+      await service.login(req, res, next, params);
+      expect(spyUpdateUrl).toHaveBeenCalledWith('bla/login/callback?redirect_url=/');
+    })
   });
 
   describe('logout', () => {
