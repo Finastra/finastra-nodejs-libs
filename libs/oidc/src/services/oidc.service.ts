@@ -130,7 +130,6 @@ export class OidcService implements OnModuleInit {
 
       req.session.tenant = tenantId;
       req.session.channel = channel;
-
       let redirect_url = req.query['redirect_url'] ?? '/';
       redirect_url = Buffer.from(JSON.stringify({ redirect_url: `${prefix}${redirect_url}` }), 'utf-8').toString(
         'base64',
@@ -152,7 +151,7 @@ export class OidcService implements OnModuleInit {
             }
 
             let state = req.query['state'];
-            const buff = state ? Buffer.from(req.query['state'], 'base64')?.toString('utf-8') : '{"redirect_url":"/"}';
+            const buff = Buffer.from(state, 'base64').toString('utf-8');
             state = JSON.parse(buff);
 
             return res.redirect(`${state['redirect_url']}`);
