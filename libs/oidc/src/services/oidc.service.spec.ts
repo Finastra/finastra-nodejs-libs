@@ -248,8 +248,6 @@ describe('OidcService', () => {
         cb();
       });
 
-
-
       const spy = jest.spyOn(passport, 'authenticate').mockImplementation((strategy, options, cb) => {
         cb(null, {}, null);
         return (req, res, next) => {};
@@ -262,57 +260,7 @@ describe('OidcService', () => {
       expect(spyRes).toHaveBeenCalled();
     });
 
-    it('should set redirect path',async () => {
-      service.strategy = new OidcStrategy(service, idpKey);
-      params = {
-        tenantId: 'tenant',
-        channelType: 'b2c',
-      };
 
-      req.logIn = jest.fn().mockImplementation((user, cb) => {
-        cb();
-      });
-
-      req.url = '/login'
-      req.query={
-        'redirect_url':'/branza'
-      }
-
-      const spy = jest.spyOn(passport, 'authenticate').mockImplementation((strategy, options, cb) => {
-        cb(null, {}, null);
-        return (req, res, next) => {};
-      });
-
-      const cookie = jest.spyOn(res,'cookie')
-
-      await service.login(req, res, next, params);
-      expect(cookie).toHaveBeenCalledWith("redirect_url", "/branza");
-    })
-    it('should redirect with the right path',async () => {
-
-      service.strategy = new OidcStrategy(service, idpKey);
-      params = {
-        tenantId: 'tenant',
-        channelType: 'b2c',
-      };
-
-      req.url = "/login/callback"
-      req.headers = {
-        cookie:'redirect_url=/branza'
-      }
-
-      req.logIn = jest.fn().mockImplementation((user, cb) => {
-        cb();
-      });
-      const spy = jest.spyOn(passport, 'authenticate').mockImplementation((strategy, options, cb) => {
-        cb(null, {}, null);
-        return (req, res, next) => {};
-      });
-
-      const spyRes = jest.spyOn(res, 'redirect');
-      await service.login(req, res, next, params);
-      expect(spyRes).toHaveBeenCalledWith('/tenant/b2c/branza');
-    })
   });
 
   describe('logout', () => {

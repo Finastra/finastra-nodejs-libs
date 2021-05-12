@@ -10,9 +10,9 @@ import { OIDC_MODULE_OPTIONS, SESSION_STATE_COOKIE } from '../oidc.constants';
 import { OidcStrategy } from '../strategies';
 import { SSRPagesService } from './ssr-pages.service';
 import passport = require('passport');
-import * as cookie from 'cookie';
 
 const logger = new Logger('OidcService');
+
 @Injectable()
 export class OidcService implements OnModuleInit {
   isMultitenant: boolean = false;
@@ -25,6 +25,7 @@ export class OidcService implements OnModuleInit {
       strategy: OidcStrategy;
     };
   } = {};
+
   constructor(
     @Inject(OIDC_MODULE_OPTIONS) public options: OidcModuleOptions,
     private ssrPagesService: SSRPagesService,
@@ -119,38 +120,27 @@ export class OidcService implements OnModuleInit {
       const tenantId = params.tenantId || req.session.tenant;
       const channel = params.channelType || req.session.channel;
 
-      if(!req.url.includes('callback')) {
-        const prev_url = req.query['redirect_url']??'/';
-        res.cookie('redirect_url',prev_url)
-      }
-
       const strategy =
         this.strategy ||
         (this.idpInfos[this.getIdpInfosKey(tenantId, channel)] &&
           this.idpInfos[this.getIdpInfosKey(tenantId, channel)].strategy) ||
         (await this.createStrategy(tenantId, channel));
 
-
       const prefix = channel && tenantId ? `/${tenantId}/${channel}` : '';
 
       req.session.tenant = tenantId;
       req.session.channel = channel;
 
-      let redirect_url = '/'
-
-      if(req.url.includes('callback')) {
-        redirect_url = cookie.parse(req.headers.cookie)['redirect_url']
-        res.cookie('redirect_url',null)
-      }
-
-      const successRedirect = `${prefix}${redirect_url}`;
-
+      let redirect_url = req.query['redirect_url'] ?? '/';
+      redirect_url = Buffer.from(JSON.stringify({ redirect_url: `${prefix}${redirect_url}` }), 'utf-8').toString(
+        'base64',
+      );
       passport.authenticate(
         strategy,
         {
           ...req['options'],
-          successRedirect,
-          failureRedirect: `${prefix}/login?redirect_url=${redirect_url}`,
+          failureRedirect: `${prefix}/login`,
+          state: redirect_url,
         },
         (err, user, info) => {
           if (err || !user) {
@@ -160,7 +150,12 @@ export class OidcService implements OnModuleInit {
             if (err) {
               return next(err);
             }
-            return res.redirect(successRedirect);
+
+            let state = req.query['state'];
+            const buff = state ? Buffer.from(req.query['state'], 'base64')?.toString('utf-8') : '{"redirect_url":"/"}';
+            state = JSON.parse(buff);
+
+            return res.redirect(`${state['redirect_url']}`);
           });
         },
       )(req, res, next);
