@@ -10,6 +10,7 @@ import { OIDC_MODULE_OPTIONS, SESSION_STATE_COOKIE } from '../oidc.constants';
 import { OidcStrategy } from '../strategies';
 import { SSRPagesService } from './ssr-pages.service';
 import passport = require('passport');
+import * as cookie from 'cookie';
 
 const logger = new Logger('OidcService');
 @Injectable()
@@ -117,7 +118,11 @@ export class OidcService implements OnModuleInit {
     try {
       const tenantId = params.tenantId || req.session.tenant;
       const channel = params.channelType || req.session.channel;
-      const prev_url = req.query['redirect_url'] ?? '/';
+
+      if(!req.url.includes('callback')) {
+        const prev_url = req.query['redirect_url']??'/';
+        res.cookie('redirect_url',prev_url)
+      }
 
       const strategy =
         this.strategy ||
@@ -125,21 +130,27 @@ export class OidcService implements OnModuleInit {
           this.idpInfos[this.getIdpInfosKey(tenantId, channel)].strategy) ||
         (await this.createStrategy(tenantId, channel));
 
+
       const prefix = channel && tenantId ? `/${tenantId}/${channel}` : '';
 
       req.session.tenant = tenantId;
       req.session.channel = channel;
 
-      strategy.updateRedirectUri(`${this.options.origin}/login/callback?redirect_url=${prev_url}`);
+      let redirect_url = '/'
 
-      const successRedirect = `${prefix}${prev_url}`;
+      if(req.url.includes('callback')) {
+        redirect_url = cookie.parse(req.headers.cookie)['redirect_url']
+        res.cookie('redirect_url',null)
+      }
+
+      const successRedirect = `${prefix}${redirect_url}`;
 
       passport.authenticate(
         strategy,
         {
           ...req['options'],
           successRedirect,
-          failureRedirect: `${prefix}/login?redirect_url=${prev_url}`,
+          failureRedirect: `${prefix}/login?redirect_url=${redirect_url}`,
         },
         (err, user, info) => {
           if (err || !user) {

@@ -248,6 +248,8 @@ describe('OidcService', () => {
         cb();
       });
 
+
+
       const spy = jest.spyOn(passport, 'authenticate').mockImplementation((strategy, options, cb) => {
         cb(null, {}, null);
         return (req, res, next) => {};
@@ -260,17 +262,30 @@ describe('OidcService', () => {
       expect(spyRes).toHaveBeenCalled();
     });
 
-    it('should update the redirect_uri',async () => {
+    it('should set redirect path',async () => {
       service.strategy = new OidcStrategy(service, idpKey);
       params = {
         tenantId: 'tenant',
         channelType: 'b2c',
       };
-      const spyUpdateUrl = jest.spyOn(service.strategy,'updateRedirectUri')
+
+      req.logIn = jest.fn().mockImplementation((user, cb) => {
+        cb();
+      });
+
+      req.url = '/login?redirect_url="/branza'
+
+      const spy = jest.spyOn(passport, 'authenticate').mockImplementation((strategy, options, cb) => {
+        cb(null, {}, null);
+        return (req, res, next) => {};
+      });
+
+      const cookie = jest.spyOn(res,'cookie')
+
       await service.login(req, res, next, params);
-      expect(spyUpdateUrl).toHaveBeenCalledWith('bla/login/callback?redirect_url=/');
+      expect(cookie).toHaveBeenCalledWith("redirect_url", "/branza");
     })
-    it('should update with the right redirect_uri',async () => {
+    it('should redirect with the right path',async () => {
 
       service.strategy = new OidcStrategy(service, idpKey);
       params = {
@@ -278,13 +293,22 @@ describe('OidcService', () => {
         channelType: 'b2c',
       };
 
-      req.query = {
-        redirect_url:'/blablabla/blablabla/'
+      req.url = "/login/callback"
+      req.headers = {
+        cookie:'redirect_url=/branza'
       }
 
-      const spyUpdateUrl = jest.spyOn(service.strategy,'updateRedirectUri')
+      req.logIn = jest.fn().mockImplementation((user, cb) => {
+        cb();
+      });
+      const spy = jest.spyOn(passport, 'authenticate').mockImplementation((strategy, options, cb) => {
+        cb(null, {}, null);
+        return (req, res, next) => {};
+      });
+
+      const spyRes = jest.spyOn(res, 'redirect');
       await service.login(req, res, next, params);
-      expect(spyUpdateUrl).toHaveBeenCalledWith('bla/login/callback?redirect_url=/blablabla/blablabla/');
+      expect(spyRes).toHaveBeenCalledWith('/tenant/b2c/branza');
     })
   });
 

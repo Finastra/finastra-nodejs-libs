@@ -88,9 +88,5 @@ describe('OidcStrategy', () => {
       expect(result.authTokens.expiresAt > Date.now() / 1000).toBeTruthy();
     });
 
-    it('should update redirect uri',() => {
-      strategy.updateRedirectUri("blablabla");
-      expect(strategy._params.redirect_uri).toBe('blablabla')
-    })
   });
 });

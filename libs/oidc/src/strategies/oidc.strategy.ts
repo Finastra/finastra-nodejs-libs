@@ -8,7 +8,6 @@ import { authenticateExternalIdps, getUserInfo } from '../utils';
 export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
   readonly logger = new Logger(OidcStrategy.name);
 
-  protected _params: any;
   userInfoCallback: any;
 
   constructor(private oidcService: OidcService, private idpKey: string, private channelType?: ChannelType) {
@@ -19,10 +18,6 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
       usePKCE: oidcService.options.usePKCE,
     });
     this.userInfoCallback = oidcService.options.userInfoCallback;
-  }
-
-  public updateRedirectUri(value) {
-    this._params.redirect_uri = value
   }
 
   async validate(tokenset: TokenSet): Promise<OidcUser> {
