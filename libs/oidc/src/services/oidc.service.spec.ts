@@ -273,7 +273,10 @@ describe('OidcService', () => {
         cb();
       });
 
-      req.url = '/login?redirect_url="/branza'
+      req.url = '/login'
+      req.query={
+        'redirect_url':'/branza'
+      }
 
       const spy = jest.spyOn(passport, 'authenticate').mockImplementation((strategy, options, cb) => {
         cb(null, {}, null);
