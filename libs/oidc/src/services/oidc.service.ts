@@ -153,8 +153,9 @@ export class OidcService implements OnModuleInit {
             let state = req.query['state'];
             const buff = Buffer.from(state, 'base64').toString('utf-8');
             state = JSON.parse(buff);
-
-            return res.redirect(`${state['redirect_url']}`);
+            let url:string = state['redirect_url'];
+            url = !url.startsWith('/')?`/${url}`:url;
+            return res.redirect(url);
           });
         },
       )(req, res, next);

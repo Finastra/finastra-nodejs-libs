@@ -294,6 +294,32 @@ describe('OidcService', () => {
       expect(spy).toHaveBeenCalled();
       expect(spyRes).toHaveBeenCalledWith('/tenant/b2c/branza');
     });
+
+    it('should add / to redirect url if it doesn\'t exist', async () => {
+      service.strategy = new OidcStrategy(service, idpKey);
+
+      req.logIn = jest.fn().mockImplementation((user, cb) => {
+        cb();
+      });
+
+      const spy = jest.spyOn(passport, 'authenticate').mockImplementation((strategy, options, cb) => {
+        req.query = {
+          state:options.state
+        }
+        cb(null, {}, null);
+        return (req, res, next) => {};
+      });
+
+      const spyRes = jest.spyOn(res, 'redirect');
+
+      req.query =  {
+        "redirect_url":"branza"
+      }
+
+      await service.login(req, res, next, params);
+      expect(spy).toHaveBeenCalled();
+      expect(spyRes).toHaveBeenCalledWith('/branza');
+    });
   });
 
   describe('logout', () => {
