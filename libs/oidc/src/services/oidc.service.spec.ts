@@ -247,8 +247,12 @@ describe('OidcService', () => {
       req.logIn = jest.fn().mockImplementation((user, cb) => {
         cb();
       });
+      req.query = {request_url:null};
 
       const spy = jest.spyOn(passport, 'authenticate').mockImplementation((strategy, options, cb) => {
+        req.query = {
+          state:options.state
+        }
         cb(null, {}, null);
         return (req, res, next) => {};
       });
@@ -258,6 +262,63 @@ describe('OidcService', () => {
       await service.login(req, res, next, params);
       expect(spy).toHaveBeenCalled();
       expect(spyRes).toHaveBeenCalled();
+    });
+
+    it('should redirect if everything is successful to the redirect url', async () => {
+      service.strategy = new OidcStrategy(service, idpKey);
+      params = {
+        tenantId: 'tenant',
+        channelType: 'b2c',
+      };
+
+
+      req.logIn = jest.fn().mockImplementation((user, cb) => {
+        cb();
+      });
+
+      const spy = jest.spyOn(passport, 'authenticate').mockImplementation((strategy, options, cb) => {
+        req.query = {
+          state:options.state
+        }
+        cb(null, {}, null);
+        return (req, res, next) => {};
+      });
+
+      const spyRes = jest.spyOn(res, 'redirect');
+
+      req.query =  {
+        "redirect_url":"/branza"
+      }
+
+      await service.login(req, res, next, params);
+      expect(spy).toHaveBeenCalled();
+      expect(spyRes).toHaveBeenCalledWith('/tenant/b2c/branza');
+    });
+
+    it('should add / to redirect url if it doesn\'t exist', async () => {
+      service.strategy = new OidcStrategy(service, idpKey);
+
+      req.logIn = jest.fn().mockImplementation((user, cb) => {
+        cb();
+      });
+
+      const spy = jest.spyOn(passport, 'authenticate').mockImplementation((strategy, options, cb) => {
+        req.query = {
+          state:options.state
+        }
+        cb(null, {}, null);
+        return (req, res, next) => {};
+      });
+
+      const spyRes = jest.spyOn(res, 'redirect');
+
+      req.query =  {
+        "redirect_url":"branza"
+      }
+
+      await service.login(req, res, next, params);
+      expect(spy).toHaveBeenCalled();
+      expect(spyRes).toHaveBeenCalledWith('/branza');
     });
   });
 

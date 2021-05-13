@@ -87,5 +87,6 @@ describe('OidcStrategy', () => {
       expect(result).toBeTruthy();
       expect(result.authTokens.expiresAt > Date.now() / 1000).toBeTruthy();
     });
+
   });
 });

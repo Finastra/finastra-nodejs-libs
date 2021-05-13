@@ -36,3 +36,4 @@ lerna-debug.log*
 .env
 coverage
 .history
+/finastra-nodejs-libs.iml
