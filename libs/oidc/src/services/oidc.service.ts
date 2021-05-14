@@ -12,6 +12,7 @@ import { SSRPagesService } from './ssr-pages.service';
 import passport = require('passport');
 
 const logger = new Logger('OidcService');
+
 @Injectable()
 export class OidcService implements OnModuleInit {
   isMultitenant: boolean = false;
@@ -24,6 +25,7 @@ export class OidcService implements OnModuleInit {
       strategy: OidcStrategy;
     };
   } = {};
+
   constructor(
     @Inject(OIDC_MODULE_OPTIONS) public options: OidcModuleOptions,
     private ssrPagesService: SSRPagesService,
@@ -128,15 +130,16 @@ export class OidcService implements OnModuleInit {
 
       req.session.tenant = tenantId;
       req.session.channel = channel;
-
-      const successRedirect = `${prefix}/`;
-
+      let redirect_url = req.query['redirect_url'] ?? '/';
+      redirect_url = Buffer.from(JSON.stringify({ redirect_url: `${prefix}${redirect_url}` }), 'utf-8').toString(
+        'base64',
+      );
       passport.authenticate(
         strategy,
         {
           ...req['options'],
-          successRedirect,
           failureRedirect: `${prefix}/login`,
+          state: redirect_url,
         },
         (err, user, info) => {
           if (err || !user) {
@@ -146,7 +149,13 @@ export class OidcService implements OnModuleInit {
             if (err) {
               return next(err);
             }
-            return res.redirect(successRedirect);
+
+            let state = req.query['state'];
+            const buff = Buffer.from(state, 'base64').toString('utf-8');
+            state = JSON.parse(buff);
+            let url:string = state['redirect_url'];
+            url = !url.startsWith('/')?`/${url}`:url;
+            return res.redirect(url);
           });
         },
       )(req, res, next);

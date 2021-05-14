@@ -5,6 +5,8 @@
 <!-- TOC -->
 
 - [Changelog](#changelog)
+  - [0.18.0 (2021-05-13)](#0180-2021-05-13)
+    - [Features](#features)
   - [0.17.0 (2021-04-27)](#0170-2021-04-27)
     - [Features](#features)
   - [0.16.2 (2021-04-06)](#0162-2021-04-06)
@@ -88,6 +90,11 @@
     - [Bug fixes](#bug-fixes-3)
 
 <!-- /TOC -->
+
+## 0.18.0 (2021-05-13)
+
+### Features
+Add redirect to url after login  /login?redirect_url=[/your-path]
 
 ## 0.17.0 (2021-04-27)
 
