@@ -33,7 +33,7 @@ jobs:
       - name: Unit tests
         run: npm run test:cov
       - name: Codecov
-        uses: codecov/codecov-action@v1.2.2
+        uses: codecov/codecov-action@v1.5.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage/lcov.info
