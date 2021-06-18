@@ -6,7 +6,7 @@
 <p align="center">
   <a href="https://github.com/finastra/finastra-nodejs-libs/actions?query=workflow%3ABuild"><img src="https://github.com/finastra/finastra-nodejs-libs/workflows/Build/badge.svg" alt="Build status" /></a>
   <a href="https://codecov.io/gh/finastra/finastra-nodejs-libs">
-  <img src="https://codecov.io/gh/finastra/finastra-nodejs-libs/branch/develop/graph/badge.svg" />
+  <img src="https://codecov.io/gh/finastra/finastra-nodejs-libs/branch/develop/graph/badge.svg?token=MMOF30Y2XV" />
 </a>
 <a href="https://app.fossa.com/projects/git%2Bgithub.com%2FFinastra%2Ffinastra-nodejs-libs?ref=badge_shield" alt="FOSSA Status"><img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2FFinastra%2Ffinastra-nodejs-libs.svg?type=shield"/></a>
   <a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
