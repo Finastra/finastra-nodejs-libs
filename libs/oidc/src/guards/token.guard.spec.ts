@@ -73,11 +73,54 @@ describe('OIDCGuard', () => {
         }
 
       },
+      params: {},
       isAuthenticated: () => true,
     });
     jest.spyOn(oidcService, 'isExpired').mockReturnValue(false);
 
     expect(await guard.canActivate(context)).toBeTruthy();
+  });
+
+  it('should return true with multitenant auth requesting token refresh with expired token', async () => {
+    jest.spyOn(guard['reflector'], 'get').mockReturnValue(false);
+    const context = createMock<ExecutionContext>();
+
+    context.switchToHttp().getRequest.mockReturnValue({
+      user: {
+        username: 'test',
+        authTokens: {
+          expiresAt: Date.now() - 10
+        }
+
+      },
+      url: '/test/b2c/refresh-token',
+      params: { tenantId: 'test', channelType: 'b2c'},
+      isAuthenticated: () => true,
+    });
+    jest.spyOn(oidcService, 'isExpired').mockReturnValue(false);
+
+    expect(await guard.canActivate(context)).toBeTruthy();
+  });
+  
+  it('should throw error with expired token', async () => {
+    jest.spyOn(guard['reflector'], 'get').mockReturnValue(false);
+    const context = createMock<ExecutionContext>();
+
+    context.switchToHttp().getRequest.mockReturnValue({
+      user: {
+        username: 'test',
+        authTokens: {
+          expiresAt: Date.now() - 10
+        }
+
+      },
+      url: '/test/b2c/',
+      params: { tenantId: 'test', channelType: 'b2c'},
+      isAuthenticated: () => true,
+    });
+    jest.spyOn(oidcService, 'isExpired').mockReturnValue(true);
+
+    await expect(guard.canActivate(context)).rejects.toThrow(UnauthorizedException);
   });
 
   it('should throw unauthorized error without auth', async () => {
@@ -87,6 +130,7 @@ describe('OIDCGuard', () => {
     context.switchToHttp().getRequest.mockReturnValue({
       headers: {},
       isAuthenticated: () => false,
+      params: {},
     });
 
     await expect(guard.canActivate(context)).rejects.toThrow(UnauthorizedException);
@@ -118,13 +162,15 @@ describe('OIDCGuard', () => {
               username: 'test',
               authTokens: {
                 expiresAt: Date.now() + 10000
-              }
-
+              },
+              url: '/',
+              params: {},
             },
           },
         }),
       }),
     );
+    jest.spyOn(oidcService, 'isExpired').mockReturnValue(false);
 
     expect(await guard.canActivate(context)).toBe(true);
   });
