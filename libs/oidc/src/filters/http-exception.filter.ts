@@ -1,5 +1,6 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { Response } from 'express';
+import { stringify } from 'flatted';
 import { MisdirectedStatus } from '../interfaces/misdirected-status.enum';
 import { SSRPagesService } from '../services';
 
@@ -15,7 +16,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest();
     const status = exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    this.logger.warn({ ...request, ...exception });
+    this.logger.warn({ request: stringify(request), ...exception });
 
     switch (status) {
       case MisdirectedStatus.MISDIRECTED:
