@@ -15,7 +15,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest();
     const status = exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    this.logger.warn(exception);
+    this.logger.warn({ ...request, ...exception });
 
     switch (status) {
       case MisdirectedStatus.MISDIRECTED:
