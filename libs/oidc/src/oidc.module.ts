@@ -45,6 +45,7 @@ export class OidcModule implements NestModule {
       .apply(LoginMiddleware)
       .forRoutes(
         { path: '/login', method: RequestMethod.ALL },
+        { path: '/:tenantId/login', method: RequestMethod.ALL },
         { path: '/:tenantId/:channelType/login', method: RequestMethod.ALL },
       );
   }

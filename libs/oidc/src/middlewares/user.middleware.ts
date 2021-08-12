@@ -16,10 +16,14 @@ export class UserMiddleware implements NestMiddleware {
       }
 
       const routeParams = req.params && req.params[0] && req.params[0].split('/');
+      const fixedChannelType = this.service.options.channelType;
       let tenantId, channelType;
       if (routeParams && routeParams[1] && (routeParams[1] === ChannelType.b2c || routeParams[1] === ChannelType.b2e)) {
         tenantId = routeParams[0];
         channelType = routeParams[1];
+      } else if (routeParams && (fixedChannelType === ChannelType.b2c || fixedChannelType === ChannelType.b2e)) {
+        tenantId = routeParams[0];
+        channelType = fixedChannelType;
       }
 
       const key = this.service.getIdpInfosKey(tenantId, channelType);

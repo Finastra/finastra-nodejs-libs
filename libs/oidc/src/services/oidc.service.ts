@@ -118,7 +118,7 @@ export class OidcService implements OnModuleInit {
   async login(@Req() req: Request, @Res() res: Response, @Next() next: Function, @Param() params) {
     try {
       const tenantId = params.tenantId || req.session.tenant;
-      const channel = params.channelType || req.session.channel;
+      const channel = this.options.channelType || params.channelType || req.session.channel;
 
       const strategy =
         this.strategy ||
@@ -153,8 +153,8 @@ export class OidcService implements OnModuleInit {
             let state = req.query['state'];
             const buff = Buffer.from(state, 'base64').toString('utf-8');
             state = JSON.parse(buff);
-            let url:string = state['redirect_url'];
-            url = !url.startsWith('/')?`/${url}`:url;
+            let url: string = state['redirect_url'];
+            url = !url.startsWith('/') ? `/${url}` : url;
             return res.redirect(url);
           });
         },
