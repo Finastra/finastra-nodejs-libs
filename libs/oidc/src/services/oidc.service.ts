@@ -85,7 +85,7 @@ export class OidcService implements OnModuleInit {
     } catch (err) {
       if (this.isMultitenant) {
         const errorMsg = {
-          error: err,
+          error: err.message,
           debug: {
             origin: this.options.origin,
             tenantId,
@@ -153,8 +153,8 @@ export class OidcService implements OnModuleInit {
             let state = req.query['state'];
             const buff = Buffer.from(state, 'base64').toString('utf-8');
             state = JSON.parse(buff);
-            let url:string = state['redirect_url'];
-            url = !url.startsWith('/')?`/${url}`:url;
+            let url: string = state['redirect_url'];
+            url = !url.startsWith('/') ? `/${url}` : url;
             return res.redirect(url);
           });
         },
