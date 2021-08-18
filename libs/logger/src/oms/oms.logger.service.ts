@@ -1,9 +1,9 @@
 import { Injectable, Logger, Scope } from '@nestjs/common';
 import { OMSLogLevel } from './OMSLog.interface';
 
-@Injectable({scope: Scope.TRANSIENT})
+@Injectable({ scope: Scope.TRANSIENT })
 export class OMSLogger extends Logger {
-  private print(logLevel: OMSLogLevel, message: string, context?: string) {
+  private print(logLevel: OMSLogLevel, message: string, context?: string, trace?: string) {
     let currentContext = context;
     if (typeof context === 'undefined') {
       currentContext = this.context;
@@ -14,6 +14,7 @@ export class OMSLogger extends Logger {
       sev: logLevel,
       msg: message,
       logger: currentContext,
+      trace,
     };
 
     console.log(JSON.stringify(logEntry));
@@ -26,7 +27,7 @@ export class OMSLogger extends Logger {
   error(message: string, trace: string, context?: string) {
     process.stdout.isTTY
       ? super.error(message, trace, context)
-      : this.print(OMSLogLevel.ERROR, `${message} ${JSON.stringify(trace)}`, context);
+      : this.print(OMSLogLevel.ERROR, message, context, `${JSON.stringify(trace)}`);
   }
 
   warn(message: string, context?: string) {
