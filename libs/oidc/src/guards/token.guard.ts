@@ -9,6 +9,7 @@ export class TokenGuard implements CanActivate {
   constructor(private readonly reflector: Reflector, private oidcService: OidcService) { }
   async canActivate(context: ExecutionContext) {
     let request;
+    let prefix = "";
     if (context['contextType'] === 'graphql') {
       request = GqlExecutionContext.create(context).getContext().req;
     } else {
@@ -19,7 +20,10 @@ export class TokenGuard implements CanActivate {
     
     if (isPublic) return true;
 
-    const prefix = params.tenantId && params.channelType ? `/${params.tenantId}/${params.channelType}` : '';
+    if (params) {
+       prefix = params.tenantId && params.channelType ? `/${params.tenantId}/${params.channelType}` : '';
+    }
+
     if (request.isAuthenticated() && (!this.oidcService.isExpired(request.user['authTokens'].expiresAt) || (request.url === `${prefix}/refresh-token`))) {
         return true;
     } else {
