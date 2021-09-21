@@ -21,17 +21,17 @@ export class OMSLogger extends ConsoleLogger {
   }
 
   log(message: string, context?: string) {
-    process.stdout.isTTY ? super.log(message, context) : this.print(OMSLogLevel.INFO, message, context);
+    process.stdout.isTTY ? super.log.apply(this, arguments) : this.print(OMSLogLevel.INFO, message, context);
   }
 
   error(message: string, trace: string, context?: string) {
     process.stdout.isTTY
-      ? super.error(message, trace, context)
+      ? super.error.apply(this, arguments)
       : this.print(OMSLogLevel.ERROR, message, context, `${JSON.stringify(trace)}`);
   }
 
   warn(message: string, context?: string) {
-    process.stdout.isTTY ? super.warn(message, context) : this.print(OMSLogLevel.WARNING, message, context);
+    process.stdout.isTTY ? super.warn.apply(this, arguments) : this.print(OMSLogLevel.WARNING, message, context);
   }
 
   debug(message: string, context?: string) {
@@ -39,6 +39,6 @@ export class OMSLogger extends ConsoleLogger {
   }
 
   verbose(message: string, context?: string) {
-    process.stdout.isTTY ? super.verbose(message, context) : this.print(OMSLogLevel.VERBOSE, message, context);
+    process.stdout.isTTY ? super.verbose.apply(this, arguments) : this.print(OMSLogLevel.VERBOSE, message, context);
   }
 }
