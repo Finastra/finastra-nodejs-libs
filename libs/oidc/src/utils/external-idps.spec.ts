@@ -1,10 +1,7 @@
-import { Issuer } from 'openid-client';
 import axios from 'axios';
-import { authenticateExternalIdps } from './external-idps';
-import { JWKS } from 'jose';
+import { Issuer } from 'openid-client';
 import { MOCK_OIDC_MODULE_OPTIONS } from '../mocks';
-
-const keyStore = new JWKS.KeyStore([]);
+import { authenticateExternalIdps } from './external-idps';
 
 describe('authenticateExternalIdps', () => {
   it('should return tokens', async () => {
@@ -50,7 +47,7 @@ describe('authenticateExternalIdps', () => {
   });
 
   it('should return empty tokens', async () => {
-    jest.spyOn(Issuer, 'discover').mockReturnValue(Promise.reject());
+    jest.spyOn(Issuer, 'discover').mockReturnValue(Promise.reject('[TEST] Error'));
     const result = await authenticateExternalIdps(MOCK_OIDC_MODULE_OPTIONS.externalIdps);
     expect(result).toBeUndefined();
   });

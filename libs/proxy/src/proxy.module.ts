@@ -42,7 +42,7 @@ const proxyFactory = {
     });
 
     proxy.on('proxyRes', function (proxyRes, req, res) {
-      const url = concatPath(proxyRes.headers.host, req.url);
+      const url = concatPath(proxyRes['req'].getHeader('host'), req.url);
       logger.log(`Received ${req.method} ${url}`, 'Proxy');
     });
     return proxy;
