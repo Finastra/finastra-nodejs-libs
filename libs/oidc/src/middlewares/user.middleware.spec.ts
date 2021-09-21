@@ -4,8 +4,8 @@ import { Request, Response } from 'express';
 import { JWKS, JWT } from 'jose';
 import { MockOidcService, MOCK_OIDC_MODULE_OPTIONS } from '../mocks';
 import { OidcService } from '../services';
+import * as externalIdps from '../utils/external-idps';
 import { UserMiddleware } from './user.middleware';
-const utils = require('../utils');
 
 describe('User Middleware', () => {
   let middleware: UserMiddleware;
@@ -42,7 +42,7 @@ describe('User Middleware', () => {
 
       service.options = MOCK_OIDC_MODULE_OPTIONS;
 
-      utils.authenticateExternalIdps = jest.fn().mockReturnValue(service.options.externalIdps);
+      jest.spyOn(externalIdps, 'authenticateExternalIdps').mockReturnValue(service.options.externalIdps);
 
       jest.spyOn(service, 'createStrategy').mockImplementation(() => {
         service.idpInfos[idpKey].tokenStore = new JWKS.KeyStore([]);
@@ -105,7 +105,7 @@ describe('User Middleware', () => {
 
       service.options = MOCK_OIDC_MODULE_OPTIONS;
 
-      utils.authenticateExternalIdps = jest.fn().mockReturnValue(service.options.externalIdps);
+      jest.spyOn(externalIdps, 'authenticateExternalIdps').mockReturnValue(service.options.externalIdps);
 
       const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c`;
       req.headers.authorization = `Bearer ${token}`;
