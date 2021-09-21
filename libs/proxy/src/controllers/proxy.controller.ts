@@ -17,7 +17,7 @@ export class ProxyController {
 
       response.status(500).send({ error: msg });
 
-      this.logger.error(msg, err, 'Proxy');
+      this.logger.error(msg, err);
     }
   }
 }

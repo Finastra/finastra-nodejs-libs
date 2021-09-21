@@ -48,7 +48,7 @@ export class ProxyService {
     }
 
     res.status(404).send({ error: "Could not find 'target' or 'serviceId'" });
-    this.logger.error("Could not find 'target' or 'serviceId'", 'Proxy');
+    this.logger.error("Could not find 'target' or 'serviceId'");
   }
 
   private async doProxy(

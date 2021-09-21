@@ -10,7 +10,7 @@ import { concatPath } from './utils';
 const proxyFactory = {
   provide: HTTP_PROXY,
   useFactory: async (options: ProxyModuleOptions) => {
-    const logger = new Logger('httpProxy');
+    const logger = new Logger('Proxy');
     const proxy = createProxyServer({
       ...defaultProxyOptions,
       ...options.config,
@@ -18,7 +18,7 @@ const proxyFactory = {
 
     proxy.on('proxyReq', function (proxyReq, req, res, options) {
       const url = concatPath(proxyReq.getHeader('host'), req.url);
-      logger.log(`Sending ${req.method} ${url}`, 'Proxy');
+      logger.log(`Sending ${req.method} ${url}`);
 
       if (!req['body'] || !Object.keys(req['body']).length) {
         return;
@@ -43,7 +43,7 @@ const proxyFactory = {
 
     proxy.on('proxyRes', function (proxyRes, req, res) {
       const url = concatPath(proxyRes['req'].getHeader('host'), req.url);
-      logger.log(`Received ${req.method} ${url}`, 'Proxy');
+      logger.log(`Received ${req.method} ${url}`);
     });
     return proxy;
   },
