@@ -1,6 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import * as session from 'express-session';
-import * as passport from 'passport';
+import passport from 'passport';
 import { v4 as uuid } from 'uuid';
 
 export function setupSession(app: INestApplication, name: string) {
