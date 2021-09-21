@@ -1,6 +1,6 @@
 {
   "name": "@finastra/nestjs-oidc",
-  "version": "0.19.6",
+  "version": "0.19.7",
   "contributors": [
     "David Boclé <david.bocle@finastra.com>",
     "Francine Ong <francine.ong@finastra.com>",
@@ -14,7 +14,7 @@
     "directory": "libs/oidc"
   },
   "dependencies": {
-    "@finastra/ssr-pages": "^0.1.2",
+    "@finastra/ssr-pages": "^0.1.3",
     "@nestjs/jwt": "^7.0.0",
     "@nestjs/passport": "^7.0.0",
     "cookie": "^0.4.1",
