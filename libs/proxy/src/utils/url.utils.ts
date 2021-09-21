@@ -1,5 +1,3 @@
-import { endsWith } from './string.utils';
-
 export function getBaseURL(path) {
   const url = new URL(path);
   return url.origin;
@@ -11,8 +9,8 @@ export function concatPath(...args: any[]) {
     if (arguments[i] === '') {
       continue;
     }
-    path += arguments[i];
-    if (i < arguments.length - 1 && arguments[i + 1] !== '' && !isAbsolute(arguments[i + 1]) && !endsWith(path, '/')) {
+    path += arguments[i].startsWith('/') ? arguments[i].substr(1) : arguments[i];
+    if (i < arguments.length - 1 && !isAbsolute(arguments[i + 1]) && !path.endsWith('/')) {
       path += '/';
     }
   }
