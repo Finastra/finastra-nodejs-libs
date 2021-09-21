@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger, Param } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { Server } from 'http-proxy';
+import * as server from 'http-proxy';
 import { parse } from 'url';
 import { ProxyModuleOptions } from '../interfaces';
 import { HTTP_PROXY, PROXY_MODULE_OPTIONS } from '../proxy.constants';
@@ -11,7 +11,7 @@ export class ProxyService {
   private readonly logger = new Logger(ProxyService.name);
 
   constructor(
-    @Inject(HTTP_PROXY) private proxy: Server | any,
+    @Inject(HTTP_PROXY) private proxy: server | any,
     @Inject(PROXY_MODULE_OPTIONS) private options: ProxyModuleOptions,
   ) {}
 
@@ -56,7 +56,7 @@ export class ProxyService {
     res: Response,
     target: string,
     token: string,
-    options: Server.ServerOptions = {},
+    options: server.ServerOptions = {},
   ) {
     req.url = parse(target).path;
 

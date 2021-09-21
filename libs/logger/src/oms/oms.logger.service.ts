@@ -35,7 +35,7 @@ export class OMSLogger extends ConsoleLogger {
   }
 
   debug(message: string, context?: string) {
-    process.stdout.isTTY ? super.debug(message, context) : this.print(OMSLogLevel.DEBUG, message, context);
+    process.stdout.isTTY ? super.debug.apply(this, arguments) : this.print(OMSLogLevel.DEBUG, message, context);
   }
 
   verbose(message: string, context?: string) {

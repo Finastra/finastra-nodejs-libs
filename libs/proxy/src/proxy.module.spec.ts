@@ -1,8 +1,8 @@
-import { TestingModule, Test } from '@nestjs/testing';
-import { ProxyModule } from './proxy.module';
-import { HTTP_PROXY } from './proxy.constants';
-import { Server } from 'http-proxy';
+import { Test, TestingModule } from '@nestjs/testing';
+import * as server from 'http-proxy';
 import { createRequest } from 'node-mocks-http';
+import { HTTP_PROXY } from './proxy.constants';
+import { ProxyModule } from './proxy.module';
 
 describe('ProxyModule', () => {
   describe('register sync', () => {
@@ -13,7 +13,7 @@ describe('ProxyModule', () => {
       module = await Test.createTestingModule({
         imports: [ProxyModule.forRoot({})],
       }).compile();
-      proxy = module.get<Server>(HTTP_PROXY);
+      proxy = module.get<server>(HTTP_PROXY);
     });
 
     it('should be defined', () => {

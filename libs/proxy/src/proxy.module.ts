@@ -1,11 +1,11 @@
-import { Module, Logger, DynamicModule, Provider } from '@nestjs/common';
+import { DynamicModule, Logger, Module, Provider } from '@nestjs/common';
 import { createProxyServer } from 'http-proxy';
 import * as queryString from 'querystring';
-import { concatPath } from './utils';
-import { ProxyService } from './services';
 import { ProxyController } from './controllers';
-import { defaultProxyOptions, PROXY_MODULE_OPTIONS, HTTP_PROXY } from './proxy.constants';
-import { ProxyModuleOptions, ProxyModuleAsyncOptions, ProxyModuleOptionsFactory } from './interfaces';
+import { ProxyModuleAsyncOptions, ProxyModuleOptions, ProxyModuleOptionsFactory } from './interfaces';
+import { defaultProxyOptions, HTTP_PROXY, PROXY_MODULE_OPTIONS } from './proxy.constants';
+import { ProxyService } from './services';
+import { concatPath } from './utils';
 
 const proxyFactory = {
   provide: HTTP_PROXY,
@@ -20,19 +20,19 @@ const proxyFactory = {
       const url = concatPath(proxyReq.getHeader('host'), req.url);
       logger.log(`Sending ${req.method} ${url}`, 'Proxy');
 
-      if (!req.body || !Object.keys(req.body).length) {
+      if (!req['body'] || !Object.keys(req['body']).length) {
         return;
       }
 
       const contentType = proxyReq.getHeader('Content-Type');
-      let bodyData;
+      let bodyData: string;
 
       if (contentType === 'application/json') {
-        bodyData = JSON.stringify(req.body);
+        bodyData = JSON.stringify(req['body']);
       }
 
       if (contentType === 'application/x-www-form-urlencoded') {
-        bodyData = queryString.stringify(req.body);
+        bodyData = queryString.stringify(req['body']);
       }
 
       if (bodyData) {
@@ -42,7 +42,7 @@ const proxyFactory = {
     });
 
     proxy.on('proxyRes', function (proxyRes, req, res) {
-      const url = concatPath(proxyRes.req.getHeader('host'), req.url);
+      const url = concatPath(proxyRes.headers.host, req.url);
       logger.log(`Received ${req.method} ${url}`, 'Proxy');
     });
     return proxy;
