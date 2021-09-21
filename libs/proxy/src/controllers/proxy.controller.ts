@@ -1,6 +1,6 @@
-import { Controller, Res, Logger, Request as NestRequest, All, Param } from '@nestjs/common';
+import { All, Controller, Logger, Param, Request as NestRequest, Res } from '@nestjs/common';
+import { Request, Response } from 'express';
 import { ProxyService } from '../services';
-import { Response, Request } from 'express';
 
 @Controller('?*/proxy')
 export class ProxyController {

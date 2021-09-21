@@ -1,12 +1,12 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { ProxyService } from './proxy.service';
-import { Server } from 'http-proxy';
 import { createMock } from '@golevelup/nestjs-testing';
-import { PROXY_MODULE_OPTIONS, HTTP_PROXY } from '../proxy.constants';
+import { ConsoleLogger } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
 import { Request, Response } from 'express';
-import { Logger } from '@nestjs/common';
+import { Server } from 'http-proxy';
+import { HTTP_PROXY, PROXY_MODULE_OPTIONS } from '../proxy.constants';
+import { ProxyService } from './proxy.service';
 
-class NoopLogger extends Logger {
+class NoopLogger extends ConsoleLogger {
   log(message: any, context?: string): void {}
   error(message: any, trace?: string, context?: string): void {}
   warn(message: any, context?: string): void {}

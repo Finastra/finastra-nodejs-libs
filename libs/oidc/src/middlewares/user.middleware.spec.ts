@@ -1,11 +1,10 @@
-import { JWT } from 'jose';
-import { UserMiddleware } from './user.middleware';
 import { createMock } from '@golevelup/nestjs-testing';
+import { Test, TestingModule } from '@nestjs/testing';
 import { Request, Response } from 'express';
-import { MOCK_OIDC_MODULE_OPTIONS, MockOidcService } from '../mocks';
-import { TestingModule, Test } from '@nestjs/testing';
+import { JWKS, JWT } from 'jose';
+import { MockOidcService, MOCK_OIDC_MODULE_OPTIONS } from '../mocks';
 import { OidcService } from '../services';
-import { JWKS } from 'jose';
+import { UserMiddleware } from './user.middleware';
 const utils = require('../utils');
 
 describe('User Middleware', () => {
