@@ -247,12 +247,12 @@ describe('OidcService', () => {
       req.logIn = jest.fn().mockImplementation((user, cb) => {
         cb();
       });
-      req.query = {request_url:null};
+      req.query = { request_url: null };
 
       const spy = jest.spyOn(passport, 'authenticate').mockImplementation((strategy, options, cb) => {
         req.query = {
-          state:options.state
-        }
+          state: options.state,
+        };
         cb(null, {}, null);
         return (req, res, next) => {};
       });
@@ -271,31 +271,30 @@ describe('OidcService', () => {
         channelType: 'b2c',
       };
 
-
       req.logIn = jest.fn().mockImplementation((user, cb) => {
         cb();
       });
 
       const spy = jest.spyOn(passport, 'authenticate').mockImplementation((strategy, options, cb) => {
         req.query = {
-          state:options.state
-        }
+          state: options.state,
+        };
         cb(null, {}, null);
         return (req, res, next) => {};
       });
 
       const spyRes = jest.spyOn(res, 'redirect');
 
-      req.query =  {
-        "redirect_url":"/branza"
-      }
+      req.query = {
+        redirect_url: '/branza',
+      };
 
       await service.login(req, res, next, params);
       expect(spy).toHaveBeenCalled();
       expect(spyRes).toHaveBeenCalledWith('/tenant/b2c/branza');
     });
 
-    it('should add / to redirect url if it doesn\'t exist', async () => {
+    it("should add / to redirect url if it doesn't exist", async () => {
       service.strategy = new OidcStrategy(service, idpKey);
 
       req.logIn = jest.fn().mockImplementation((user, cb) => {
@@ -304,17 +303,17 @@ describe('OidcService', () => {
 
       const spy = jest.spyOn(passport, 'authenticate').mockImplementation((strategy, options, cb) => {
         req.query = {
-          state:options.state
-        }
+          state: options.state,
+        };
         cb(null, {}, null);
         return (req, res, next) => {};
       });
 
       const spyRes = jest.spyOn(res, 'redirect');
 
-      req.query =  {
-        "redirect_url":"branza"
-      }
+      req.query = {
+        redirect_url: 'branza',
+      };
 
       await service.login(req, res, next, params);
       expect(spy).toHaveBeenCalled();
@@ -525,6 +524,21 @@ describe('OidcService', () => {
         timeout: 0,
       };
     });
+
+    it('should return 401 if no user', async () => {
+      const req = createRequest();
+      req.isAuthenticated = jest.fn().mockReturnValue(false);
+      const res = createResponse();
+      res.status = (() => {
+        return { send: jest.fn() };
+      }) as any;
+      const next = jest.fn();
+      const spy = jest.spyOn(res, 'sendStatus');
+
+      await service.refreshTokens(req, res, next);
+      expect(spy).toHaveBeenCalledWith(401);
+    });
+
     it('should return 200 if no token to refresh', async () => {
       const req = createRequest();
       req.user = {
@@ -549,6 +563,7 @@ describe('OidcService', () => {
         authTokens: {},
         userinfo: {},
       };
+      req.isAuthenticated = jest.fn().mockReturnValue(true);
       const res = createResponse();
       res.sendStatus = jest.fn();
       const next = jest.fn();
@@ -569,6 +584,7 @@ describe('OidcService', () => {
         },
         userinfo: {},
       };
+      req.isAuthenticated = jest.fn().mockReturnValue(true);
       const res = createResponse();
       res.sendStatus = jest.fn();
       const next = jest.fn();
@@ -597,6 +613,7 @@ describe('OidcService', () => {
         },
         userinfo: { channel: 'b2c' },
       };
+      req.isAuthenticated = jest.fn().mockReturnValue(true);
       const res = createResponse();
       res.sendStatus = jest.fn();
       const next = jest.fn();
@@ -625,6 +642,7 @@ describe('OidcService', () => {
         },
         userinfo: { channel: 'b2e' },
       };
+      req.isAuthenticated = jest.fn().mockReturnValue(true);
       const res = createResponse();
       res.sendStatus = jest.fn();
       const next = jest.fn();
@@ -653,6 +671,7 @@ describe('OidcService', () => {
         },
         userinfo: {},
       };
+      req.isAuthenticated = jest.fn().mockReturnValue(true);
       const res = createResponse();
       res.sendStatus = jest.fn();
       const next = jest.fn();
@@ -681,6 +700,7 @@ describe('OidcService', () => {
         },
         userinfo: {},
       };
+      req.isAuthenticated = jest.fn().mockReturnValue(true);
       const res = createResponse();
       res.sendStatus = jest.fn();
       const next = jest.fn();
@@ -707,6 +727,7 @@ describe('OidcService', () => {
         },
         userinfo: {},
       };
+      req.isAuthenticated = jest.fn().mockReturnValue(true);
       const res = createResponse();
       res.status = (() => {
         return { send: jest.fn() };
@@ -733,6 +754,7 @@ describe('OidcService', () => {
         },
         userinfo: {},
       };
+      req.isAuthenticated = jest.fn().mockReturnValue(true);
       const res = createResponse();
       res.status = (() => {
         return { send: jest.fn() };
