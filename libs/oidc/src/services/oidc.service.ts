@@ -193,6 +193,10 @@ export class OidcService implements OnModuleInit {
   }
 
   async refreshTokens(@Req() req: Request, @Res() res: Response, @Next() next: Function) {
+    if (!req.isAuthenticated()) {
+      res.sendStatus(401);
+      return;
+    }
     const authTokens = req.user['authTokens'];
     authTokens.channel = req.user['userinfo'].channel;
     if (this.isExpired(authTokens.expiresAt)) {
