@@ -1,6 +1,6 @@
 {
   "name": "@finastra/nestjs-logger",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "contributors": [
     "Răzvan Bordeanu <razvan.bordeanu@finastra.com>",
     "David Boclé <david.bocle@finastra.com>",
