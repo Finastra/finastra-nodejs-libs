@@ -22,5 +22,9 @@
     "openid-client": "^4.7.4",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0"
+  },
+  "optionalDependencies": {
+    "connect-mongo": "4.4.0",
+    "@types/mongodb": "^3.6.5"
   }
 }

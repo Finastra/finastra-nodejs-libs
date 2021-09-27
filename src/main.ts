@@ -1,5 +1,5 @@
 import { HttpLoggingInterceptor, OMSLogger } from '@finastra/nestjs-logger';
-import { setupSession, TokenGuard } from '@finastra/nestjs-oidc';
+import { sessionMongo, TokenGuard } from '@finastra/nestjs-oidc';
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
@@ -14,7 +14,10 @@ async function bootstrap() {
 
   app.useGlobalGuards(app.get(TokenGuard));
 
-  setupSession(app, 'test-app');
+  sessionMongo(app, 'test-app', {
+    mongoUrl: 'mongodb://user:password@localhost:27017',
+    dbName: 'ux-hub',
+  });
 
   const port = process.env.PORT || 3000;
 

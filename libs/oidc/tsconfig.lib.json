@@ -2,11 +2,10 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "declaration": true,
+    "esModuleInterop": true,
     "outDir": "../../dist/libs/oidc",
     "paths": {
-      "@finastra/ssr-pages": [
-        "dist/libs/ssr-pages"
-      ]
+      "@finastra/ssr-pages": ["dist/libs/ssr-pages"]
     }
   },
   "include": ["src/**/*"],

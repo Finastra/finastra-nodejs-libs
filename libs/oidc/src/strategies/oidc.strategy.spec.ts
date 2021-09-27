@@ -7,6 +7,8 @@ import { OidcStrategy } from './oidc.strategy';
 
 const utils = require('../utils');
 
+jest.mock('../utils');
+
 describe('OidcStrategy', () => {
   let strategy;
 
@@ -28,7 +30,7 @@ describe('OidcStrategy', () => {
 
   describe('validate', () => {
     it('should return true', async () => {
-      utils.getUserInfo = jest.fn().mockImplementation(() => {
+      jest.spyOn(utils, 'getUserInfo').mockImplementation(() => {
         return {
           username: 'John Doe',
           groups: [],
@@ -40,7 +42,7 @@ describe('OidcStrategy', () => {
     });
 
     it('should contain an expiration when given a token', async () => {
-      utils.getUserInfo = jest.fn().mockImplementation(() => {
+      jest.spyOn(utils, 'getUserInfo').mockImplementation(() => {
         return {
           username: 'John Doe',
           groups: [],
@@ -57,7 +59,7 @@ describe('OidcStrategy', () => {
     });
 
     it('should contain an expiration when given a token with expires_at', async () => {
-      utils.getUserInfo = jest.fn().mockImplementation(() => {
+      jest.spyOn(utils, 'getUserInfo').mockImplementation(() => {
         return {
           username: 'John Doe',
           groups: [],
@@ -73,7 +75,7 @@ describe('OidcStrategy', () => {
     });
 
     it('should contain an expiration when given a token with expires_in', async () => {
-      utils.getUserInfo = jest.fn().mockImplementation(() => {
+      jest.spyOn(utils, 'getUserInfo').mockImplementation(() => {
         return {
           username: 'John Doe',
           groups: [],
@@ -87,6 +89,5 @@ describe('OidcStrategy', () => {
       expect(result).toBeTruthy();
       expect(result.authTokens.expiresAt > Date.now() / 1000).toBeTruthy();
     });
-
   });
 });
