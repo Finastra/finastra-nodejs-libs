@@ -7,8 +7,6 @@ import { OidcService } from '../services';
 import * as externalIdps from '../utils/external-idps';
 import { UserMiddleware } from './user.middleware';
 
-jest.mock('../utils');
-
 describe('User Middleware', () => {
   let middleware: UserMiddleware;
   let service;
