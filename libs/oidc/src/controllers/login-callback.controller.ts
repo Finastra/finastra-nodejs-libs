@@ -1,5 +1,5 @@
-import { Controller, Get, Req, Res, Param, Next } from '@nestjs/common';
-import { Response, Request } from 'express';
+import { Controller, Get, Next, Param, Req, Res } from '@nestjs/common';
+import { Request, Response } from 'express';
 import { Public } from '../decorators/public.decorator';
 import { OidcService } from '../services';
 

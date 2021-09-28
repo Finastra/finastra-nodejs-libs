@@ -1,12 +1,12 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { ProxyService } from './proxy.service';
-import { Server } from 'http-proxy';
 import { createMock } from '@golevelup/nestjs-testing';
-import { PROXY_MODULE_OPTIONS, HTTP_PROXY } from '../proxy.constants';
+import { ConsoleLogger } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
 import { Request, Response } from 'express';
-import { Logger } from '@nestjs/common';
+import * as server from 'http-proxy';
+import { HTTP_PROXY, PROXY_MODULE_OPTIONS } from '../proxy.constants';
+import { ProxyService } from './proxy.service';
 
-class NoopLogger extends Logger {
+class NoopLogger extends ConsoleLogger {
   log(message: any, context?: string): void {}
   error(message: any, trace?: string, context?: string): void {}
   warn(message: any, context?: string): void {}
@@ -24,7 +24,7 @@ const mockProxyModuleOptions = {
 
 describe('ProxyService', () => {
   let service: ProxyService;
-  let proxy: Server;
+  let proxy: server;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -32,7 +32,7 @@ describe('ProxyService', () => {
         ProxyService,
         {
           provide: HTTP_PROXY,
-          useValue: createMock<Server>(),
+          useValue: createMock<server>(),
         },
         {
           provide: PROXY_MODULE_OPTIONS,
@@ -44,7 +44,7 @@ describe('ProxyService', () => {
     module.useLogger(new NoopLogger());
 
     service = module.get<ProxyService>(ProxyService);
-    proxy = module.get<Server>(HTTP_PROXY);
+    proxy = module.get<server>(HTTP_PROXY);
   });
 
   it('should be defined', () => {
@@ -178,7 +178,7 @@ describe('ProxyService', () => {
 describe('Proxy Service - empty configuration provided', () => {
   const mockProxyModuleOptions = {};
   let service: ProxyService;
-  let proxy: Server;
+  let proxy: server;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -186,7 +186,7 @@ describe('Proxy Service - empty configuration provided', () => {
         ProxyService,
         {
           provide: HTTP_PROXY,
-          useValue: createMock<Server>(),
+          useValue: createMock<server>(),
         },
         {
           provide: PROXY_MODULE_OPTIONS,
@@ -198,7 +198,7 @@ describe('Proxy Service - empty configuration provided', () => {
     module.useLogger(new NoopLogger());
 
     service = module.get<ProxyService>(ProxyService);
-    proxy = module.get<Server>(HTTP_PROXY);
+    proxy = module.get<server>(HTTP_PROXY);
   });
 
   it('should be defined', () => {

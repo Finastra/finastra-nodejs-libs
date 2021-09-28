@@ -11,7 +11,10 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "incremental": true,
+    "typeRoots": ["node_modules/@types"],
     "paths": {
       "@finastra/nestjs-oidc": ["libs/oidc/src"],
       "@finastra/nestjs-oidc/*": ["libs/oidc/src/*"],

@@ -1,11 +1,11 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { createResponse, createRequest } from 'node-mocks-http';
-import { ProxyController } from './proxy.controller';
-import { ProxyService } from '../services';
 import { createMock } from '@golevelup/nestjs-testing';
-import { Logger } from '@nestjs/common';
+import { ConsoleLogger } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+import { createRequest, createResponse } from 'node-mocks-http';
+import { ProxyService } from '../services';
+import { ProxyController } from './proxy.controller';
 
-class NoopLogger extends Logger {
+class NoopLogger extends ConsoleLogger {
   log(message: any, context?: string): void {}
   error(message: any, trace?: string, context?: string): void {}
   warn(message: any, context?: string): void {}
