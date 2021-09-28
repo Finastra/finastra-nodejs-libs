@@ -242,5 +242,3 @@ sessionMongo(app, 'test-app', {
   dbName: 'sample-db',
 });
 ```
-
-If you want to test it out locally, you can launch a mongoDB instance with the following command: `docker-compose up`
