@@ -1,8 +1,8 @@
 {
   "name": "@finastra/nestjs-logger",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "contributors": [
-    "Razvan Bordeanu <razvan.bordeanu@finastra.com>",
+    "Răzvan Bordeanu <razvan.bordeanu@finastra.com>",
     "David Boclé <david.bocle@finastra.com>",
     "Vitaliy Markitanov <vitaliy.markitanov@finastra.com>"
   ],
@@ -14,7 +14,7 @@
     "directory": "libs/logger"
   },
   "optionalDependencies": {
-    "@nestjs/graphql": "^7.10.3",
-    "graphql": "15.5.0"
+    "@nestjs/graphql": "^9.0.4",
+    "graphql": "^15.6.0"
   }
 }

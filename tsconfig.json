@@ -9,36 +9,20 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "incremental": true,
+    "typeRoots": ["node_modules/@types"],
     "paths": {
-      "@finastra/nestjs-oidc": [
-        "libs/oidc/src"
-      ],
-      "@finastra/nestjs-oidc/*": [
-        "libs/oidc/src/*"
-      ],
-      "@finastra/nestjs-proxy": [
-        "libs/proxy/src"
-      ],
-      "@finastra/nestjs-proxy/*": [
-        "libs/proxy/src/*"
-      ],
-      "@finastra/api_corporate-accounts": [
-        "libs/ffdc-apis/corporate-accounts/src"
-      ],
-      "@finastra/api_corporate-accounts/*": [
-        "libs/ffdc-apis/corporate-accounts/src/*"
-      ],
-      "@finastra/nestjs-logger": [
-        "libs/logger/src"
-      ],
-      "@finastra/nestjs-logger/*": [
-        "libs/logger/src/*"
-      ]
+      "@finastra/nestjs-oidc": ["libs/oidc/src"],
+      "@finastra/nestjs-oidc/*": ["libs/oidc/src/*"],
+      "@finastra/nestjs-proxy": ["libs/proxy/src"],
+      "@finastra/nestjs-proxy/*": ["libs/proxy/src/*"],
+      "@finastra/api_corporate-accounts": ["libs/ffdc-apis/corporate-accounts/src"],
+      "@finastra/api_corporate-accounts/*": ["libs/ffdc-apis/corporate-accounts/src/*"],
+      "@finastra/nestjs-logger": ["libs/logger/src"],
+      "@finastra/nestjs-logger/*": ["libs/logger/src/*"]
     }
   },
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "exclude": ["node_modules", "dist"]
 }

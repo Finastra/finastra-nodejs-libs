@@ -1,8 +1,8 @@
-import { Issuer } from 'openid-client';
-import axios from 'axios';
-import { stringify } from 'querystring';
 import { Logger } from '@nestjs/common';
-import { IdentityProviderOptions, ExternalIdps } from '../interfaces';
+import axios from 'axios';
+import { Issuer } from 'openid-client';
+import { stringify } from 'querystring';
+import { ExternalIdps, IdentityProviderOptions } from '../interfaces';
 
 const logger = new Logger('ExternalIdps');
 
@@ -16,7 +16,8 @@ export async function authenticateExternalIdps(externalIdps: ExternalIdps): Prom
     .then(() => {
       return tokens;
     })
-    .catch(() => {
+    .catch(error => {
+      logger.error(error);
       logger.error(`Error requesting external IDP token`);
       return;
     });

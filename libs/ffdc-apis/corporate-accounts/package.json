@@ -1,6 +1,6 @@
 {
   "name": "@finastra/api_corporate-accounts",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "contributors": [
     "David Boclé <david.bocle@finastra.com>",
     "Francine Ong <francine.ong@finastra.com>"
@@ -13,9 +13,9 @@
     "directory": "libs/ffdc-apis/corporate-accounts"
   },
   "dependencies": {
-    "@nestjs/jwt": "^7.0.0",
-    "@nestjs/passport": "^7.0.0",
-    "openid-client": "^3.14.2",
+    "@nestjs/jwt": "^8.0.0",
+    "@nestjs/passport": "^8.0.1",
+    "openid-client": "^4.9.0",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0"
   }
