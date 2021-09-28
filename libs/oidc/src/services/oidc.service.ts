@@ -117,8 +117,8 @@ export class OidcService implements OnModuleInit {
 
   async login(@Req() req: Request, @Res() res: Response, @Next() next: Function, @Param() params) {
     try {
-      const tenantId = params.tenantId || req.session.tenant;
-      const channel = params.channelType || req.session.channel;
+      const tenantId = params.tenantId || req.session['tenant'];
+      const channel = params.channelType || req.session['channel'];
 
       const strategy =
         this.strategy ||
@@ -128,8 +128,8 @@ export class OidcService implements OnModuleInit {
 
       const prefix = channel && tenantId ? `/${tenantId}/${channel}` : '';
 
-      req.session.tenant = tenantId;
-      req.session.channel = channel;
+      req.session['tenant'] = tenantId;
+      req.session['channel'] = channel;
       let redirect_url = req.query['redirect_url'] ?? '/';
       redirect_url = Buffer.from(JSON.stringify({ redirect_url: `${prefix}${redirect_url}` }), 'utf-8').toString(
         'base64',
@@ -150,7 +150,7 @@ export class OidcService implements OnModuleInit {
               return next(err);
             }
 
-            let state = req.query['state'];
+            let state = req.query['state'] as string;
             const buff = Buffer.from(state, 'base64').toString('utf-8');
             state = JSON.parse(buff);
             let url: string = state['redirect_url'];
@@ -168,8 +168,9 @@ export class OidcService implements OnModuleInit {
     const id_token = req.user ? req.user['id_token'] : undefined;
     req.logout();
     req.session.destroy(async () => {
-      const end_session_endpoint = this.idpInfos[this.getIdpInfosKey(params.tenantId, params.channelType)].trustIssuer
-        .metadata.end_session_endpoint;
+      const end_session_endpoint =
+        this.idpInfos[this.getIdpInfosKey(params.tenantId, params.channelType)].trustIssuer.metadata
+          .end_session_endpoint;
 
       if (end_session_endpoint) {
         res.redirect(
@@ -214,7 +215,7 @@ export class OidcService implements OnModuleInit {
     }
   }
 
-  loggedOut(@Req() req: Request, @Res() res: Response, @Param() params) {
+  loggedOut(@Req() req: Request, @Res() res: Response, @Param() params?: any) {
     let prefix = this._getPrefix(req, params);
     let postLogoutRedirectUri = this.options.postLogoutRedirectUri || '/login';
     if (!postLogoutRedirectUri.startsWith('/')) {

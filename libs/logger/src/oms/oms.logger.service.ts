@@ -1,8 +1,8 @@
-import { Injectable, Logger, Scope } from '@nestjs/common';
+import { ConsoleLogger, Injectable, Scope } from '@nestjs/common';
 import { OMSLogLevel } from './OMSLog.interface';
 
 @Injectable({ scope: Scope.TRANSIENT })
-export class OMSLogger extends Logger {
+export class OMSLogger extends ConsoleLogger {
   private print(logLevel: OMSLogLevel, message: string, context?: string, trace?: string) {
     let currentContext = context;
     if (typeof context === 'undefined') {
@@ -21,24 +21,24 @@ export class OMSLogger extends Logger {
   }
 
   log(message: string, context?: string) {
-    process.stdout.isTTY ? super.log(message, context) : this.print(OMSLogLevel.INFO, message, context);
+    process.stdout.isTTY ? super.log.apply(this, arguments) : this.print(OMSLogLevel.INFO, message, context);
   }
 
   error(message: string, trace: string, context?: string) {
     process.stdout.isTTY
-      ? super.error(message, trace, context)
+      ? super.error.apply(this, arguments)
       : this.print(OMSLogLevel.ERROR, message, context, `${JSON.stringify(trace)}`);
   }
 
   warn(message: string, context?: string) {
-    process.stdout.isTTY ? super.warn(message, context) : this.print(OMSLogLevel.WARNING, message, context);
+    process.stdout.isTTY ? super.warn.apply(this, arguments) : this.print(OMSLogLevel.WARNING, message, context);
   }
 
   debug(message: string, context?: string) {
-    process.stdout.isTTY ? super.debug(message, context) : this.print(OMSLogLevel.DEBUG, message, context);
+    process.stdout.isTTY ? super.debug.apply(this, arguments) : this.print(OMSLogLevel.DEBUG, message, context);
   }
 
   verbose(message: string, context?: string) {
-    process.stdout.isTTY ? super.verbose(message, context) : this.print(OMSLogLevel.VERBOSE, message, context);
+    process.stdout.isTTY ? super.verbose.apply(this, arguments) : this.print(OMSLogLevel.VERBOSE, message, context);
   }
 }

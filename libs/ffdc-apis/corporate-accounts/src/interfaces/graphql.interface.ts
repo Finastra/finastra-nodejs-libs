@@ -1,4 +1,5 @@
-/** ------------------------------------------------------
+/*
+ * -------------------------------------------------------
  * THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
  * -------------------------------------------------------
  */
@@ -49,32 +50,32 @@ export interface Account {
 
 export interface IQuery {
   accounts(
-    limit?: number,
-    offset?: number,
-    fromDate?: string,
-    toDate?: string,
-    statementLimit?: number,
-    statementOffset?: number,
-  ): AccountBasicRes | Promise<AccountBasicRes>;
+    limit?: Nullable<number>,
+    offset?: Nullable<number>,
+    fromDate?: Nullable<string>,
+    toDate?: Nullable<string>,
+    statementLimit?: Nullable<number>,
+    statementOffset?: Nullable<number>,
+  ): Nullable<AccountBasicRes> | Promise<Nullable<AccountBasicRes>>;
   accountsBalance(
-    accountType?: AccountType,
-    limit?: number,
-    offset?: number,
-    fromDate?: string,
-    toDate?: string,
-    equivalentCurrency?: string,
-    statementLimit?: number,
-    statementOffset?: number,
-  ): AccountwBalanceRes | Promise<AccountwBalanceRes>;
-  account(id: string): AccountDetail | Promise<AccountDetail>;
-  accountBalance(id: string): AccountBalance | Promise<AccountBalance>;
+    accountType?: Nullable<AccountType>,
+    limit?: Nullable<number>,
+    offset?: Nullable<number>,
+    fromDate?: Nullable<string>,
+    toDate?: Nullable<string>,
+    equivalentCurrency?: Nullable<string>,
+    statementLimit?: Nullable<number>,
+    statementOffset?: Nullable<number>,
+  ): Nullable<AccountwBalanceRes> | Promise<Nullable<AccountwBalanceRes>>;
+  account(id: string): Nullable<AccountDetail> | Promise<Nullable<AccountDetail>>;
+  accountBalance(id: string): Nullable<AccountBalance> | Promise<Nullable<AccountBalance>>;
   accountStatement(
     id: string,
     fromDate: string,
     toDate: string,
-    limit?: number,
-    offset?: number,
-  ): AccountStatementRes | Promise<AccountStatementRes>;
+    limit?: Nullable<number>,
+    offset?: Nullable<number>,
+  ): Nullable<AccountStatementRes> | Promise<Nullable<AccountStatementRes>>;
 }
 
 export interface AccountBasic extends Account {
@@ -83,13 +84,13 @@ export interface AccountBasic extends Account {
   type: AccountType;
   number: string;
   accountContext: AccountContext;
-  balances?: AccountBalance;
-  statement?: AccountStatementRes;
+  balances?: Nullable<AccountBalance>;
+  statement?: Nullable<AccountStatementRes>;
 }
 
 export interface AccountBasicRes {
-  items?: AccountBasic[];
-  _meta?: FFDCMeta;
+  items?: Nullable<Nullable<AccountBasic>[]>;
+  _meta?: Nullable<FFDCMeta>;
 }
 
 export interface AccountBalance extends Account {
@@ -110,13 +111,13 @@ export interface AccountwBalance extends Account {
   availableBalanceEquivalent: string;
   balanceAsOn: string;
   equivalentCurrency: string;
-  details?: AccountDetail;
-  statement?: AccountStatementRes;
+  details?: Nullable<AccountDetail>;
+  statement?: Nullable<AccountStatementRes>;
 }
 
 export interface AccountwBalanceRes {
-  items?: AccountwBalance[];
-  _meta?: FFDCMeta;
+  items?: Nullable<Nullable<AccountwBalance>[]>;
+  _meta?: Nullable<FFDCMeta>;
 }
 
 export interface AccountDetail extends Account {
@@ -125,40 +126,42 @@ export interface AccountDetail extends Account {
   number: string;
   currency: string;
   format: AccountFormat;
-  country?: string;
+  country?: Nullable<string>;
   status: AccountStatus;
-  cutomerReference?: string;
-  interestRate?: number;
-  debitInterestRate?: number;
-  creditInterestRate?: number;
-  principalAmount?: number;
-  maturityAmount?: number;
-  accountStartDate?: string;
-  accountEndDate?: string;
-  bankShortName?: string;
-  overDraftLimit?: number;
+  cutomerReference?: Nullable<string>;
+  interestRate?: Nullable<number>;
+  debitInterestRate?: Nullable<number>;
+  creditInterestRate?: Nullable<number>;
+  principalAmount?: Nullable<number>;
+  maturityAmount?: Nullable<number>;
+  accountStartDate?: Nullable<string>;
+  accountEndDate?: Nullable<string>;
+  bankShortName?: Nullable<string>;
+  overDraftLimit?: Nullable<number>;
 }
 
 export interface AccountStatement {
-  postingDate?: string;
-  valueDate?: string;
+  postingDate?: Nullable<string>;
+  valueDate?: Nullable<string>;
   currency: string;
   amount: number;
   transactionType: TransactionType;
   balance: number;
-  backOfficeReference?: string;
-  ref1?: string;
-  ref2?: string;
+  backOfficeReference?: Nullable<string>;
+  ref1?: Nullable<string>;
+  ref2?: Nullable<string>;
 }
 
 export interface AccountStatementRes {
-  items?: AccountStatement[];
-  _meta?: FFDCMeta;
+  items?: Nullable<Nullable<AccountStatement>[]>;
+  _meta?: Nullable<FFDCMeta>;
 }
 
 export interface FFDCMeta {
-  limit?: number;
-  pageCount?: number;
-  itemCount?: number;
-  page?: number;
+  limit?: Nullable<number>;
+  pageCount?: Nullable<number>;
+  itemCount?: Nullable<number>;
+  page?: Nullable<number>;
 }
+
+type Nullable<T> = T | null;

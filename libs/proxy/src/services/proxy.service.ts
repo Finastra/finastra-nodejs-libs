@@ -1,9 +1,9 @@
-import { Injectable, Inject, Logger, Param } from '@nestjs/common';
-import { Server } from 'http-proxy';
-import { parse } from 'url';
+import { Inject, Injectable, Logger, Param } from '@nestjs/common';
 import { Request, Response } from 'express';
+import * as server from 'http-proxy';
+import { parse } from 'url';
 import { ProxyModuleOptions } from '../interfaces';
-import { PROXY_MODULE_OPTIONS, HTTP_PROXY } from '../proxy.constants';
+import { HTTP_PROXY, PROXY_MODULE_OPTIONS } from '../proxy.constants';
 import { concatPath, getBaseURL } from '../utils';
 
 @Injectable()
@@ -11,13 +11,13 @@ export class ProxyService {
   private readonly logger = new Logger(ProxyService.name);
 
   constructor(
-    @Inject(HTTP_PROXY) private proxy: Server | any,
+    @Inject(HTTP_PROXY) private proxy: server | any,
     @Inject(PROXY_MODULE_OPTIONS) private options: ProxyModuleOptions,
   ) {}
 
   async proxyRequest(req: Request, res: Response, @Param() params?) {
-    const target = req.query.target;
-    const serviceId = req.query.serviceId;
+    const target = req.query.target as string;
+    const serviceId = req.query.serviceId as string;
     let token = null;
 
     if (req.hasOwnProperty('user')) {
@@ -48,7 +48,7 @@ export class ProxyService {
     }
 
     res.status(404).send({ error: "Could not find 'target' or 'serviceId'" });
-    this.logger.error("Could not find 'target' or 'serviceId'", 'Proxy');
+    this.logger.error("Could not find 'target' or 'serviceId'");
   }
 
   private async doProxy(
@@ -56,7 +56,7 @@ export class ProxyService {
     res: Response,
     target: string,
     token: string,
-    options: Server.ServerOptions = {},
+    options: server.ServerOptions = {},
   ) {
     req.url = parse(target).path;
 

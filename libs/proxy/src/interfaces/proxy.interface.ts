@@ -1,14 +1,14 @@
-import { Server } from 'http-proxy';
 import { ModuleMetadata, Type } from '@nestjs/common/interfaces';
+import * as server from 'http-proxy';
 
 export interface Service {
   id: string;
   url: string;
-  config?: Server.ServerOptions;
+  config?: server.ServerOptions;
 }
 
 export interface ProxyModuleOptions {
-  config?: Server.ServerOptions;
+  config?: server.ServerOptions;
   services?: Service[];
 }
 
