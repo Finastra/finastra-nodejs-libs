@@ -35,7 +35,7 @@
     "@nestjs/serve-static": "^2.2.2",
     "apollo-server-express": "^3.3.0",
     "axios": "^0.21.4",
-    "connect-mongo": "^4.6.0",
+    "connect-mongo": "4.4.0",
     "cookie": "^0.4.1",
     "csurf": "^1.11.0",
     "express-session": "^1.17.2",

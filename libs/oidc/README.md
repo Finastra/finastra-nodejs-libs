@@ -6,7 +6,7 @@ NestJS OIDC Auth module
 NestJS module to enable OAuth 2 & OIDC login to your application.\
 It exposes following endpoints :
 
-- login?redirect_url   redirect_url will be used as the path to redirect to on success login
+- login?redirect_url redirect_url will be used as the path to redirect to on success login
 - login/callback
 - logout
 - user
@@ -212,3 +212,35 @@ export class AppModule {}
 
 > `issuerOrigin` is the route url of the IDP issuer. Issuer will be built with this pattern: `:issuerOrigin/:tenantId/.well-known/openid-configuration`
 > The other parameters remains the same that on single tenancy except that `clientMetadata` need to be embedded in channel type `b2c` or `b2e` parameter.
+
+## Utils
+
+### Setup Session
+
+If you don't want to have to think about how to configure the session, you can use our helpers. We currently expose 2: in-memory and mongoDB.\
+The configuration for those can be found [here](./src/utils/session/).
+
+#### In Memory
+
+> This will not work if you're deploying multiple instances of your application.
+
+```ts
+setupInMemory(app, 'test-app');
+
+// Alternative way
+setupSession(app, 'test-app');
+```
+
+#### MongoDB
+
+> Preferred method if you're deploying multiple instances of your application.
+
+```ts
+// Use mongoDB as session store
+sessionMongo(app, 'test-app', {
+  mongoUrl: 'mongodb://user:password@localhost:27017',
+  dbName: 'sample-db',
+});
+```
+
+If you want to test it out locally, you can launch a mongoDB instance with the following command: `docker-compose up`
