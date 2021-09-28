@@ -1,7 +1,7 @@
-const MongoStore = require('connect-mongo');
+import MongoStore from 'connect-mongo';
 import { ConnectMongoOptions } from 'connect-mongo/build/main/lib/MongoStore';
-import * as session from 'express-session';
-import * as passport from 'passport';
+import session from 'express-session';
+import passport from 'passport';
 import { v4 as uiid } from 'uuid';
 
 export const sessionMongo = (app, name, options: ConnectMongoOptions) => {
