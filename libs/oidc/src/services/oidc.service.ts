@@ -13,6 +13,13 @@ import passport = require('passport');
 
 const logger = new Logger('OidcService');
 
+declare module 'express-session' {
+  interface SessionData {
+    tenant: string
+    channel: string;
+  }
+}
+
 @Injectable()
 export class OidcService implements OnModuleInit {
   isMultitenant: boolean = false;

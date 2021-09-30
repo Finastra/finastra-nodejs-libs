@@ -72,6 +72,10 @@ $ npm run test
 $ npm run test:cov
 ```
 
+## External services
+
+A `docker-compose` file has been added for convenience. Currently only mongoDB has been added.
+
 ## License
 
 All libraries in this repo are [MIT licensed](LICENSE).
