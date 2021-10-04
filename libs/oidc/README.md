@@ -225,7 +225,7 @@ The configuration for those can be found [here](./src/utils/session/).
 > This will not work if you're deploying multiple instances of your application.
 
 ```ts
-setupInMemory(app, 'test-app');
+sessionInMemory(app, 'test-app');
 
 // Alternative way
 setupSession(app, 'test-app');

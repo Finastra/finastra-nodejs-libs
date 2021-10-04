@@ -117,14 +117,14 @@
 
 ### Features
 
-- New `sessionMongo` util. Works the same as previous `setupSession`, but the store is using mongoDB instead of in-memory. To differentiate, a new `setupInMemory` is also available, and to not introduce breaking changes, using the previous `setupSession` will call `setupInMemory` in the background !
+- New `sessionMongo` util. Works the same as previous `setupSession`, but the store is using mongoDB instead of in-memory. To differentiate, a new `sessionInMemory` is also available, and to not introduce breaking changes, using the previous `setupSession` will call `sessionInMemory` in the background !
 
 ```ts
 // Old and current way
 setupSession(app, 'test-app');
 
 // Alternative way
-setupInMemory(app, 'test-app');
+sessionInMemory(app, 'test-app');
 ```
 
 ```ts
