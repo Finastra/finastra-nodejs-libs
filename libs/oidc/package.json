@@ -1,6 +1,6 @@
 {
-  "name": "@finastra/nestjs-oidc",
-  "version": "0.21.0",
+  "name": "@igorko/nestjs-oidc",
+  "version": "0.0.1",
   "contributors": [
     "David Boclé <david.bocle@finastra.com>",
     "Francine Ong <francine.ong@finastra.com>",
@@ -10,7 +10,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Finastra/finastra-nodejs-libs.git",
+    "url": "https://github.com/Feling/finastra-nodejs-libs.git",
     "directory": "libs/oidc"
   },
   "dependencies": {
