@@ -10,7 +10,7 @@ let session = {
     maxAge: 30 * 60 * 1000, // session expires in 1hr, refreshed by `rolling: true` option.
     httpOnly: true, // so that cookie can't be accessed via client-side script
     secure: false,
-    sameSite: 'strict',
+    sameSite: 'lax',
   },
 };
 

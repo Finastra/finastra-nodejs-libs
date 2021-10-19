@@ -225,9 +225,13 @@ The configuration for those can be found [here](./src/utils/session/).
 > This will not work if you're deploying multiple instances of your application.
 
 ```ts
+import { sessionInMemory } from '@finastra/nestjs-oidc/utils/session';
+
 sessionInMemory(app, 'test-app');
 
 // Alternative way
+import { setupSession } from '@finastra/nestjs-oidc';
+
 setupSession(app, 'test-app');
 ```
 
@@ -236,6 +240,8 @@ setupSession(app, 'test-app');
 > Preferred method if you're deploying multiple instances of your application.
 
 ```ts
+import { sessionMongo } from '@finastra/nestjs-oidc/utils/session';
+
 // Use mongoDB as session store
 sessionMongo(app, 'test-app', {
   mongoUrl: 'mongodb://user:password@localhost:27017',
