@@ -27,6 +27,8 @@ describe('ProxyModule', () => {
           const req = createRequest();
           proxyReq.getHeader = header => header;
           proxyReq.write = jest.fn();
+          proxyReq.protocol = 'http:';
+          proxyReq.host = 'localhost';
           const spy = jest.spyOn(proxyReq, 'write');
           proxy.emit('proxyReq', proxyReq, req);
           expect(spy).not.toHaveBeenCalled();
@@ -39,6 +41,8 @@ describe('ProxyModule', () => {
           req.body = body;
           proxyReq.getHeader = header => header;
           proxyReq.write = jest.fn();
+          proxyReq.protocol = 'http:';
+          proxyReq.host = 'localhost';
           const spy = jest.spyOn(proxyReq, 'write');
           proxy.emit('proxyReq', proxyReq, req);
           expect(spy).not.toHaveBeenCalled();
@@ -49,6 +53,8 @@ describe('ProxyModule', () => {
           proxyReq.getHeader = header => 'application/json';
           proxyReq.write = jest.fn();
           proxyReq.setHeader = jest.fn();
+          proxyReq.protocol = 'http:';
+          proxyReq.host = 'localhost';
 
           const req = createRequest();
           const body = { prop: 'test' };
@@ -64,6 +70,8 @@ describe('ProxyModule', () => {
           proxyReq.getHeader = header => 'application/x-www-form-urlencoded';
           proxyReq.write = jest.fn();
           proxyReq.setHeader = jest.fn();
+          proxyReq.protocol = 'http:';
+          proxyReq.host = 'localhost';
 
           const req = createRequest();
           const body = { prop: 'test' };
@@ -72,23 +80,6 @@ describe('ProxyModule', () => {
           const spy = jest.spyOn(proxyReq, 'write');
           proxy.emit('proxyReq', proxyReq, req);
           expect(spy).toHaveBeenCalledWith('prop=test');
-        });
-      });
-
-      describe('on proxyRes', () => {
-        it('should log', () => {
-          const req = createRequest();
-          req.url = 'path';
-
-          const proxyRes = {
-            req: {
-              getHeader: header => header,
-            },
-          };
-          const spy = jest.spyOn(proxyRes.req, 'getHeader');
-
-          proxy.emit('proxyRes', proxyRes, req);
-          expect(spy).toHaveBeenCalled();
         });
       });
     });

@@ -1,7 +1,6 @@
 import { Inject, Injectable, Logger, Param } from '@nestjs/common';
 import { Request, Response } from 'express';
 import * as server from 'http-proxy';
-import { parse } from 'url';
 import { ProxyModuleOptions } from '../interfaces';
 import { HTTP_PROXY, PROXY_MODULE_OPTIONS } from '../proxy.constants';
 import { concatPath, getBaseURL } from '../utils';
@@ -27,7 +26,7 @@ export class ProxyService {
     const prefix = params ? `${params[0]}` : '';
 
     if (target && !serviceId) {
-      return this.doProxy(req, res, concatPath(prefix, target), token);
+      return this.doProxy(req, res, target, token);
     }
 
     if (serviceId) {
@@ -58,7 +57,7 @@ export class ProxyService {
     token: string,
     options: server.ServerOptions = {},
   ) {
-    req.url = parse(target).path;
+    req.url = new URL(target).pathname;
 
     let defaultOptions = {
       target: getBaseURL(target),
