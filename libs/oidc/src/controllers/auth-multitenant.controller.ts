@@ -27,6 +27,7 @@ export class AuthMultitenantController {
   }
 
   @Get('/refresh-token')
+  @Header('Cache-Control', 'no-store, max-age=0')
   async refreshTokens(@Req() req: Request, @Res() res: Response, @Next() next: Function) {
     this.oidcService.refreshTokens(req, res, next);
   }
