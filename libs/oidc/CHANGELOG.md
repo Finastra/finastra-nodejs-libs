@@ -122,6 +122,7 @@
 ### Bugfixes
 
 - Remove top level export of `sessionMongo` to keep its dependencies optional
+- Switch `SameSite` cookie attribute from `strict` to `lax`
 
 ## 0.22.0 (2021-10-19)
 
