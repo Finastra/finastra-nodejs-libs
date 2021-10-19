@@ -121,7 +121,7 @@
 
 ### Bugfixes
 
-- Remove top level export of `sessionMongo` to keep it's dependencies optional
+- Remove top level export of `sessionMongo` to keep its dependencies optional
 
 ## 0.22.0 (2021-10-19)
 
