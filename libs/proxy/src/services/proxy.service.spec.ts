@@ -15,7 +15,7 @@ class NoopLogger extends ConsoleLogger {
 const services = [
   {
     id: 'test',
-    url: 'https://test.io',
+    url: 'https://test.io/subpath',
   },
 ];
 const mockProxyModuleOptions = {
@@ -89,8 +89,8 @@ describe('ProxyService', () => {
 
       const spy = jest.spyOn(proxy, 'web');
       service.proxyRequest(req, res);
-      expect((spy.mock.calls[0][2] as any).target).toBe(services[0].url);
-      expect((spy.mock.calls[0][0] as any).url).toBe('/deep-test');
+      expect((spy.mock.calls[0][2] as any).target).toBe('https://test.io');
+      expect((spy.mock.calls[0][0] as any).url).toBe('/subpath/deep-test');
     });
 
     it('should not call proxy when no service id nor target', () => {

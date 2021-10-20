@@ -10,8 +10,8 @@ describe('URL utils', () => {
 
   describe('concatPath', () => {
     it('should return concatenated path', () => {
-      const path = concatPath('1', '2', '');
-      expect(path).toBe('1/2/');
+      const path = concatPath('https://a', '2', '');
+      expect(path).toBe('https://a/2');
     });
   });
 

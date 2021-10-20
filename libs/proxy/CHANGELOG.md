@@ -4,12 +4,16 @@
 
 <!-- TOC depthFrom:2 depthTo:3 -->
 
+- [0.5.2 (2021-10-20)](#052-2021-10-20)
+  - [Bugfixes](#bugfixes)
+- [0.5.1 (2021-10-19)](#051-2021-10-19)
+  - [Bugfixes](#bugfixes-1)
 - [0.5.0 (2021-09-27)](#050-2021-09-27)
   - [Features](#features)
 - [0.4.0 (2020-09-16)](#040-2020-09-16)
   - [Features](#features-1)
 - [0.3.1 (2020-07-23)](#031-2020-07-23)
-  - [Bugfixes](#bugfixes)
+  - [Bugfixes](#bugfixes-2)
 - [0.3.0 (2020-07-23)](#030-2020-07-23)
   - [Features](#features-2)
 - [0.2.1 (2020-06-25)](#021-2020-06-25)
@@ -20,6 +24,18 @@
   - [Bug fixes](#bug-fixes-1)
 
 <!-- /TOC -->
+
+## 0.5.2 (2021-10-20)
+
+### Bugfixes
+
+- Use `url-join` to parse and join urls and solve use cases when baseUrl has a subpath
+
+## 0.5.1 (2021-10-19)
+
+### Bugfixes
+
+- Use out of the box `URL` to parse and join urls
 
 ## 0.5.0 (2021-09-27)
 
