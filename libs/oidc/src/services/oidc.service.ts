@@ -15,7 +15,7 @@ const logger = new Logger('OidcService');
 
 declare module 'express-session' {
   interface SessionData {
-    tenant: string
+    tenant: string;
     channel: string;
   }
 }
@@ -152,11 +152,12 @@ export class OidcService implements OnModuleInit {
           if (err || !user) {
             return next(err || info);
           }
-          req.logIn(user, function (err) {
+          req.logIn(user, err => {
             if (err) {
               return next(err);
             }
 
+            this._updateSessionDuration(req);
             let state = req.query['state'] as string;
             const buff = Buffer.from(state, 'base64').toString('utf-8');
             state = JSON.parse(buff);
@@ -212,6 +213,7 @@ export class OidcService implements OnModuleInit {
       return await this._refreshToken(authTokens)
         .then(data => {
           this._updateUserAuthToken(data, req);
+          this._updateSessionDuration(req);
           res.sendStatus(200);
         })
         .catch(err => {
@@ -289,6 +291,12 @@ export class OidcService implements OnModuleInit {
       };
     } else {
       throw new Error(response.data);
+    }
+  }
+
+  _updateSessionDuration(req) {
+    if (req.session) {
+      req.session.cookie.maxAge = req.user.authTokens.refreshExpiresIn * 1000;
     }
   }
 
