@@ -1,16 +1,13 @@
-import { join } from 'path';
 import { URL } from 'url';
+import urljoin from 'url-join';
 
 export function getBaseURL(path) {
   const url = new URL(path);
   return url.origin;
 }
 
-export function concatPath(...args: any[]) {
-  const baseUrl = args.shift();
-  const finalUrl = new URL(baseUrl);
-  finalUrl.pathname = join(...args);
-  return finalUrl.toString();
+export function concatPath(...args: string[]) {
+  return urljoin(...args);
 }
 
 export function isAbsolute(path) {

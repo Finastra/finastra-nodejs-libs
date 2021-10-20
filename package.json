@@ -50,7 +50,8 @@
     "passport-jwt": "^4.0.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "rxjs": "^7.3.0"
+    "rxjs": "^7.3.0",
+    "url-join": "^4.0.1"
   },
   "devDependencies": {
     "@apollo/gateway": "^0.41.0",
