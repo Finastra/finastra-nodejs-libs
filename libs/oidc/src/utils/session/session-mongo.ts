@@ -1,10 +1,10 @@
-import MongoStore from 'connect-mongo';
-import { ConnectMongoOptions } from 'connect-mongo/build/main/lib/MongoStore';
+const MongoStore = require('connect-mongo');
+import { INestApplication } from '@nestjs/common';
 import session from 'express-session';
 import passport from 'passport';
 import { baseSession } from './base-session';
 
-export const sessionMongo = (app, name, options: ConnectMongoOptions) => {
+export const sessionMongo = (app: INestApplication, name: string, options: ConnectMongoOptions) => {
   app.use(
     session({
       name,
@@ -15,3 +15,11 @@ export const sessionMongo = (app, name, options: ConnectMongoOptions) => {
   app.use(passport.initialize());
   app.use(passport.session());
 };
+
+export interface ConnectMongoOptions {
+  mongoUrl?: string;
+  collectionName?: string;
+  dbName?: string;
+  ttl?: number;
+  [key: string]: any;
+}

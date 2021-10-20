@@ -248,3 +248,5 @@ sessionMongo(app, 'test-app', {
   dbName: 'sample-db',
 });
 ```
+
+> Third parameter is directly being passed to [connect-mongo](https://github.com/jdesboeufs/connect-mongo#options). Refer to its documentation for more information.

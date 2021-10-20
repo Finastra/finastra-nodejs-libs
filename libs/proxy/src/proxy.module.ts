@@ -17,7 +17,7 @@ const proxyFactory = {
     });
 
     proxy.on('proxyReq', function (proxyReq, req, res, options) {
-      const url = concatPath(proxyReq.getHeader('host'), req.url);
+      const url = concatPath(`${proxyReq.protocol}//${proxyReq.host}`, req.url);
       logger.log(`Sending ${req.method} ${url}`);
 
       if (!req['body'] || !Object.keys(req['body']).length) {
@@ -42,7 +42,7 @@ const proxyFactory = {
     });
 
     proxy.on('proxyRes', function (proxyRes, req, res) {
-      const url = concatPath(proxyRes['req'].getHeader('host'), req.url);
+      const url = concatPath(`${proxyRes['req'].protocol}//${proxyRes['req'].host}`, req.url);
       logger.log(`Received ${req.method} ${url}`);
     });
     return proxy;
