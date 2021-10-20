@@ -57,9 +57,10 @@ export class ProxyService {
     token: string,
     options: server.ServerOptions = {},
   ) {
-    req.url = new URL(target).pathname;
+    const url = new URL(target);
+    req.url = `${url.pathname}${url.search}`;
 
-    let defaultOptions = {
+    const defaultOptions = {
       target: getBaseURL(target),
       headers: {
         ...(token && { authorization: 'Bearer ' + token }),

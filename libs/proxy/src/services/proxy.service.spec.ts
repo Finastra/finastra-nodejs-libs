@@ -84,13 +84,13 @@ describe('ProxyService', () => {
 
       req.query = {
         serviceId: services[0].id,
-        target: 'deep-test',
+        target: 'deep-test?query=ok',
       };
 
       const spy = jest.spyOn(proxy, 'web');
       service.proxyRequest(req, res);
       expect((spy.mock.calls[0][2] as any).target).toBe('https://test.io');
-      expect((spy.mock.calls[0][0] as any).url).toBe('/subpath/deep-test');
+      expect((spy.mock.calls[0][0] as any).url).toBe('/subpath/deep-test?query=ok');
     });
 
     it('should not call proxy when no service id nor target', () => {
