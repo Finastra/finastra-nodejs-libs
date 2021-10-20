@@ -295,7 +295,9 @@ export class OidcService implements OnModuleInit {
   }
 
   _updateSessionDuration(req) {
-    req.session.cookie.maxAge = req.user.authTokens.refreshExpiresIn * 1000;
+    if (req.session) {
+      req.session.cookie.maxAge = req.user.authTokens.refreshExpiresIn * 1000;
+    }
   }
 
   _updateUserAuthToken(data: Partial<IdentityProviderOptions>, req) {
