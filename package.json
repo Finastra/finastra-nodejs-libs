@@ -7,6 +7,7 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
+    "postbuild": "cpx -v \"libs/oidc/src/services/login-popup.hbs\" dist/libs/oidc/src/services",
     "dev": "npm run start:debug",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"libs/**/*.ts\"",
     "start": "nest start",
@@ -37,6 +38,7 @@
     "axios": "^0.21.4",
     "connect-mongo": "4.4.0",
     "cookie": "^0.4.1",
+    "cpx": "^1.5.0",
     "csurf": "^1.11.0",
     "express-session": "^1.17.2",
     "flatted": "^3.2.2",
@@ -45,6 +47,7 @@
     "helmet": "^4.6.0",
     "http-proxy": "^1.18.1",
     "mongoose": "^5.13.9",
+    "npm-force-resolutions": "^0.0.10",
     "openid-client": "^4.8.0",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
