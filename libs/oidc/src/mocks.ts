@@ -61,6 +61,12 @@ export const MockOidcService = {
   getTokenStoreKey: () => {
     return 'tenant.b2c';
   },
+
+  updateSessionDuration: req => {},
+
+  updateUserAuthToken: (data, req) => {},
+
+  requestTokenRefresh: authTokens => {},
 };
 
 export const MOCK_REQUEST = {

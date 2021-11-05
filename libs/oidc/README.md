@@ -121,6 +121,8 @@ You can either use it globally, or scoped per controller or route.
 app.useGlobalGuards(app.get(TokenGuard));
 ```
 
+Using the token guard globally will protect all your routes
+
 #### Controller or route based
 
 `*.controller.ts`
