@@ -7,7 +7,7 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
-    "postbuild": "cpx -v \"libs/oidc/src/services/login-popup.hbs\" dist/libs/oidc/src/services",
+    "postbuild": "cpx -v \"libs/oidc/src/services/login-popup.hbs\" dist/libs/oidc/services",
     "dev": "npm run start:debug",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"libs/**/*.ts\"",
     "start": "nest start",
