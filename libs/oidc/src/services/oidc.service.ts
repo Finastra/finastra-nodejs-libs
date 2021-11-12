@@ -157,7 +157,7 @@ export class OidcService implements OnModuleInit {
               return next(err);
             }
 
-            this._updateSessionDuration(req);
+            this.updateSessionDuration(req);
             let state = req.query['state'] as string;
             const buff = Buffer.from(state, 'base64').toString('utf-8');
             state = JSON.parse(buff);
@@ -210,10 +210,10 @@ export class OidcService implements OnModuleInit {
     authTokens.channel = req.user['userinfo'].channel;
     if (this.isExpired(authTokens.expiresAt)) {
       authTokens.channel = req.user['userinfo'].channel;
-      return await this._refreshToken(authTokens)
+      return await this.requestTokenRefresh(authTokens)
         .then(data => {
-          this._updateUserAuthToken(data, req);
-          this._updateSessionDuration(req);
+          this.updateUserAuthToken(data, req);
+          this.updateSessionDuration(req);
           res.sendStatus(200);
         })
         .catch(err => {
@@ -246,7 +246,7 @@ export class OidcService implements OnModuleInit {
     res.send(loggedOutPage);
   }
 
-  async _refreshToken(authToken: IdentityProviderOptions) {
+  async requestTokenRefresh(authToken: IdentityProviderOptions) {
     if (!authToken.accessToken || !authToken.refreshToken || !authToken.tokenEndpoint) {
       throw new Error('Missing token endpoint');
     }
@@ -294,13 +294,13 @@ export class OidcService implements OnModuleInit {
     }
   }
 
-  _updateSessionDuration(req) {
+  updateSessionDuration(req) {
     if (req.session) {
       req.session.cookie.maxAge = req.user.authTokens.refreshExpiresIn * 1000;
     }
   }
 
-  _updateUserAuthToken(data: Partial<IdentityProviderOptions>, req) {
+  updateUserAuthToken(data: Partial<IdentityProviderOptions>, req) {
     req.user.authTokens.accessToken = data.accessToken;
     req.user.authTokens.refreshToken = data.refreshToken;
     req.user.authTokens.expiresAt = data.expiresAt;
