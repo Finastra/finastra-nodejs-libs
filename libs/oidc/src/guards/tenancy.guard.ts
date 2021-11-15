@@ -3,15 +3,14 @@ import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { MisdirectedStatus } from '../interfaces';
 import { OidcService } from '../services';
+import { hasDecorator } from '../utils/has-decorator';
 
 @Injectable()
 export class TenancyGuard implements CanActivate {
   constructor(private reflector: Reflector, private oidcService: OidcService) { }
 
   canActivate(context: ExecutionContext): boolean {
-    const classIsMultitenant = this.reflector.get<boolean>('isMultitenant', context.getClass());
-    const handlerIsMultitenant = this.reflector.get<boolean>('isMultitenant', context.getHandler());
-    const isMultitenant = typeof classIsMultitenant !== 'undefined' ? classIsMultitenant : handlerIsMultitenant;
+    const isMultitenant = hasDecorator('isMultitenant', context, this.reflector);
 
     let req = context.switchToHttp().getRequest();
     if (context['contextType'] === 'graphql') {
