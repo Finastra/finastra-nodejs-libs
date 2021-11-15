@@ -156,7 +156,6 @@ export class OidcService implements OnModuleInit {
             if (err) {
               return next(err);
             }
-
             this.updateSessionDuration(req);
             let state = req.query['state'] as string;
             const buff = Buffer.from(state, 'base64').toString('utf-8');
