@@ -19,7 +19,7 @@
 <body>
     <h3 id="message"></h3>
     <script type="text/javascript">
-        var pop = window.open("{{popup-url}}?loginpopup=true", "ARR Calculator Login", "height=640, width=480");
+        var pop = window.open("{{{sso_url}}}", "Login Page", "height=640, width=480");
         // failed to open the popup
         if (!pop) {
             var message = document.getElementById("message");
@@ -28,7 +28,7 @@
             var timer = setInterval(function () {
                 if (pop.closed) {
                     clearInterval(timer);
-                    window.location.replace("{{prefix}}?nav=0");
+                    window.location.replace("{{{redirect_url}}}");
                 }
             }, 1000);
         }

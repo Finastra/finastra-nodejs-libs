@@ -133,11 +133,16 @@ export class OidcService implements OnModuleInit {
       const channel = params.channelType || req.session.channel;
       const prefix = channel && tenantId ? `/${tenantId}/${channel}` : '';
       const isEmbeded = req.headers && req.headers["sec-fetch-dest"] === "iframe" ? true : false;
-      const url = req.protocol + "://" + req.headers.host + req.url;
+      let redirect_url = req.query['redirect_url'] ?? '/';
 
       if (isEmbeded) {
-        var templatePopupPage = handlebars.compile(this.templateLoginPopupSource);
-        res.send(templatePopupPage({ "popup-url": url, "prefix": prefix }));
+        let templatePopupPage = handlebars.compile(this.templateLoginPopupSource);
+        let ssoUrl = `${req.protocol}://${req.headers.host}${req.url}`;
+        ssoUrl += ssoUrl.includes("?") ? "&loginpopup=true" : "?loginpopup=true";
+        const searchParams = new URLSearchParams(JSON.parse(JSON.stringify(req.query)));
+        redirect_url = `${prefix}${redirect_url}?${searchParams.toString()}`;
+        redirect_url = !redirect_url.startsWith('/') ? `/${redirect_url}` : redirect_url;
+        res.send(templatePopupPage({ "sso_url": ssoUrl, "redirect_url": redirect_url }));
       } else {
         const loginpopup = req.query.loginpopup === "true";
         const strategy =
@@ -147,7 +152,6 @@ export class OidcService implements OnModuleInit {
           (await this.createStrategy(tenantId, channel));
         req.session['tenant'] = tenantId;
         req.session['channel'] = channel;
-        let redirect_url = req.query['redirect_url'] ?? '/';
         redirect_url = Buffer.from(JSON.stringify({ redirect_url: `${prefix}${redirect_url}`, loginpopup: loginpopup }), 'utf-8').toString('base64');
         passport.authenticate(
           strategy,
