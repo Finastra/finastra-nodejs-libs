@@ -14,6 +14,12 @@ export class CatsController {
   }
 
   @isAvailableRouteForMultitenant(true)
+  @Get('/:tenantId/')
+  async WelcomeSingleChannel(@Req() req, @Param() params): Promise<string> {
+    return `Welcome ${req.user.userinfo.username} (${req.user.userinfo.tenant} | ${req.user.userinfo.channel})`;
+  }
+
+  @isAvailableRouteForMultitenant(true)
   @Get('/:tenantId/:channelType')
   async Welcome(@Req() req, @Param() params): Promise<string> {
     return `Welcome ${req.user.userinfo.username} [${req.user.userinfo.sub}] (${req.user.userinfo.tenant} | ${params.channelType})`;

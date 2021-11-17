@@ -2,14 +2,25 @@ import { HttpLoggingInterceptor, OMSLogger } from '@finastra/nestjs-logger';
 import { setupSession, TokenGuard } from '@finastra/nestjs-oidc';
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { readFileSync } from 'fs';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const omsLogger = new OMSLogger();
+  const logger = new OMSLogger();
+
+  let httpsOptions = null;
+  if (process.env.HTTPS && process.env.HTTPS === 'true') {
+    httpsOptions = {
+      key: readFileSync('./envs/certificates/localhost.key'),
+      cert: readFileSync('./envs/certificates/localhost.crt'),
+    };
+  }
+
   const app = await NestFactory.create(AppModule, {
-    logger: omsLogger,
+    logger,
+    httpsOptions,
   });
-  app.useLogger(omsLogger);
+  app.useLogger(logger);
   app.useGlobalInterceptors(new HttpLoggingInterceptor());
 
   app.useGlobalGuards(app.get(TokenGuard));

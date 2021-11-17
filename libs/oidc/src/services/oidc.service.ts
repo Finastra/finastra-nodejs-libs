@@ -126,7 +126,7 @@ export class OidcService implements OnModuleInit {
           this.idpInfos[this.getIdpInfosKey(tenantId, channel)].strategy) ||
         (await this.createStrategy(tenantId, channel));
 
-      const prefix = channel && tenantId ? `/${tenantId}/${channel}` : '';
+      const prefix = channel && tenantId ? (this.options.channelType ? `/${tenantId}` : `/${tenantId}/${channel}`) : '';
 
       req.session.tenant = tenantId;
       req.session.channel = channel;
@@ -168,8 +168,9 @@ export class OidcService implements OnModuleInit {
     const id_token = req.user ? req.user['id_token'] : undefined;
     req.logout();
     req.session.destroy(async () => {
-      const end_session_endpoint = this.idpInfos[this.getIdpInfosKey(params.tenantId, params.channelType)].trustIssuer
-        .metadata.end_session_endpoint;
+      const end_session_endpoint =
+        this.idpInfos[this.getIdpInfosKey(params.tenantId, params.channelType)].trustIssuer.metadata
+          .end_session_endpoint;
 
       if (end_session_endpoint) {
         res.redirect(

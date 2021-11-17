@@ -1,27 +1,5 @@
-import { OidcModuleOptions, OidcOptionsFactory } from '@finastra/nestjs-oidc';
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { OidcSingleTenantConfig } from './oidc-configs/single-tenant';
 
 @Injectable()
-export class OidcConfigService implements OidcOptionsFactory {
-  constructor(private configService: ConfigService) {}
-
-  createModuleConfig(): OidcModuleOptions {
-    return {
-      issuer: this.configService.get('OIDC_ISSUER'),
-      clientMetadata: {
-        client_id: this.configService.get('OIDC_CLIENT_ID'),
-        client_secret: this.configService.get('OIDC_CLIENT_SECRET'),
-      },
-      authParams: {
-        scope: this.configService.get('OIDC_SCOPE'),
-        resource: this.configService.get('OIDC_RESOURCE'),
-        nonce: 'true',
-      },
-      origin: this.configService.get('ORIGIN'),
-      defaultHttpOptions: {
-        timeout: 20000,
-      },
-    };
-  }
-}
+export class OidcConfigService extends OidcSingleTenantConfig {}

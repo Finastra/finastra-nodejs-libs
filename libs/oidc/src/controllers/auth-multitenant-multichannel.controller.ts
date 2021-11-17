@@ -1,12 +1,12 @@
-import { Controller, Get, Req, Res, Param, Next } from '@nestjs/common';
-import { Response, Request } from 'express';
+import { Controller, Get, Next, Param, Req, Res } from '@nestjs/common';
+import { Request, Response } from 'express';
+import { isAvailableRouteForMultitenant } from '../decorators';
 import { Public } from '../decorators/public.decorator';
 import { OidcService } from '../services';
-import { isAvailableRouteForMultitenant } from '../decorators';
 
 @isAvailableRouteForMultitenant(true)
 @Controller('/:tenantId/:channelType')
-export class AuthMultitenantController {
+export class AuthMultitenantMultiChannelController {
   constructor(public oidcService: OidcService) {}
 
   @Get('/user')

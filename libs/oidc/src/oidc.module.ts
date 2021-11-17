@@ -2,6 +2,7 @@ import { DynamicModule, Global, MiddlewareConsumer, Module, NestModule, Provider
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { TenantSwitchController } from './controllers';
+import { AuthMultitenantMultiChannelController } from './controllers/auth-multitenant-multichannel.controller';
 import { AuthMultitenantController } from './controllers/auth-multitenant.controller';
 import { AuthController } from './controllers/auth.controller';
 import { LoginCallbackController } from './controllers/login-callback.controller';
@@ -17,7 +18,13 @@ import { SessionSerializer } from './utils/session.serializer';
 @Global()
 @Module({
   imports: [JwtModule.register({})],
-  controllers: [AuthController, AuthMultitenantController, LoginCallbackController, TenantSwitchController],
+  controllers: [
+    AuthController,
+    AuthMultitenantController,
+    AuthMultitenantMultiChannelController,
+    LoginCallbackController,
+    TenantSwitchController,
+  ],
   providers: [
     SessionSerializer,
     TokenGuard,

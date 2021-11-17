@@ -1,12 +1,12 @@
-import { JWT } from 'jose';
-import { UserMiddleware } from './user.middleware';
 import { createMock } from '@golevelup/nestjs-testing';
+import { Test, TestingModule } from '@nestjs/testing';
 import { Request, Response } from 'express';
-import { MOCK_OIDC_MODULE_OPTIONS, MockOidcService } from '../mocks';
-import { TestingModule, Test } from '@nestjs/testing';
+import { JWKS, JWT } from 'jose';
+import { MockOidcService, MOCK_OIDC_MODULE_OPTIONS } from '../mocks';
 import { OidcService } from '../services';
-import { JWKS } from 'jose';
+import { UserMiddleware } from './user.middleware';
 const utils = require('../utils');
+const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c`;
 
 describe('User Middleware', () => {
   let middleware: UserMiddleware;
@@ -157,7 +157,6 @@ describe('User Middleware', () => {
         username: 'John Doe',
       } as any);
 
-      const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c`;
       req.headers.authorization = `Bearer ${token}`;
       await middleware.use(req, res, next);
       expect(req.user['userinfo']).toBeTruthy();
@@ -174,7 +173,6 @@ describe('User Middleware', () => {
       jest.spyOn(JWT, 'verify').mockReturnValue({
         username: 'John Doe',
       } as any);
-      const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c`;
       req.headers.authorization = `Bearer ${token}`;
       await middleware.use(req, res, next);
       expect(req.user['userinfo']).toBeTruthy();
@@ -191,7 +189,6 @@ describe('User Middleware', () => {
       jest.spyOn(JWT, 'verify').mockReturnValue({
         username: 'John Doe',
       } as any);
-      const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c`;
       req.headers.authorization = `Bearer ${token}`;
       await middleware.use(req, res, next);
       expect(req.user['userinfo'].channel).toEqual('b2e');
@@ -212,7 +209,27 @@ describe('User Middleware', () => {
       service.getIdpInfosKey = () => {
         return idpKey;
       };
-      const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c`;
+      req.headers.authorization = `Bearer ${token}`;
+      await middleware.use(req, res, next);
+      expect(req.user['userinfo'].channel).toEqual('b2c');
+      expect(req.user['userinfo']).toBeTruthy();
+      expect(next).toHaveBeenCalled();
+    });
+
+    it('should add channel in user if fixed channel type specified', async () => {
+      const req = createMock<Request>();
+      req['params'] = {
+        0: 'tenant',
+      };
+      const res = createMock<Response>();
+      const next = jest.fn();
+      jest.spyOn(JWT, 'verify').mockReturnValue({
+        username: 'John Doe',
+      } as any);
+      service.getIdpInfosKey = () => {
+        return idpKey;
+      };
+      service.options.channelType = 'b2c';
       req.headers.authorization = `Bearer ${token}`;
       await middleware.use(req, res, next);
       expect(req.user['userinfo'].channel).toEqual('b2c');
@@ -235,7 +252,6 @@ describe('User Middleware', () => {
       };
       service.idpInfos[idpKey] = {};
       service.idpInfos[idpKey].tokenStore = new JWKS.KeyStore();
-      const token = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c`;
       req.headers.authorization = `Bearer ${token}`;
       await middleware.use(req, res, next);
       expect(req.user['userinfo'].channel).toEqual('b2c');

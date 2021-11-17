@@ -162,6 +162,20 @@ describe('OidcService', () => {
       expect(spy).toHaveBeenCalled();
     });
 
+    it('should call passport authenticate for multitenant & single channel login', async () => {
+      service.strategy = null;
+      service.options.channelType = ChannelType.b2c;
+      params = {
+        tenantId: 'tenant',
+      };
+      const spy = jest.spyOn(passport, 'authenticate').mockImplementation(() => {
+        return (req, res, next) => {};
+      });
+      await service.login(req, res, next, params);
+      expect(spy).toHaveBeenCalled();
+      delete service.options.channelType;
+    });
+
     it('should send a 404 when error in createStrategy', async () => {
       service.strategy = null;
       params = {
@@ -247,12 +261,12 @@ describe('OidcService', () => {
       req.logIn = jest.fn().mockImplementation((user, cb) => {
         cb();
       });
-      req.query = {request_url:null};
+      req.query = { request_url: null };
 
       const spy = jest.spyOn(passport, 'authenticate').mockImplementation((strategy, options, cb) => {
         req.query = {
-          state:options.state
-        }
+          state: options.state,
+        };
         cb(null, {}, null);
         return (req, res, next) => {};
       });
@@ -271,31 +285,30 @@ describe('OidcService', () => {
         channelType: 'b2c',
       };
 
-
       req.logIn = jest.fn().mockImplementation((user, cb) => {
         cb();
       });
 
       const spy = jest.spyOn(passport, 'authenticate').mockImplementation((strategy, options, cb) => {
         req.query = {
-          state:options.state
-        }
+          state: options.state,
+        };
         cb(null, {}, null);
         return (req, res, next) => {};
       });
 
       const spyRes = jest.spyOn(res, 'redirect');
 
-      req.query =  {
-        "redirect_url":"/branza"
-      }
+      req.query = {
+        redirect_url: '/branza',
+      };
 
       await service.login(req, res, next, params);
       expect(spy).toHaveBeenCalled();
       expect(spyRes).toHaveBeenCalledWith('/tenant/b2c/branza');
     });
 
-    it('should add / to redirect url if it doesn\'t exist', async () => {
+    it("should add / to redirect url if it doesn't exist", async () => {
       service.strategy = new OidcStrategy(service, idpKey);
 
       req.logIn = jest.fn().mockImplementation((user, cb) => {
@@ -304,17 +317,17 @@ describe('OidcService', () => {
 
       const spy = jest.spyOn(passport, 'authenticate').mockImplementation((strategy, options, cb) => {
         req.query = {
-          state:options.state
-        }
+          state: options.state,
+        };
         cb(null, {}, null);
         return (req, res, next) => {};
       });
 
       const spyRes = jest.spyOn(res, 'redirect');
 
-      req.query =  {
-        "redirect_url":"branza"
-      }
+      req.query = {
+        redirect_url: 'branza',
+      };
 
       await service.login(req, res, next, params);
       expect(spy).toHaveBeenCalled();
