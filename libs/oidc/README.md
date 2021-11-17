@@ -121,6 +121,39 @@ You can either use it globally, or scoped per controller or route.
 app.useGlobalGuards(app.get(TokenGuard));
 ```
 
+Using the token guard globally will protect all your routes.
+
+If you want to **redirect all the unauthorized requests to the login route**, you need to add this middleware in your project:
+
+```typescript
+import { SESSION_STATE_COOKIE } from '@finastra/nestjs-oidc';
+import { Injectable, NestMiddleware } from '@nestjs/common';
+import { Response } from 'express';
+
+@Injectable()
+export class StaticMiddleware implements NestMiddleware {
+  use(req: any, res: Response, next: Function) {
+    // If the request is authenticated, do nothing
+    if (req.isAuthenticated()) {
+      return next();
+    }
+
+    // Add the SESSION_STATE_COOKIE to make sure to prompt the login page if the user has already authenticated before
+    res.cookie(SESSION_STATE_COOKIE, 'logging in', {
+      maxAge: 15 * 1000 * 60,
+    });
+
+    // If you're using the multitenancy authentication, you'll need to get the prefix
+    const channelType = req.params.channelType;
+    const tenantId = req.params.tenantId;
+    const prefix = `${tenantId}/${channelType}`;
+
+    // Redirect to login page
+    res.redirect(`/${prefix}/login`);
+  }
+}
+```
+
 #### Controller or route based
 
 `*.controller.ts`
