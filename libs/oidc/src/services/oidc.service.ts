@@ -173,10 +173,13 @@ export class OidcService implements OnModuleInit {
 
   async logout(@Req() req: Request, @Res() res: Response, @Param() params) {
     const id_token = req.user ? req.user['id_token'] : undefined;
+    const tenantId = params.tenantId || req.session['tenant'];
+    const channelType = this.options.channelType || params.channelType || req.session['channel'];
+
     req.logout();
     req.session.destroy(async () => {
-      const end_session_endpoint = this.idpInfos[this.getIdpInfosKey(params.tenantId, params.channelType)].trustIssuer
-        .metadata.end_session_endpoint;
+      const end_session_endpoint = this.idpInfos[this.getIdpInfosKey(tenantId, channelType)].trustIssuer.metadata
+        .end_session_endpoint;
 
       if (end_session_endpoint) {
         res.redirect(
@@ -189,7 +192,7 @@ export class OidcService implements OnModuleInit {
         res.cookie(SESSION_STATE_COOKIE, 'logged out', {
           maxAge: 15 * 1000 * 60,
         });
-        let prefix = params.tenantId && params.channelType ? `/${params.tenantId}/${params.channelType}` : '';
+        let prefix = tenantId && channelType ? `/${tenantId}/${channelType}` : '';
         let suffix =
           req.query.tenantId && req.query.channelType
             ? `?tenantId=${req.query.tenantId}&channelType=${req.query.channelType}`
