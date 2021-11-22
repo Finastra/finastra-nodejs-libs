@@ -36,6 +36,7 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
       refreshToken: tokenset.refresh_token,
       tokenEndpoint: this.oidcService.idpInfos[this.idpKey].trustIssuer.metadata.token_endpoint,
       expiresAt,
+      refreshExpiresIn: tokenset.refresh_expires_in,
     };
     const user: OidcUser = {
       id_token,

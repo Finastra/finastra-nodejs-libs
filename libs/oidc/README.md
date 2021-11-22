@@ -6,7 +6,7 @@ NestJS OIDC Auth module
 NestJS module to enable OAuth 2 & OIDC login to your application.\
 It exposes following endpoints :
 
-- login?redirect_url   redirect_url will be used as the path to redirect to on success login
+- login?redirect_url redirect_url will be used as the path to redirect to on success login
 - login/callback
 - logout
 - user
@@ -121,6 +121,39 @@ You can either use it globally, or scoped per controller or route.
 app.useGlobalGuards(app.get(TokenGuard));
 ```
 
+Using the token guard globally will protect all your routes.
+
+If you want to **redirect all the unauthorized requests to the login route**, you need to add this middleware in your project:
+
+```typescript
+import { SESSION_STATE_COOKIE } from '@finastra/nestjs-oidc';
+import { Injectable, NestMiddleware } from '@nestjs/common';
+import { Response } from 'express';
+
+@Injectable()
+export class StaticMiddleware implements NestMiddleware {
+  use(req: any, res: Response, next: Function) {
+    // If the request is authenticated, do nothing
+    if (req.isAuthenticated()) {
+      return next();
+    }
+
+    // Add the SESSION_STATE_COOKIE to make sure to prompt the login page if the user has already authenticated before
+    res.cookie(SESSION_STATE_COOKIE, 'logging in', {
+      maxAge: 15 * 1000 * 60,
+    });
+
+    // If you're using the multitenancy authentication, you'll need to get the prefix
+    const channelType = req.params.channelType;
+    const tenantId = req.params.tenantId;
+    const prefix = `${tenantId}/${channelType}`;
+
+    // Redirect to login page
+    res.redirect(`/${prefix}/login`);
+  }
+}
+```
+
 #### Controller or route based
 
 `*.controller.ts`
@@ -212,3 +245,41 @@ export class AppModule {}
 
 > `issuerOrigin` is the route url of the IDP issuer. Issuer will be built with this pattern: `:issuerOrigin/:tenantId/.well-known/openid-configuration`
 > The other parameters remains the same that on single tenancy except that `clientMetadata` need to be embedded in channel type `b2c` or `b2e` parameter.
+
+## Utils
+
+### Setup Session
+
+If you don't want to have to think about how to configure the session, you can use our helpers. We currently expose 2: in-memory and mongoDB.\
+The configuration for those can be found [here](./src/utils/session/).
+
+#### In Memory
+
+> This will not work if you're deploying multiple instances of your application.
+
+```ts
+import { sessionInMemory } from '@finastra/nestjs-oidc/utils/session';
+
+sessionInMemory(app, 'test-app');
+
+// Alternative way
+import { setupSession } from '@finastra/nestjs-oidc';
+
+setupSession(app, 'test-app');
+```
+
+#### MongoDB
+
+> Preferred method if you're deploying multiple instances of your application.
+
+```ts
+import { sessionMongo } from '@finastra/nestjs-oidc/utils/session';
+
+// Use mongoDB as session store
+sessionMongo(app, 'test-app', {
+  mongoUrl: 'mongodb://user:password@localhost:27017',
+  dbName: 'sample-db',
+});
+```
+
+> Third parameter is directly being passed to [connect-mongo](https://github.com/jdesboeufs/connect-mongo#options). Refer to its documentation for more information.

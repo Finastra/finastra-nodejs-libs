@@ -120,7 +120,16 @@ describe('OidcService', () => {
     const IssuerMock = MOCK_ISSUER_INSTANCE;
     beforeEach(() => {
       req = createRequest();
-      req.session = {};
+      req.session = {
+        cookie: {
+          maxAge: 0,
+        },
+      };
+      req.user = {
+        authTokens: {
+          refreshExpiresIn: 1800,
+        },
+      };
       res = createResponse();
       next = jest.fn();
       params = {};
@@ -288,6 +297,11 @@ describe('OidcService', () => {
       req.logIn = jest.fn().mockImplementation((user, cb) => {
         cb();
       });
+      req.session = {
+        cookie: {
+          maxAge: 0,
+        },
+      };
 
       const spy = jest.spyOn(passport, 'authenticate').mockImplementation((strategy, options, cb) => {
         req.query = {
@@ -314,6 +328,12 @@ describe('OidcService', () => {
       req.logIn = jest.fn().mockImplementation((user, cb) => {
         cb();
       });
+
+      req.session = {
+        cookie: {
+          maxAge: 0,
+        },
+      };
 
       const spy = jest.spyOn(passport, 'authenticate').mockImplementation((strategy, options, cb) => {
         req.query = {
@@ -521,7 +541,14 @@ describe('OidcService', () => {
   });
 
   describe('refreshTokens', () => {
+    let req;
     beforeEach(() => {
+      req = createRequest();
+      req.session = {
+        cookie: {
+          maxAge: 0,
+        },
+      };
       service.options['b2c'] = {
         clientMetadata: {
           client_id: '123',
@@ -538,10 +565,25 @@ describe('OidcService', () => {
         timeout: 0,
       };
     });
+
+    it('should return 401 if no user', async () => {
+      req.isAuthenticated = jest.fn().mockReturnValue(false);
+      const res = createResponse();
+      res.status = (() => {
+        return { send: jest.fn() };
+      }) as any;
+      const next = jest.fn();
+      const spy = jest.spyOn(res, 'sendStatus');
+
+      await service.refreshTokens(req, res, next);
+      expect(spy).toHaveBeenCalledWith(401);
+    });
+
     it('should return 200 if no token to refresh', async () => {
-      const req = createRequest();
       req.user = {
-        authTokens: {},
+        authTokens: {
+          refreshExpiresIn: 3600,
+        },
         userinfo: {},
       };
       req.isAuthenticated = jest.fn().mockReturnValue(true);
@@ -562,6 +604,7 @@ describe('OidcService', () => {
         authTokens: {},
         userinfo: {},
       };
+      req.isAuthenticated = jest.fn().mockReturnValue(true);
       const res = createResponse();
       res.sendStatus = jest.fn();
       const next = jest.fn();
@@ -572,16 +615,17 @@ describe('OidcService', () => {
     });
 
     it('should return 200 if token was refreshed', async () => {
-      const req = createRequest();
       req.user = {
         authTokens: {
           accessToken: 'abc',
           refreshToken: 'def',
           tokenEndpoint: '/token',
           expiresAt: Date.now() / 1000 - 10,
+          refreshExpiresIn: 3600,
         },
         userinfo: {},
       };
+      req.isAuthenticated = jest.fn().mockReturnValue(true);
       const res = createResponse();
       res.sendStatus = jest.fn();
       const next = jest.fn();
@@ -600,16 +644,18 @@ describe('OidcService', () => {
     });
 
     it('should return 200 if token was refreshed for b2c channel', async () => {
-      const req = createRequest();
       req.user = {
         authTokens: {
           accessToken: 'abc',
           refreshToken: 'def',
           tokenEndpoint: '/token',
           expiresAt: Date.now() / 1000 - 10,
+          refreshExpiresIn: 3600,
         },
         userinfo: { channel: 'b2c' },
       };
+      req.session.cookie.maxAge = 0;
+      req.isAuthenticated = jest.fn().mockReturnValue(true);
       const res = createResponse();
       res.sendStatus = jest.fn();
       const next = jest.fn();
@@ -628,16 +674,17 @@ describe('OidcService', () => {
     });
 
     it('should return 200 if token was refreshed for b2e channel', async () => {
-      const req = createRequest();
       req.user = {
         authTokens: {
           accessToken: 'abc',
           refreshToken: 'def',
           tokenEndpoint: '/token',
           expiresAt: Date.now() / 1000 - 10,
+          refreshExpiresIn: 3600,
         },
         userinfo: { channel: 'b2e' },
       };
+      req.isAuthenticated = jest.fn().mockReturnValue(true);
       const res = createResponse();
       res.sendStatus = jest.fn();
       const next = jest.fn();
@@ -656,16 +703,17 @@ describe('OidcService', () => {
     });
 
     it('should return 200 if valid token was refreshed and result has expires_in', async () => {
-      const req = createRequest();
       req.user = {
         authTokens: {
           expiresAt: Date.now() / 1000 - 10,
           accessToken: 'abc',
           refreshToken: 'def',
           tokenEndpoint: '/token',
+          refreshExpiresIn: 3600,
         },
         userinfo: {},
       };
+      req.isAuthenticated = jest.fn().mockReturnValue(true);
       const res = createResponse();
       res.sendStatus = jest.fn();
       const next = jest.fn();
@@ -684,16 +732,17 @@ describe('OidcService', () => {
     });
 
     it('should return 200 if valid token was refreshed and result has no expires_at and expires_in', async () => {
-      const req = createRequest();
       req.user = {
         authTokens: {
           expiresAt: Date.now() / 1000 - 10,
           accessToken: 'abc',
           refreshToken: 'def',
           tokenEndpoint: '/token',
+          refreshExpiresIn: 3600,
         },
         userinfo: {},
       };
+      req.isAuthenticated = jest.fn().mockReturnValue(true);
       const res = createResponse();
       res.sendStatus = jest.fn();
       const next = jest.fn();
@@ -710,16 +759,17 @@ describe('OidcService', () => {
     });
 
     it('should return 401 if token failed to refresh', async () => {
-      const req = createRequest();
       req.user = {
         authTokens: {
           accessToken: 'abc',
           refreshToken: 'def',
           tokenEndpoint: '/token',
           expiresAt: Date.now() / 1000 - 10,
+          refreshExpiresIn: 3600,
         },
         userinfo: {},
       };
+      req.isAuthenticated = jest.fn().mockReturnValue(true);
       const res = createResponse();
       res.status = (() => {
         return { send: jest.fn() };
@@ -746,6 +796,7 @@ describe('OidcService', () => {
         },
         userinfo: {},
       };
+      req.isAuthenticated = jest.fn().mockReturnValue(true);
       const res = createResponse();
       res.status = (() => {
         return { send: jest.fn() };

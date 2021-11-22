@@ -16,7 +16,7 @@ describe('GraphQLLoggingInterceptor', () => {
   });
 
   describe('#intercept', () => {
-    it('should intercept in graphQL context', async done => {
+    it('should intercept in graphQL context', done => {
       const mockExecutionContext = createMock<ExecutionContext>();
       const mockHandler = createMock<CallHandler>();
 
@@ -39,7 +39,7 @@ describe('GraphQLLoggingInterceptor', () => {
       });
     });
 
-    it('should intercept in graphQL context', async done => {
+    it('should intercept in graphQL context', done => {
       const mockExecutionContext = createMock<ExecutionContext>();
       const mockHandler = createMock<CallHandler>();
 

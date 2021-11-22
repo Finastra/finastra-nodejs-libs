@@ -1,6 +1,6 @@
 {
   "name": "@finastra/nestjs-oidc",
-  "version": "0.20.0",
+  "version": "0.23.0",
   "contributors": [
     "David Boclé <david.bocle@finastra.com>",
     "Francine Ong <francine.ong@finastra.com>",
@@ -14,13 +14,17 @@
     "directory": "libs/oidc"
   },
   "dependencies": {
-    "@finastra/ssr-pages": "^0.1.2",
-    "@nestjs/jwt": "^7.0.0",
-    "@nestjs/passport": "^7.0.0",
+    "@finastra/ssr-pages": "^0.1.3",
+    "@nestjs/jwt": "^8.0.0",
+    "@nestjs/passport": "^8.0.1",
     "cookie": "^0.4.1",
     "flatted": "^3.2.2",
-    "openid-client": "^4.7.4",
+    "openid-client": "^4.9.0",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0"
+  },
+  "optionalDependencies": {
+    "connect-mongo": "4.4.0",
+    "@types/mongodb": "^3.6.5"
   }
 }

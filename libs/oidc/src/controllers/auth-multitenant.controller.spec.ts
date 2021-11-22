@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { createResponse, createRequest } from 'node-mocks-http';
+import { createRequest, createResponse } from 'node-mocks-http';
 import { MockOidcService, MOCK_REQUEST } from '../mocks';
 import { OidcService } from '../services';
 import { AuthMultitenantController } from './auth-multitenant.controller';
@@ -33,9 +33,14 @@ describe('AuthMultitenantController', () => {
   });
 
   describe('user', () => {
+    it('should return guest object', () => {
+      const req = {};
+      expect(controller.user(null)).toEqual({ isGuest: true });
+    });
+
     it('should return userinfo', () => {
       const req = MOCK_REQ;
-      expect(controller.user(req)).toBe(req.user['userinfo']);
+      expect(controller.user(req.user)).toBe(req.user['userinfo']);
     });
   });
 
