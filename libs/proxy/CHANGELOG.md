@@ -27,6 +27,12 @@
 
 <!-- /TOC -->
 
+## 0.6.0 (2021-11-4)
+
+### Features
+
+- Remove possibility to proxy a call without a `serviceId`
+
 ## 0.5.3 (2021-10-20)
 
 ### Bugfixes
