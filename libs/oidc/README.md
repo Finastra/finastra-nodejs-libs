@@ -165,6 +165,10 @@ import { TokenGuard } from '@finastra/nestjs-oidc';
 @Controller('')
 ```
 
+### Popup login
+
+Per default the login middleware will use the request header `sec-fetch-dest` value to know if the login should be done it a popup or not. If the value is set to `iframe` this will cause most browsers to show a popup to enter credentials on unauthorized responses. After login success it close the popup and redirect the page initiator as for a normal login flow.
+
 ## Other options to register OidcModule
 
 | Option            | Description                                                             |
