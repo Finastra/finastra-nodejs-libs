@@ -52,7 +52,7 @@ describe('ProxyService', () => {
   });
 
   describe('proxyRequest', () => {
-    it('should call proxy with just target', () => {
+    it('should not call proxy with just target', () => {
       const req = createMock<Request>();
       const res = createMock<Response>();
 
@@ -62,7 +62,7 @@ describe('ProxyService', () => {
 
       const spy = jest.spyOn(proxy, 'web');
       service.proxyRequest(req, res);
-      expect(spy).toHaveBeenCalled();
+      expect(spy).not.toHaveBeenCalled();
     });
 
     it('should call proxy with just serviceId', () => {
@@ -125,6 +125,7 @@ describe('ProxyService', () => {
 
       req.query = {
         target: services[0].url,
+        serviceId: services[0].id,
       };
 
       proxy.web = jest.fn().mockImplementation(async (req, res, options, callback) => {
@@ -143,6 +144,7 @@ describe('ProxyService', () => {
 
       req.query = {
         target: services[0].url,
+        serviceId: services[0].id,
       };
 
       proxy.web = jest.fn().mockImplementation(async (req, res, options, callback) => {
