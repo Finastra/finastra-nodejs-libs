@@ -143,13 +143,16 @@ export class StaticMiddleware implements NestMiddleware {
       maxAge: 15 * 1000 * 60,
     });
 
+    // If you want to send the query params to the login middleware
+    const searchParams = new URLSearchParams(req.query);
+
     // If you're using the multitenancy authentication, you'll need to get the prefix
     const channelType = req.params.channelType;
     const tenantId = req.params.tenantId;
     const prefix = `${tenantId}/${channelType}`;
 
-    // Redirect to login page
-    res.redirect(`/${prefix}/login`);
+    // Redirect to login page and forward the request query params
+    res.redirect(`/${prefix}/login?${searchParams.toString()}`);
   }
 }
 ```
