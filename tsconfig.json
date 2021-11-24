@@ -13,6 +13,7 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "incremental": true,
+    "skipLibCheck": true,
     "typeRoots": ["node_modules/@types"],
     "paths": {
       "@finastra/nestjs-oidc": ["libs/oidc/src"],
