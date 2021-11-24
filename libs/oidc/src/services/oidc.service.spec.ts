@@ -1,4 +1,5 @@
 import axios from 'axios';
+import * as handlebars from 'handlebars';
 import { JWKS } from 'jose';
 import { createRequest, createResponse } from 'node-mocks-http';
 import { Issuer } from 'openid-client';
@@ -284,21 +285,15 @@ describe('OidcService', () => {
         cb();
       });
       req.query = { request_url: null };
+      req.headers = { "sec-fetch-dest":"iframe" };
 
-      const spy = jest.spyOn(passport, 'authenticate').mockImplementation((strategy, options, cb) => {
-        req.query = {
-          state: options.state,
-        };
-        req.set({ "sec-fetch-dest":"iframe" });
-        cb(null, {}, null);
-        return (req, res, next) => {};
-      });
-
-      const spyRes = jest.spyOn(res, 'send');
+      const spySend = jest.spyOn(res, 'send');
+      const spyHandlebars = jest.spyOn(handlebars, 'compile');
 
       await service.login(req, res, next, params);
-      expect(spy).toHaveBeenCalled();
-      expect(spyRes).toHaveBeenCalled();
+      
+      expect(spyHandlebars).toHaveBeenCalled();
+      expect(spySend).toHaveBeenCalled();
     });
 
     it('should redirect if everything is successful to the redirect url', async () => {
