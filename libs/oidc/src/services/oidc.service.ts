@@ -1,16 +1,15 @@
 import { HttpStatus, Inject, Injectable, Logger, Next, OnModuleInit, Param, Req, Res } from '@nestjs/common';
 import axios from 'axios';
 import { Request, Response } from 'express';
-import { readFileSync } from 'fs';
 import * as handlebars from 'handlebars';
 import { JWKS } from 'jose';
 import { Client, custom, Issuer } from 'openid-client';
-import { join } from 'path';
 import { stringify } from 'querystring';
 import { v4 as uuid } from 'uuid';
 import { ChannelType, IdentityProviderOptions, OidcModuleOptions } from '../interfaces';
 import { OIDC_MODULE_OPTIONS, SESSION_STATE_COOKIE } from '../oidc.constants';
 import { OidcStrategy } from '../strategies';
+import { loginPopupTemplate } from '../templates/login-popup.hbs';
 import { SSRPagesService } from './ssr-pages.service';
 import passport = require('passport');
 
@@ -37,18 +36,12 @@ export class OidcService implements OnModuleInit {
       strategy: OidcStrategy;
     };
   } = {};
-  templateLoginPopupSource: any;
 
   constructor(
     @Inject(OIDC_MODULE_OPTIONS) public options: OidcModuleOptions,
     private ssrPagesService: SSRPagesService,
   ) {
     this.isMultitenant = !!this.options.issuerOrigin;
-    const templatePath = join(
-      (__node_require__ || require).resolve('@finastra/nestjs-oidc'),
-      '../services/login-popup.hbs',
-    );
-    this.templateLoginPopupSource = readFileSync(templatePath, 'utf8');
   }
 
   async onModuleInit() {
@@ -142,7 +135,7 @@ export class OidcService implements OnModuleInit {
       let redirect_url = req.query['redirect_url'] ?? '/';
 
       if (isEmbeded) {
-        let templatePopupPage = handlebars.compile(this.templateLoginPopupSource);
+        let templatePopupPage = handlebars.compile(loginPopupTemplate);
         let ssoUrl = `${req.protocol}://${req.headers.host}${req.url}`;
         ssoUrl += ssoUrl.includes('?') ? '&loginpopup=true' : '?loginpopup=true';
         const searchParams = new URLSearchParams(JSON.parse(JSON.stringify(req.query)));
