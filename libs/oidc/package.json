@@ -4,7 +4,8 @@
   "contributors": [
     "David Boclé <david.bocle@finastra.com>",
     "Francine Ong <francine.ong@finastra.com>",
-    "Răzvan Bordeanu <razvan.bordeanu@finastra.com>"
+    "Răzvan Bordeanu <razvan.bordeanu@finastra.com>",
+    "Pierre Simon <pierre.simon@finastra.com>"
   ],
   "main": "index.js",
   "license": "MIT",
