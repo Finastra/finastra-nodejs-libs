@@ -23,6 +23,8 @@ declare module 'express-session' {
   }
 }
 
+declare const __node_require__: NodeRequire;
+
 @Injectable()
 export class OidcService implements OnModuleInit {
   isMultitenant: boolean = false;
@@ -42,7 +44,8 @@ export class OidcService implements OnModuleInit {
     private ssrPagesService: SSRPagesService,
   ) {
     this.isMultitenant = !!this.options.issuerOrigin;
-    this.templateLoginPopupSource = readFileSync(join(__dirname, './login-popup.hbs'), 'utf8');
+    const templatePath = join(__node_require__.resolve('@finastra/nestjs-oidc'), '../services/login-popup.hbs');
+    this.templateLoginPopupSource = readFileSync(templatePath, 'utf8');
   }
 
   async onModuleInit() {
@@ -132,19 +135,19 @@ export class OidcService implements OnModuleInit {
       const tenantId = params.tenantId || req.session.tenant;
       const channel = params.channelType || req.session.channel;
       const prefix = channel && tenantId ? `/${tenantId}/${channel}` : '';
-      const isEmbeded = req.headers && req.headers["sec-fetch-dest"] === "iframe" ? true : false;
+      const isEmbeded = req.headers && req.headers['sec-fetch-dest'] === 'iframe' ? true : false;
       let redirect_url = req.query['redirect_url'] ?? '/';
 
       if (isEmbeded) {
         let templatePopupPage = handlebars.compile(this.templateLoginPopupSource);
         let ssoUrl = `${req.protocol}://${req.headers.host}${req.url}`;
-        ssoUrl += ssoUrl.includes("?") ? "&loginpopup=true" : "?loginpopup=true";
+        ssoUrl += ssoUrl.includes('?') ? '&loginpopup=true' : '?loginpopup=true';
         const searchParams = new URLSearchParams(JSON.parse(JSON.stringify(req.query)));
         redirect_url = `${prefix}${redirect_url}?${searchParams.toString()}`;
         redirect_url = !redirect_url.startsWith('/') ? `/${redirect_url}` : redirect_url;
-        res.send(templatePopupPage({ "sso_url": ssoUrl, "redirect_url": redirect_url }));
+        res.send(templatePopupPage({ sso_url: ssoUrl, redirect_url: redirect_url }));
       } else {
-        const loginpopup = req.query.loginpopup === "true";
+        const loginpopup = req.query.loginpopup === 'true';
         const strategy =
           this.strategy ||
           (this.idpInfos[this.getIdpInfosKey(tenantId, channel)] &&
@@ -152,7 +155,10 @@ export class OidcService implements OnModuleInit {
           (await this.createStrategy(tenantId, channel));
         req.session['tenant'] = tenantId;
         req.session['channel'] = channel;
-        redirect_url = Buffer.from(JSON.stringify({ redirect_url: `${prefix}${redirect_url}`, loginpopup: loginpopup }), 'utf-8').toString('base64');
+        redirect_url = Buffer.from(
+          JSON.stringify({ redirect_url: `${prefix}${redirect_url}`, loginpopup: loginpopup }),
+          'utf-8',
+        ).toString('base64');
         passport.authenticate(
           strategy,
           {
@@ -203,7 +209,8 @@ export class OidcService implements OnModuleInit {
 
       if (end_session_endpoint) {
         res.redirect(
-          `${end_session_endpoint}?post_logout_redirect_uri=${this.options.redirectUriLogout ? this.options.redirectUriLogout : this.options.origin
+          `${end_session_endpoint}?post_logout_redirect_uri=${
+            this.options.redirectUriLogout ? this.options.redirectUriLogout : this.options.origin
           }&client_id=${this.options.clientMetadata.client_id}${id_token ? '&id_token_hint=' + id_token : ''}`,
         );
       } else {
@@ -330,7 +337,7 @@ export class OidcService implements OnModuleInit {
     return req.query.tenantId && req.query.channelType
       ? `/${req.query.tenantId}/${req.query.channelType}`
       : params.tenantId && params.channelType
-        ? `/${params.tenantId}/${params.channelType}`
-        : '';
+      ? `/${params.tenantId}/${params.channelType}`
+      : '';
   }
 }
