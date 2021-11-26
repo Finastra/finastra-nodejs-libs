@@ -21,6 +21,7 @@ describe('OidcService', () => {
       IssuerMock.keystore = jest.fn();
       jest.spyOn(Issuer, 'discover').mockImplementation(() => Promise.resolve(IssuerMock));
     });
+
     it('should create strategy when app is single tenant', async () => {
       let strategy = await service.createStrategy();
       expect(strategy).toBeDefined();
@@ -285,13 +286,13 @@ describe('OidcService', () => {
         cb();
       });
       req.query = { request_url: null };
-      req.headers = { "sec-fetch-dest":"iframe" };
+      req.headers = { 'sec-fetch-dest': 'iframe' };
 
       const spySend = jest.spyOn(res, 'send');
       const spyHandlebars = jest.spyOn(handlebars, 'compile');
 
       await service.login(req, res, next, params);
-      
+
       expect(spyHandlebars).toHaveBeenCalled();
       expect(spySend).toHaveBeenCalled();
     });

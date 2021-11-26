@@ -23,7 +23,7 @@ declare module 'express-session' {
   }
 }
 
-declare const __node_require__: NodeRequire;
+export declare const __node_require__: NodeRequire;
 
 @Injectable()
 export class OidcService implements OnModuleInit {
@@ -44,7 +44,10 @@ export class OidcService implements OnModuleInit {
     private ssrPagesService: SSRPagesService,
   ) {
     this.isMultitenant = !!this.options.issuerOrigin;
-    const templatePath = join(__node_require__.resolve('@finastra/nestjs-oidc'), '../services/login-popup.hbs');
+    const templatePath = join(
+      (__node_require__ || require).resolve('@finastra/nestjs-oidc'),
+      '../services/login-popup.hbs',
+    );
     this.templateLoginPopupSource = readFileSync(templatePath, 'utf8');
   }
 
