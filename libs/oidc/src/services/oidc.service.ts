@@ -22,8 +22,6 @@ declare module 'express-session' {
   }
 }
 
-export declare const __node_require__: NodeRequire;
-
 @Injectable()
 export class OidcService implements OnModuleInit {
   isMultitenant: boolean = false;
