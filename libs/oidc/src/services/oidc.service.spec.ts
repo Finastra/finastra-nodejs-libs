@@ -292,7 +292,6 @@ describe('OidcService', () => {
       const spyHandlebars = jest.spyOn(handlebars, 'compile');
 
       await service.login(req, res, next, params);
-
       expect(spyHandlebars).toHaveBeenCalled();
       expect(spySend).toHaveBeenCalled();
     });
