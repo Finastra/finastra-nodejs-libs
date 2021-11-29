@@ -4,7 +4,6 @@ import { Request, Response } from 'express';
 import * as handlebars from 'handlebars';
 import { JWKS } from 'jose';
 import { Client, custom, Issuer } from 'openid-client';
-import { join } from 'path';
 import { stringify } from 'querystring';
 import { v4 as uuid } from 'uuid';
 import { ChannelType, IdentityProviderOptions, OidcModuleOptions } from '../interfaces';
@@ -35,14 +34,12 @@ export class OidcService implements OnModuleInit {
       strategy: OidcStrategy;
     };
   } = {};
-  templateLoginPopupSource: any;
 
   constructor(
     @Inject(OIDC_MODULE_OPTIONS) public options: OidcModuleOptions,
     private ssrPagesService: SSRPagesService,
   ) {
     this.isMultitenant = !!this.options.issuerOrigin;
-    this.templateLoginPopupSource = readFileSync(join(__dirname, './login-popup.hbs'), 'utf8');
   }
 
   async onModuleInit() {
