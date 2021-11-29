@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+export const loginPopupTemplate = `<!DOCTYPE html>
 <html>
 
 <head>
@@ -35,4 +35,4 @@
     </script>
 </body>
 
-</html>
+</html>`;
