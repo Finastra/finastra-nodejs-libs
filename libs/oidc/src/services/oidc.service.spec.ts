@@ -825,7 +825,7 @@ describe('OidcService', () => {
         tenantId: 'tenantId',
         channelType: 'channelType',
       };
-      expect(service._getPrefix(req, params)).toBe(`/${req.query.tenantId}/${req.query.channelType}`);
+      expect(service._getPrefix(req, params)).toBe(`${req.query.tenantId}/${req.query.channelType}`);
     });
 
     it('should get prefix from channel', () => {
@@ -834,7 +834,7 @@ describe('OidcService', () => {
         tenantId: 'tenantId',
         channelType: 'channelType',
       };
-      expect(service._getPrefix(req, params)).toBe(`/${params.tenantId}/${params.channelType}`);
+      expect(service._getPrefix(req, params)).toBe(`${params.tenantId}/${params.channelType}`);
     });
   });
 });
