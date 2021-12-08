@@ -11,7 +11,7 @@ import { OidcService } from '../services';
 @isAvailableRouteForMultitenant(true)
 @Controller('/:tenantId')
 export class AuthMultitenantController {
-  constructor(public oidcService: OidcService) {}
+  constructor(public oidcService: OidcService) { }
 
   @Get('/user')
   @Header('Cache-Control', 'no-store, max-age=0')

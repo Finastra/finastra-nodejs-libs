@@ -80,25 +80,6 @@ If you do not provide any, the default proxy configuration for this module can b
 
 ## Client-side usage examples
 
-### Requesting without pre-defined service
-
-```typescript
-const serverUri = 'http://localhost:3000';
-const target = 'http://localhost:3001/cats';
-
-// GET
-fetch(`${serverUri}/proxy?target=${target}`);
-
-// POST
-const data = { name: 'Garfield' };
-fetch(`${serverUri}/proxy?target=${target}`, {
-  method: 'POST',
-  body: JSON.stringify(data),
-});
-```
-
-### Requesting a specific service
-
 ```typescript
 const serverUri = 'http://localhost:3000';
 const serviceId = 'ACCOUNT_INFORMATION_US';
@@ -110,6 +91,8 @@ const accountId = '112';
 const target = `${accountId}/details`;
 fetch(`${serverUri}/proxy?serviceId=${serviceId}&target=${target}`);
 ```
+
+> `target` parameter is optional
 
 ## Using module with a service using OIDC module with multitenancy configuration
 

@@ -26,7 +26,11 @@ export class ProxyService {
     const prefix = params ? `${params[0]}` : '';
 
     if (target && !serviceId) {
-      return this.doProxy(req, res, target, token);
+      const error = `Cannot make a proxy call without a serviceId`;
+      this.logger.warn(error);
+      return res.status(500).send({
+        error,
+      });
     }
 
     if (serviceId) {
