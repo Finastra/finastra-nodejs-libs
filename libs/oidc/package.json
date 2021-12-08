@@ -1,10 +1,11 @@
 {
   "name": "@finastra/nestjs-oidc",
-  "version": "0.23.0",
+  "version": "0.24.0",
   "contributors": [
     "David Boclé <david.bocle@finastra.com>",
     "Francine Ong <francine.ong@finastra.com>",
-    "Răzvan Bordeanu <razvan.bordeanu@finastra.com>"
+    "Răzvan Bordeanu <razvan.bordeanu@finastra.com>",
+    "Pierre Simon <pierre.simon@finastra.com>"
   ],
   "main": "index.js",
   "license": "MIT",
@@ -19,6 +20,7 @@
     "@nestjs/passport": "^8.0.1",
     "cookie": "^0.4.1",
     "flatted": "^3.2.2",
+    "handlebars": "^4.7.7",
     "openid-client": "^4.9.0",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0"

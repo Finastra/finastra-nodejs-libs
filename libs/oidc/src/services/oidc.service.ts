@@ -1,6 +1,7 @@
 import { HttpStatus, Inject, Injectable, Logger, Next, OnModuleInit, Param, Req, Res } from '@nestjs/common';
 import axios from 'axios';
 import { Request, Response } from 'express';
+import * as handlebars from 'handlebars';
 import { JWKS } from 'jose';
 import { Client, custom, Issuer } from 'openid-client';
 import { stringify } from 'querystring';
@@ -8,6 +9,7 @@ import { v4 as uuid } from 'uuid';
 import { ChannelType, IdentityProviderOptions, OidcModuleOptions } from '../interfaces';
 import { OIDC_MODULE_OPTIONS, SESSION_STATE_COOKIE } from '../oidc.constants';
 import { OidcStrategy } from '../strategies';
+import { loginPopupTemplate } from '../templates/login-popup.hbs';
 import { SSRPagesService } from './ssr-pages.service';
 import passport = require('passport');
 
@@ -137,35 +139,66 @@ export class OidcService implements OnModuleInit {
 
       req.session['tenant'] = tenantId;
       req.session['channel'] = channel;
+
+      const isEmbeded = req.headers && req.headers['sec-fetch-dest'] === 'iframe' ? true : false;
       let redirect_url = req.query['redirect_url'] ?? '/';
-      redirect_url = Buffer.from(JSON.stringify({ redirect_url: `${prefix}${redirect_url}` }), 'utf-8').toString(
-        'base64',
-      );
-      passport.authenticate(
-        strategy,
-        {
-          ...req['options'],
-          failureRedirect: `${prefix}/login`,
-          state: redirect_url,
-        },
-        (err, user, info) => {
-          if (err || !user) {
-            return next(err || info);
-          }
-          req.logIn(user, err => {
-            if (err) {
-              return next(err);
+
+      if (isEmbeded) {
+        let templatePopupPage = handlebars.compile(loginPopupTemplate);
+        let ssoUrl = `${req.protocol}://${req.headers.host}${req.url}`;
+        ssoUrl += ssoUrl.includes('?') ? '&loginpopup=true' : '?loginpopup=true';
+        const searchParams = new URLSearchParams(JSON.parse(JSON.stringify(req.query)));
+        redirect_url = `${prefix}${redirect_url}?${searchParams.toString()}`;
+        redirect_url = !redirect_url.startsWith('/') ? `/${redirect_url}` : redirect_url;
+        res.send(templatePopupPage({ sso_url: ssoUrl, redirect_url: redirect_url }));
+      } else {
+        const loginpopup = req.query.loginpopup === 'true';
+        const strategy =
+          this.strategy ||
+          (this.idpInfos[this.getIdpInfosKey(tenantId, channel)] &&
+            this.idpInfos[this.getIdpInfosKey(tenantId, channel)].strategy) ||
+          (await this.createStrategy(tenantId, channel));
+        req.session['tenant'] = tenantId;
+        req.session['channel'] = channel;
+        redirect_url = Buffer.from(
+          JSON.stringify({ redirect_url: `${prefix}${redirect_url}`, loginpopup: loginpopup }),
+          'utf-8',
+        ).toString('base64');
+        passport.authenticate(
+          strategy,
+          {
+            ...req['options'],
+            failureRedirect: `${prefix}/login`,
+            state: redirect_url,
+          },
+          (err, user, info) => {
+            if (err || !user) {
+              return next(err || info);
             }
-            this.updateSessionDuration(req);
-            let state = req.query['state'] as string;
-            const buff = Buffer.from(state, 'base64').toString('utf-8');
-            state = JSON.parse(buff);
-            let url: string = state['redirect_url'];
-            url = !url.startsWith('/') ? `/${url}` : url;
-            return res.redirect(url);
-          });
-        },
-      )(req, res, next);
+            req.logIn(user, err => {
+              if (err) {
+                return next(err);
+              }
+              this.updateSessionDuration(req);
+              let state = req.query['state'] as string;
+              const buff = Buffer.from(state, 'base64').toString('utf-8');
+              state = JSON.parse(buff);
+              let url: string = state['redirect_url'];
+              url = !url.startsWith('/') ? `/${url}` : url;
+              const loginpopup = state['loginpopup'];
+              if (loginpopup) {
+                return res.send(`
+                    <script type="text/javascript">
+                        window.close();
+                    </script >
+                `);
+              } else {
+                return res.redirect(url);
+              }
+            });
+          },
+        )(req, res, next);
+      }
     } catch (err) {
       res.status(HttpStatus.NOT_FOUND).send();
     }
@@ -178,8 +211,8 @@ export class OidcService implements OnModuleInit {
 
     req.logout();
     req.session.destroy(async () => {
-      const end_session_endpoint = this.idpInfos[this.getIdpInfosKey(tenantId, channelType)].trustIssuer.metadata
-        .end_session_endpoint;
+      const end_session_endpoint =
+        this.idpInfos[this.getIdpInfosKey(tenantId, channelType)].trustIssuer.metadata.end_session_endpoint;
 
       if (end_session_endpoint) {
         res.redirect(

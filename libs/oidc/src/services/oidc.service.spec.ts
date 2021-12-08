@@ -1,4 +1,5 @@
 import axios from 'axios';
+import * as handlebars from 'handlebars';
 import { JWKS } from 'jose';
 import { createRequest, createResponse } from 'node-mocks-http';
 import { Issuer } from 'openid-client';
@@ -20,6 +21,7 @@ describe('OidcService', () => {
       IssuerMock.keystore = jest.fn();
       jest.spyOn(Issuer, 'discover').mockImplementation(() => Promise.resolve(IssuerMock));
     });
+
     it('should create strategy when app is single tenant', async () => {
       let strategy = await service.createStrategy();
       expect(strategy).toBeDefined();
@@ -285,6 +287,28 @@ describe('OidcService', () => {
       await service.login(req, res, next, params);
       expect(spy).toHaveBeenCalled();
       expect(spyRes).toHaveBeenCalled();
+    });
+
+    it('should send the login popup page', async () => {
+      service.strategy = new OidcStrategy(service, idpKey);
+      params = {
+        tenantId: 'tenant',
+        channelType: 'b2c',
+      };
+
+      req.logIn = jest.fn().mockImplementation((user, cb) => {
+        cb();
+      });
+      req.query = { request_url: null };
+      req.headers = { 'sec-fetch-dest': 'iframe' };
+
+      const spySend = jest.spyOn(res, 'send');
+      const spyHandlebars = jest.spyOn(handlebars, 'compile');
+
+      await service.login(req, res, next, params);
+
+      expect(spyHandlebars).toHaveBeenCalled();
+      expect(spySend).toHaveBeenCalled();
     });
 
     it('should redirect if everything is successful to the redirect url', async () => {

@@ -143,13 +143,16 @@ export class StaticMiddleware implements NestMiddleware {
       maxAge: 15 * 1000 * 60,
     });
 
+    // If you want to send the query params to the login middleware
+    const searchParams = new URLSearchParams(req.query);
+
     // If you're using the multitenancy authentication, you'll need to get the prefix
     const channelType = req.params.channelType;
     const tenantId = req.params.tenantId;
     const prefix = `${tenantId}/${channelType}`;
 
-    // Redirect to login page
-    res.redirect(`/${prefix}/login`);
+    // Redirect to login page and forward the request query params
+    res.redirect(`/${prefix}/login?${searchParams.toString()}`);
   }
 }
 ```
@@ -164,6 +167,10 @@ import { TokenGuard } from '@finastra/nestjs-oidc';
 @UseGuards(TokenGuard)
 @Controller('')
 ```
+
+### Popup login
+
+Per default the login middleware will use the request header `sec-fetch-dest` value to know if the login should be done it a popup or not. If the value is set to `iframe` this will cause most browsers to show a popup to enter credentials on unauthorized responses. After login success it close the popup and redirect the page initiator as for a normal login flow.
 
 ## Other options to register OidcModule
 
