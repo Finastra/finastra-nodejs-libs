@@ -136,6 +136,7 @@
 ### Features
 
 - Possibility to hardcode the channel type via `channelType` property in module configuration. Useful for application that are specific to a single channel type.
+
 ## 0.23.1 (2021-11-24)
 
 ### Bugfixes
