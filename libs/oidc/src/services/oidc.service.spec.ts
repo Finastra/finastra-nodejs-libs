@@ -173,6 +173,20 @@ describe('OidcService', () => {
       expect(spy).toHaveBeenCalled();
     });
 
+    it('should call passport authenticate for multitenant & single channel login', async () => {
+      service.strategy = null;
+      service.options.channelType = ChannelType.b2c;
+      params = {
+        tenantId: 'tenant',
+      };
+      const spy = jest.spyOn(passport, 'authenticate').mockImplementation(() => {
+        return (req, res, next) => {};
+      });
+      await service.login(req, res, next, params);
+      expect(spy).toHaveBeenCalled();
+      delete service.options.channelType;
+    });
+
     it('should send a 404 when error in createStrategy', async () => {
       service.strategy = null;
       params = {
@@ -835,7 +849,7 @@ describe('OidcService', () => {
         tenantId: 'tenantId',
         channelType: 'channelType',
       };
-      expect(service._getPrefix(req, params)).toBe(`/${req.query.tenantId}/${req.query.channelType}`);
+      expect(service._getPrefix(req, params)).toBe(`${req.query.tenantId}/${req.query.channelType}`);
     });
 
     it('should get prefix from channel', () => {
@@ -844,7 +858,7 @@ describe('OidcService', () => {
         tenantId: 'tenantId',
         channelType: 'channelType',
       };
-      expect(service._getPrefix(req, params)).toBe(`/${params.tenantId}/${params.channelType}`);
+      expect(service._getPrefix(req, params)).toBe(`${params.tenantId}/${params.channelType}`);
     });
   });
 });

@@ -6,6 +6,7 @@ import { OidcService } from '../services';
 import { MockOidcService, MOCK_REQUEST } from '../mocks';
 import { TestingModule, Test } from '@nestjs/testing';
 import { GqlExecutionContext } from '@nestjs/graphql';
+import { ChannelType } from '..';
 
 describe('TenancyGuard', () => {
   let guard: TenancyGuard;
@@ -147,6 +148,23 @@ describe('TenancyGuard', () => {
       },
     };
     req.user.userinfo['channel'] = 'b2c';
+    req.user.userinfo['tenant'] = 'tenant';
+    const context = createMock<ExecutionContext>();
+    context.switchToHttp().getRequest.mockReturnValue(req);
+    expect(() => {
+      guard.canActivate(context);
+    }).toBeTruthy();
+  });
+
+  it('should return true if user tenant and tenant in url are the same with channel defined in config', () => {
+    jest.spyOn(guard['reflector'], 'get').mockReturnValue(true);
+    oidcService.options.channelType = ChannelType.b2e;
+    const req = {
+      ...MOCK_REQUEST,
+      params: {
+        tenantId: 'tenant',
+      },
+    };
     req.user.userinfo['tenant'] = 'tenant';
     const context = createMock<ExecutionContext>();
     context.switchToHttp().getRequest.mockReturnValue(req);

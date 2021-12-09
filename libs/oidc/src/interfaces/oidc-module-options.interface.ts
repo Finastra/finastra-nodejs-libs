@@ -18,7 +18,9 @@ export type OidcModuleOptions = {
     issuer: string;
     clientMetadata: ClientMetadata;
   },
-  { issuerOrigin: string } & ({ b2c: OidcChannelOptions } | { b2e: OidcChannelOptions })
+  { issuerOrigin: string } & ({ b2c: OidcChannelOptions } | { b2e: OidcChannelOptions }) & {
+      channelType?: ChannelType;
+    }
 >;
 
 interface OidcChannelOptions {

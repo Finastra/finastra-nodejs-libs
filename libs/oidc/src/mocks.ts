@@ -40,6 +40,8 @@ export const MOCK_OIDC_MODULE_OPTIONS: OidcModuleOptions = {
 };
 
 export const MockOidcService = {
+  options: {},
+
   login: (req, res, next, params) => {},
 
   logout: (req, res, params) => {},

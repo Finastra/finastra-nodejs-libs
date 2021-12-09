@@ -24,6 +24,7 @@ import { ProxyConfigService } from './configs/proxy-config.service';
     CatsModule,
     CorporateAccountsModule.forRoot({}),
     ConfigModule.forRoot({
+      // envFilePath: './envs/localhost.env',
       isGlobal: true,
       ignoreEnvFile: process.env.NODE_ENV === 'production',
     }),

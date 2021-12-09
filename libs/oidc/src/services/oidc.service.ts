@@ -126,9 +126,20 @@ export class OidcService implements OnModuleInit {
 
   async login(@Req() req: Request, @Res() res: Response, @Next() next: Function, @Param() params) {
     try {
-      const tenantId = params.tenantId || req.session.tenant;
-      const channel = params.channelType || req.session.channel;
-      const prefix = channel && tenantId ? `/${tenantId}/${channel}` : '';
+      const tenantId = params.tenantId || req.session['tenant'];
+      const channel = this.options.channelType || params.channelType || req.session['channel'];
+
+      const strategy =
+        this.strategy ||
+        (this.idpInfos[this.getIdpInfosKey(tenantId, channel)] &&
+          this.idpInfos[this.getIdpInfosKey(tenantId, channel)].strategy) ||
+        (await this.createStrategy(tenantId, channel));
+
+      const prefix = channel && tenantId ? (this.options.channelType ? `/${tenantId}` : `/${tenantId}/${channel}`) : '';
+
+      req.session['tenant'] = tenantId;
+      req.session['channel'] = channel;
+
       const isEmbeded = req.headers && req.headers['sec-fetch-dest'] === 'iframe' ? true : false;
       let redirect_url = req.query['redirect_url'] ?? '/';
 
@@ -195,11 +206,13 @@ export class OidcService implements OnModuleInit {
 
   async logout(@Req() req: Request, @Res() res: Response, @Param() params) {
     const id_token = req.user ? req.user['id_token'] : undefined;
+    const tenantId = params.tenantId || req.session['tenant'];
+    const channelType = this.options.channelType || params.channelType || req.session['channel'];
+
     req.logout();
     req.session.destroy(async () => {
       const end_session_endpoint =
-        this.idpInfos[this.getIdpInfosKey(params.tenantId, params.channelType)].trustIssuer.metadata
-          .end_session_endpoint;
+        this.idpInfos[this.getIdpInfosKey(tenantId, channelType)].trustIssuer.metadata.end_session_endpoint;
 
       if (end_session_endpoint) {
         res.redirect(
@@ -212,9 +225,9 @@ export class OidcService implements OnModuleInit {
         res.cookie(SESSION_STATE_COOKIE, 'logged out', {
           maxAge: 15 * 1000 * 60,
         });
-        let prefix = params.tenantId && params.channelType ? `/${params.tenantId}/${params.channelType}` : '';
+        let prefix = tenantId || channelType ? `/${tenantId}${this.options.channelType ? '' : '/' + channelType}` : '';
         let suffix =
-          req.query.tenantId && req.query.channelType
+          req.query.tenantId || req.query.channelType
             ? `?tenantId=${req.query.tenantId}&channelType=${req.query.channelType}`
             : '';
         res.redirect(`${prefix}/loggedout${suffix}`);
@@ -328,10 +341,8 @@ export class OidcService implements OnModuleInit {
   }
 
   _getPrefix(@Req() req: Request, params) {
-    return req.query.tenantId && req.query.channelType
-      ? `/${req.query.tenantId}/${req.query.channelType}`
-      : params.tenantId && params.channelType
-      ? `/${params.tenantId}/${params.channelType}`
-      : '';
+    const tenantPrefix = req.query.tenantId || params.tenantId;
+    const channelPrefix = this.options.channelType ? '' : req.query.channelType || params.channelType;
+    return [tenantPrefix, channelPrefix].filter(Boolean).join('/');
   }
 }

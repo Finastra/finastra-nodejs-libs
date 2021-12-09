@@ -7,7 +7,7 @@ import { hasDecorator } from '../utils/has-decorator';
 
 @Injectable()
 export class TenancyGuard implements CanActivate {
-  constructor(private reflector: Reflector, private oidcService: OidcService) { }
+  constructor(private reflector: Reflector, private oidcService: OidcService) {}
 
   canActivate(context: ExecutionContext): boolean {
     const isMultitenant = hasDecorator('isMultitenant', context, this.reflector);
@@ -23,11 +23,11 @@ export class TenancyGuard implements CanActivate {
       ((typeof isMultitenant === 'undefined' || isMultitenant === this.oidcService.isMultitenant) && !req.user) ||
       !req.user.userinfo.channel ||
       !req.params.tenantId ||
-      !req.params.channelType ||
+      (!this.oidcService.options.channelType && !req.params.channelType) ||
       (req.user.userinfo.channel &&
         req.user.userinfo.tenant &&
         req.user.userinfo.tenant === req.params.tenantId &&
-        req.user.userinfo.channel === req.params.channelType)
+        (!this.oidcService.options.channelType ? req.user.userinfo.channel === req.params.channelType : true))
     ) {
       return true;
     } else {
