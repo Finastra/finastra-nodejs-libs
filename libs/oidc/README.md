@@ -151,8 +151,8 @@ export class StaticMiddleware implements NestMiddleware {
     const tenantId = req.params.tenantId;
     const prefix = `${tenantId}/${channelType}`;
 
-    // Redirect to login page and forward the request query params
-    res.redirect(`/${prefix}/login?${searchParams.toString()}`);
+    // Redirect to login page and forward the request query params, after logging in, redirect to the redirect_url parameter
+    res.redirect(`/${prefix}/login?redirect_url=${req.url}&${searchParams.toString()}`);
   }
 }
 ```
