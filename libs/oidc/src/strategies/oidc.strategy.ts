@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, TokenSet } from 'openid-client';
 import { ChannelType, OidcUser } from '../interfaces';
 import { OidcService } from '../services';
-import { authenticateExternalIdps, getUserInfo } from '../utils';
+import { authenticateExternalIdps, getUserInfo, removeSignatureFromJwt } from '../utils';
 
 export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
   readonly logger = new Logger(OidcStrategy.name);
@@ -21,7 +21,8 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'oidc') {
   }
 
   async validate(tokenset: TokenSet): Promise<OidcUser> {
-    this.logger.debug(`https://jwt.io/#debugger-io?token=${tokenset.access_token}`);
+    const signaturelessJwt = removeSignatureFromJwt(tokenset.access_token);
+    this.logger.debug(`https://jwt.io/#debugger-io?token=${signaturelessJwt}`);
 
     const externalIdps = await authenticateExternalIdps(this.oidcService.options.externalIdps);
     const id_token = tokenset.id_token;
