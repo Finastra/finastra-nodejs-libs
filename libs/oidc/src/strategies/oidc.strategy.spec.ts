@@ -9,6 +9,7 @@ import { OidcStrategy } from './oidc.strategy';
 
 describe('OidcStrategy', () => {
   let strategy: OidcStrategy;
+  let mockTokenset: TokenSet;
 
   beforeEach(() => {
     const mockOidcService = new OidcService(MOCK_OIDC_MODULE_OPTIONS, new SSRPagesService());
@@ -20,6 +21,10 @@ describe('OidcStrategy', () => {
       strategy: null,
     };
     strategy = new OidcStrategy(mockOidcService, idpKey);
+
+    mockTokenset = createMock<TokenSet>();
+    mockTokenset.access_token =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
 
     jest.spyOn(userInfo, 'getUserInfo').mockImplementation(() => {
       return {
@@ -37,33 +42,30 @@ describe('OidcStrategy', () => {
 
   describe('validate', () => {
     it('should return true', async () => {
-      const result = await strategy.validate(createMock<TokenSet>());
+      const result = await strategy.validate(mockTokenset);
       expect(result).toBeTruthy();
     });
 
     it('should contain an expiration when given a token', async () => {
-      const tokenset = createMock<TokenSet>();
-      tokenset.expires_in = null;
+      mockTokenset.expires_in = null;
 
-      const result = await strategy.validate(tokenset);
+      const result = await strategy.validate(mockTokenset);
       expect(result).toBeTruthy();
       expect(result.authTokens.expiresAt).toBeNull();
     });
 
     it('should contain an expiration when given a token with expires_at', async () => {
-      const tokenset = createMock<TokenSet>();
-      tokenset.expires_at = 1;
+      mockTokenset.expires_at = 1;
 
-      const result = await strategy.validate(tokenset);
+      const result = await strategy.validate(mockTokenset);
       expect(result).toBeTruthy();
       expect(result.authTokens.expiresAt).toBe(1);
     });
 
     it('should contain an expiration when given a token with expires_in', async () => {
-      const tokenset = createMock<TokenSet>();
-      tokenset.expires_in = 1;
+      mockTokenset.expires_in = 1;
 
-      const result = await strategy.validate(tokenset);
+      const result = await strategy.validate(mockTokenset);
       expect(result).toBeTruthy();
       expect(result.authTokens.expiresAt > Date.now() / 1000).toBeTruthy();
     });
