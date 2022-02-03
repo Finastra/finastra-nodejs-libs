@@ -20,6 +20,7 @@ export class TenancyGuard implements CanActivate {
     if (typeof isMultitenant !== 'undefined' && isMultitenant !== this.oidcService.isMultitenant) {
       throw new NotFoundException();
     } else if (
+      req.params.tenantId === 'favicon.ico' ||
       ((typeof isMultitenant === 'undefined' || isMultitenant === this.oidcService.isMultitenant) && !req.user) ||
       !req.user.userinfo.channel ||
       !req.params.tenantId ||
