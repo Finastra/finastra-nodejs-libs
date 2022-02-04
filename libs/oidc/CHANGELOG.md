@@ -143,6 +143,7 @@
 
 - Fix favicon causing tenant switch
 - Rename logging in session cookie to `LOGIN_SESSION_COOKIE` to avoid overlap with logout session cookie and fix potential futur auto-login
+- Fix double prefix on logout
 
 ## 0.24.2 (2022-01-12)
 
