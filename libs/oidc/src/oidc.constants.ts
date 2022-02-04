@@ -7,3 +7,4 @@ export const defaultModuleOptions = {
   userInfoMethod: 'token',
 };
 export const SESSION_STATE_COOKIE = 'SESSION_STATE';
+export const LOGIN_SESSION_COOKIE = 'LOGIN_SESSION';
