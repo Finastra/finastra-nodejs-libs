@@ -126,7 +126,7 @@ Using the token guard globally will protect all your routes.
 If you want to **redirect all the unauthorized requests to the login route**, you need to add this middleware in your project:
 
 ```typescript
-import { SESSION_STATE_COOKIE } from '@finastra/nestjs-oidc';
+import { LOGIN_SESSION_COOKIE } from '@finastra/nestjs-oidc';
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Response } from 'express';
 
@@ -138,8 +138,8 @@ export class StaticMiddleware implements NestMiddleware {
       return next();
     }
 
-    // Add the SESSION_STATE_COOKIE to make sure to prompt the login page if the user has already authenticated before
-    res.cookie(SESSION_STATE_COOKIE, 'logging in', {
+    // Add the LOGIN_SESSION_COOKIE to make sure to prompt the login page if the user has already authenticated before
+    res.cookie(LOGIN_SESSION_COOKIE, 'logging in', {
       maxAge: 15 * 1000 * 60,
     });
 
