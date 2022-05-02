@@ -139,6 +139,12 @@
 
 <!-- /TOC -->
 
+## 0.24.5 (2020-05-02)
+
+### Bugfixes
+
+- Fixes post-logout redirect for single tenant config
+
 ## 0.24.4 (2022-02-28)
 
 ### Bugfixes

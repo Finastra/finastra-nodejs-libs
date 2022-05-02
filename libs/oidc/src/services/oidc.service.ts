@@ -272,7 +272,7 @@ export class OidcService implements OnModuleInit {
       svg: 'exit' as const,
       redirect: {
         auto: true,
-        link: `/${prefix}${postLogoutRedirectUri}`,
+        link: prefix ? `/${prefix}${postLogoutRedirectUri}` : postLogoutRedirectUri,
         label: 'Logout',
       },
     };
