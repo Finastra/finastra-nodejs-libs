@@ -139,6 +139,12 @@
 
 <!-- /TOC -->
 
+## 0.24.6 (2020-05-03)
+
+### Bugfixes
+
+- Adds missing `axios` dependency
+
 ## 0.24.5 (2020-05-02)
 
 ### Bugfixes
