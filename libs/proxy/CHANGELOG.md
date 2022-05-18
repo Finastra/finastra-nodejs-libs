@@ -31,6 +31,7 @@
 
 ### Features
 
+
 - Adds an option to opt out from token fowarding (per service).
 
 ```typescript
@@ -42,6 +43,7 @@ services: [
   },
 ];
 ```
+
 
 - Cookies are not proxied anymore by default. You can opt in by listing the cookie names in the `allowedCookies` option.
 

@@ -98,6 +98,7 @@ Cookies are not proxied by default. You can opt in by listing the cookie names i
 allowedCookies: ['cookie1', 'cookie2'],
 ```
 
+
 ### Default module configuration
 
 If you do not provide any, the default proxy configuration for this module can be found in [proxy.constants.ts](./src/proxy.constants.ts), under `defaultProxyOptions`
