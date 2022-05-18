@@ -27,6 +27,22 @@
 
 <!-- /TOC -->
 
+## 0.7.0 (2022-05-18)
+
+### Features
+
+- Adds an option to opt out from token fowrarding (per service).
+
+```typescript
+services: [
+  {
+    id: 'THIRD_PARTY_SERVICE',
+    url: 'https://some-service.com/some-endpoint',
+    forwardToken: false,
+  },
+];
+```
+
 ## 0.6.0 (2021-11-4)
 
 ### Features

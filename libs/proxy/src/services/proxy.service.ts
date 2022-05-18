@@ -40,7 +40,13 @@ export class ProxyService {
       if (services.has(serviceId)) {
         const service = services.get(serviceId);
         const baseUrl = service.url;
-        return this.doProxy(req, res, target ? concatPath(baseUrl, prefix, target) : baseUrl, token, service.config);
+        return this.doProxy(
+          req,
+          res,
+          target ? concatPath(baseUrl, prefix, target) : baseUrl,
+          service.forwardToken === false ? null : token,
+          service.config,
+        );
       } else {
         const error = `Could not find serviceId ${serviceId}`;
         this.logger.warn(error);

@@ -17,6 +17,11 @@ const services = [
     id: 'test',
     url: 'https://test.io/subpath',
   },
+  {
+    id: 'THIRD_PARTY_SERVICE',
+    url: 'https://some-service.com/some-endpoint',
+    forwardToken: false,
+  },
 ];
 const mockProxyModuleOptions = {
   services,
@@ -117,6 +122,23 @@ describe('ProxyService', () => {
       const spy = jest.spyOn(proxy, 'web');
       service.proxyRequest(req, res);
       expect((spy.mock.calls[0][2] as any).headers).toHaveProperty('authorization');
+    });
+
+    it('should not call proxy with token', () => {
+      const req = createMock<Request>();
+      const res = createMock<Response>();
+      req.query = {
+        serviceId: services[1].id,
+      };
+      req.user = {
+        authTokens: {
+          accessToken: 'test',
+        },
+      };
+
+      const spy = jest.spyOn(proxy, 'web');
+      service.proxyRequest(req, res);
+      expect((spy.mock.calls[0][2] as any).headers).not.toHaveProperty('authorization');
     });
 
     it('should send a 500 if error comes from proxy', done => {

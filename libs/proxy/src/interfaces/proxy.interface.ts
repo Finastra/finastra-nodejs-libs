@@ -5,6 +5,7 @@ export interface Service {
   id: string;
   url: string;
   config?: server.ServerOptions;
+  forwardToken?: boolean;
 }
 
 export interface ProxyModuleOptions {
