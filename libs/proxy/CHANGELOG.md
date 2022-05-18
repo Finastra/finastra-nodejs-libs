@@ -2,28 +2,32 @@
 
 **Table of Contents**
 
-<!-- TOC depthFrom:2 depthTo:3 -->
+<!-- TOC depthfrom:2 depthto:3 -->
 
-- [0.5.3 (2021-10-20)](#053-2021-10-20)
-  - [Bugfixes](#bugfixes)
-- [0.5.2 (2021-10-20)](#052-2021-10-20)
-  - [Bugfixes](#bugfixes-1)
-- [0.5.1 (2021-10-19)](#051-2021-10-19)
-  - [Bugfixes](#bugfixes-2)
-- [0.5.0 (2021-09-27)](#050-2021-09-27)
+- [2022-05-18](#2022-05-18)
   - [Features](#features)
-- [0.4.0 (2020-09-16)](#040-2020-09-16)
-  - [Features](#features-1)
-- [0.3.1 (2020-07-23)](#031-2020-07-23)
-  - [Bugfixes](#bugfixes-3)
-- [0.3.0 (2020-07-23)](#030-2020-07-23)
-  - [Features](#features-2)
-- [0.2.1 (2020-06-25)](#021-2020-06-25)
+- [2021-11-4](#2021-11-4)
+  - [Features](#features)
+- [2021-10-20](#2021-10-20)
+  - [Bugfixes](#bugfixes)
+- [2021-10-20](#2021-10-20)
+  - [Bugfixes](#bugfixes)
+- [2021-10-19](#2021-10-19)
+  - [Bugfixes](#bugfixes)
+- [2021-09-27](#2021-09-27)
+  - [Features](#features)
+- [2020-09-16](#2020-09-16)
+  - [Features](#features)
+- [2020-07-23](#2020-07-23)
+  - [Bugfixes](#bugfixes)
+- [2020-07-23](#2020-07-23)
+  - [Features](#features)
+- [2020-06-25](#2020-06-25)
   - [Bug fixes](#bug-fixes)
-- [0.2.0 (2020-05-19)](#020-2020-05-19)
-  - [Features](#features-3)
-- [0.1.1 (2020-04-30)](#011-2020-04-30)
-  - [Bug fixes](#bug-fixes-1)
+- [2020-05-19](#2020-05-19)
+  - [Features](#features)
+- [2020-04-30](#2020-04-30)
+  - [Bug fixes](#bug-fixes)
 
 <!-- /TOC -->
 
@@ -31,8 +35,7 @@
 
 ### Features
 
-
-- Adds an option to opt out from token fowarding (per service).
+- Adds an option to opt out from token forwarding (per service).
 
 ```typescript
 services: [
@@ -43,7 +46,6 @@ services: [
   },
 ];
 ```
-
 
 - Cookies are not proxied anymore by default. You can opt in by listing the cookie names in the `allowedCookies` option.
 
