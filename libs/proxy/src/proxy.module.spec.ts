@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import * as server from 'http-proxy';
 import { createRequest } from 'node-mocks-http';
+import { ProxyModuleOptions } from './interfaces';
 import { HTTP_PROXY } from './proxy.constants';
 import { ProxyModule } from './proxy.module';
 
@@ -26,6 +27,7 @@ describe('ProxyModule', () => {
           const proxyReq = createRequest();
           const req = createRequest();
           proxyReq.getHeader = header => header;
+          proxyReq.setHeader = jest.fn();
           proxyReq.write = jest.fn();
           proxyReq.protocol = 'http:';
           proxyReq.host = 'localhost';
@@ -40,6 +42,7 @@ describe('ProxyModule', () => {
           const body = { prop: 'test' };
           req.body = body;
           proxyReq.getHeader = header => header;
+          proxyReq.setHeader = jest.fn();
           proxyReq.write = jest.fn();
           proxyReq.protocol = 'http:';
           proxyReq.host = 'localhost';
@@ -51,6 +54,7 @@ describe('ProxyModule', () => {
         it('should stringify body if content type is json', () => {
           const proxyReq = createRequest();
           proxyReq.getHeader = header => 'application/json';
+          proxyReq.setHeader = jest.fn();
           proxyReq.write = jest.fn();
           proxyReq.setHeader = jest.fn();
           proxyReq.protocol = 'http:';
@@ -80,6 +84,20 @@ describe('ProxyModule', () => {
           const spy = jest.spyOn(proxyReq, 'write');
           proxy.emit('proxyReq', proxyReq, req);
           expect(spy).toHaveBeenCalledWith('prop=test');
+        });
+
+        it('should strip all cookies since no allowedCookies defined', () => {
+          const proxyReq = createRequest();
+          const req = createRequest();
+          proxyReq._headers = { cookie: 'ga=test' };
+          proxyReq.getHeader = header => proxyReq._headers[header];
+          proxyReq.setHeader = (header, value) => (proxyReq._headers[header] = value);
+          proxyReq.write = jest.fn();
+          proxyReq.protocol = 'http:';
+          proxyReq.host = 'localhost';
+
+          proxy.emit('proxyReq', proxyReq, req);
+          expect(proxyReq.getHeader('cookie')).toBe('');
         });
       });
     });
@@ -124,6 +142,43 @@ describe('ProxyModule', () => {
 
     it('should be defined', () => {
       expect(module).toBeDefined();
+    });
+  });
+
+  describe('register sync', () => {
+    let module: TestingModule;
+    let proxy;
+    const mockProxyModuleOptions: ProxyModuleOptions = {
+      allowedCookies: ['_ga'],
+    };
+
+    beforeEach(async () => {
+      module = await Test.createTestingModule({
+        imports: [ProxyModule.forRoot(mockProxyModuleOptions)],
+      }).compile();
+      proxy = module.get<server>(HTTP_PROXY);
+    });
+
+    it('should be defined', () => {
+      expect(module).toBeDefined();
+    });
+
+    describe('proxyFactory', () => {
+      describe('on ProxyReq', () => {
+        it('should strip all cookies since no allowedCookies defined', () => {
+          const proxyReq = createRequest();
+          const req = createRequest();
+          proxyReq._headers = { cookie: '_ga=test; privateCookie=secret;' };
+          proxyReq.getHeader = header => proxyReq._headers[header];
+          proxyReq.setHeader = (header, value) => (proxyReq._headers[header] = value);
+          proxyReq.write = jest.fn();
+          proxyReq.protocol = 'http:';
+          proxyReq.host = 'localhost';
+
+          proxy.emit('proxyReq', proxyReq, req);
+          expect(proxyReq.getHeader('cookie')).toBe('_ga=test');
+        });
+      });
     });
   });
 });
