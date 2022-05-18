@@ -74,6 +74,22 @@ Whether synchronously or asynchronously, the module takes two parameters (both o
 
 > A service can also take an optional `config`, which is the same signature as the parent one, allowing you to override configuration for that particular service !
 
+### Token forwarding
+
+By default, OAuth token are forwarded to the service call being proxied. You can disable this by setting the `forwardToken` property to `false` in the service configuration.
+
+```typescript
+services: [
+  {
+    id: 'THIRD_PARTY_SERVICE',
+    url: 'https://some-service.com/some-endpoint',
+    forwardToken: false,
+  },
+];
+```
+
+> &#x26A0; Be careful to only forward tokens to internal services. Don't forward the token to third party services.
+
 ### Default module configuration
 
 If you do not provide any, the default proxy configuration for this module can be found in [proxy.constants.ts](./src/proxy.constants.ts), under `defaultProxyOptions`
