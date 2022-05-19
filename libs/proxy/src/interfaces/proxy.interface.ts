@@ -5,11 +5,13 @@ export interface Service {
   id: string;
   url: string;
   config?: server.ServerOptions;
+  forwardToken?: boolean;
 }
 
 export interface ProxyModuleOptions {
   config?: server.ServerOptions;
   services?: Service[];
+  allowedCookies?: string[];
 }
 
 export interface ProxyModuleOptionsFactory {

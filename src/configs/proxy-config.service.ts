@@ -17,11 +17,13 @@ export class ProxyConfigService implements ProxyModuleOptionsFactory {
       {
         id: 'jsonplaceholder',
         url: 'https://jsonplaceholder.typicode.com',
+        forwardToken: false,
       },
     ];
 
     return {
       services,
+      allowedCookies: ['_ga'],
     };
   }
 }

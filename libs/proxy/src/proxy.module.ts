@@ -16,9 +16,18 @@ const proxyFactory = {
       ...options.config,
     });
 
-    proxy.on('proxyReq', function (proxyReq, req, res, options) {
+    proxy.on('proxyReq', function (proxyReq, req, res, opts) {
       const url = concatPath(`${proxyReq.protocol}//${proxyReq.host}`, req.url);
       logger.log(`Sending ${req.method} ${url}`);
+
+      let cookies = (proxyReq.getHeader('cookie') || '') as string;
+      const allowedCookies = options.allowedCookies || [];
+      cookies = cookies
+        .split(';')
+        .filter(cookie => allowedCookies.indexOf(cookie.split('=')[0].trim()) !== -1)
+        .join(';');
+
+      proxyReq.setHeader('cookie', cookies);
 
       if (!req['body'] || !Object.keys(req['body']).length) {
         return;
