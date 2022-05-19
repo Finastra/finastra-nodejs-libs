@@ -23,6 +23,7 @@ export class ProxyConfigService implements ProxyModuleOptionsFactory {
 
     return {
       services,
+      allowedCookies: ['_ga'],
     };
   }
 }

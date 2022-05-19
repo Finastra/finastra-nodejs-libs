@@ -11,6 +11,7 @@ export interface Service {
 export interface ProxyModuleOptions {
   config?: server.ServerOptions;
   services?: Service[];
+  allowedCookies?: string[];
 }
 
 export interface ProxyModuleOptionsFactory {
