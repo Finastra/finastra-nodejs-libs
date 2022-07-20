@@ -1,10 +1,10 @@
 import { CorporateAccountsModule } from '@finastra/api_corporate-accounts';
+import { ApolloDriverConfig, ApolloDriverConfigFactory } from '@nestjs/apollo';
 import { Injectable } from '@nestjs/common';
-import { GqlModuleOptions, GqlOptionsFactory } from '@nestjs/graphql';
 
 @Injectable()
-export class GqlConfigService implements GqlOptionsFactory {
-  createGqlOptions(): GqlModuleOptions {
+export class GqlConfigService implements ApolloDriverConfigFactory {
+  createGqlOptions(): ApolloDriverConfig {
     const playgroundDevOptions = {
       settings: {
         'request.credentials': 'include',

@@ -139,6 +139,12 @@
 
 <!-- /TOC -->
 
+## 0.25.0 (2022-07-20)
+
+### Features
+
+Compatible with Nest v9
+
 ## 0.24.6 (2020-05-03)
 
 ### Bugfixes

@@ -209,29 +209,31 @@ export class OidcService implements OnModuleInit {
     const tenantId = params.tenantId || req.session['tenant'];
     const channelType = this.options.channelType || params.channelType || req.session['channel'];
 
-    req.logout();
-    req.session.destroy(async () => {
-      const end_session_endpoint =
-        this.idpInfos[this.getIdpInfosKey(tenantId, channelType)].trustIssuer.metadata.end_session_endpoint;
+    req.logout(() => {
+      req.session.destroy(async () => {
+        const end_session_endpoint =
+          this.idpInfos[this.getIdpInfosKey(tenantId, channelType)].trustIssuer.metadata.end_session_endpoint;
 
-      if (end_session_endpoint) {
-        res.redirect(
-          `${end_session_endpoint}?post_logout_redirect_uri=${
-            this.options.redirectUriLogout ? this.options.redirectUriLogout : this.options.origin
-          }&client_id=${this.options.clientMetadata.client_id}${id_token ? '&id_token_hint=' + id_token : ''}`,
-        );
-      } else {
-        // Save logged out state for 15 min
-        res.cookie(SESSION_STATE_COOKIE, 'logged out', {
-          maxAge: 15 * 1000 * 60,
-        });
-        let prefix = tenantId || channelType ? `/${tenantId}${this.options.channelType ? '' : '/' + channelType}` : '';
-        let suffix =
-          req.query.tenantId || req.query.channelType
-            ? `?tenantId=${req.query.tenantId}&channelType=${req.query.channelType}`
-            : '';
-        res.redirect(`${prefix}/loggedout${suffix}`);
-      }
+        if (end_session_endpoint) {
+          res.redirect(
+            `${end_session_endpoint}?post_logout_redirect_uri=${
+              this.options.redirectUriLogout ? this.options.redirectUriLogout : this.options.origin
+            }&client_id=${this.options.clientMetadata.client_id}${id_token ? '&id_token_hint=' + id_token : ''}`,
+          );
+        } else {
+          // Save logged out state for 15 min
+          res.cookie(SESSION_STATE_COOKIE, 'logged out', {
+            maxAge: 15 * 1000 * 60,
+          });
+          let prefix =
+            tenantId || channelType ? `/${tenantId}${this.options.channelType ? '' : '/' + channelType}` : '';
+          let suffix =
+            req.query.tenantId || req.query.channelType
+              ? `?tenantId=${req.query.tenantId}&channelType=${req.query.channelType}`
+              : '';
+          res.redirect(`${prefix}/loggedout${suffix}`);
+        }
+      });
     });
   }
 
