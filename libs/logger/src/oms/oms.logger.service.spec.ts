@@ -6,7 +6,7 @@ describe('OMSLogger', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [OMSLogger],
+      providers: [OMSLogger],
     }).compile();
 
     service = await module.resolve<OMSLogger>(OMSLogger);

@@ -209,7 +209,7 @@ export class OidcService implements OnModuleInit {
     const tenantId = params.tenantId || req.session['tenant'];
     const channelType = this.options.channelType || params.channelType || req.session['channel'];
 
-    req.logout();
+    req.logout(() => {});
     req.session.destroy(async () => {
       const end_session_endpoint =
         this.idpInfos[this.getIdpInfosKey(tenantId, channelType)].trustIssuer.metadata.end_session_endpoint;
