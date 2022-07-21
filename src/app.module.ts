@@ -2,6 +2,7 @@ import { CorporateAccountsModule } from '@finastra/api_corporate-accounts';
 import { LoggerModule } from '@finastra/nestjs-logger';
 import { OidcModule } from '@finastra/nestjs-oidc';
 import { ProxyModule } from '@finastra/nestjs-proxy';
+import { ApolloDriver } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
@@ -29,6 +30,7 @@ import { ProxyConfigService } from './configs/proxy-config.service';
       ignoreEnvFile: process.env.NODE_ENV === 'production',
     }),
     GraphQLModule.forRootAsync({
+      driver: ApolloDriver,
       useClass: GqlConfigService,
     }),
   ],
