@@ -4,6 +4,8 @@
 
 <!-- TOC depthfrom:2 depthto:3 -->
 
+- [2022-10-28](#2022-10-28)
+  - [Bug fixes](#bug-fixes)
 - [2022-07-20](#2022-07-20)
   - [Features](#features)
 - [2021-09-27](#2021-09-27)
@@ -22,6 +24,12 @@
   - [Bug fixes](#bug-fixes)
 
 <!-- /TOC -->
+
+## 0.4.1 (2022-10-28)
+
+### Bug fixes
+
+- Change trace display name to stack_trace.
 
 ## 0.4.0 (2022-07-20)
 

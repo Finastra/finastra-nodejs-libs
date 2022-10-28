@@ -3,7 +3,7 @@ import { OMSLogLevel } from './OMSLog.interface';
 
 @Injectable({ scope: Scope.TRANSIENT })
 export class OMSLogger extends ConsoleLogger {
-  private print(logLevel: OMSLogLevel, message: string, context?: string, trace?: string) {
+  private print(logLevel: OMSLogLevel, message: string, context?: string, stackTrace?: string) {
     let currentContext = context;
     if (typeof context === 'undefined') {
       currentContext = this.context;
@@ -14,7 +14,7 @@ export class OMSLogger extends ConsoleLogger {
       sev: logLevel,
       msg: message,
       logger: currentContext,
-      trace,
+      stack_trace: stackTrace,
     };
 
     console.log(JSON.stringify(logEntry));
@@ -24,10 +24,10 @@ export class OMSLogger extends ConsoleLogger {
     process.stdout.isTTY ? super.log.apply(this, arguments) : this.print(OMSLogLevel.INFO, message, context);
   }
 
-  error(message: string, trace: string, context?: string) {
+  error(message: string, stackTrace: string, context?: string) {
     process.stdout.isTTY
       ? super.error.apply(this, arguments)
-      : this.print(OMSLogLevel.ERROR, message, context, `${JSON.stringify(trace)}`);
+      : this.print(OMSLogLevel.ERROR, message, context, `${JSON.stringify(stackTrace)}`);
   }
 
   warn(message: string, context?: string) {
