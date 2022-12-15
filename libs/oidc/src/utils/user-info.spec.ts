@@ -40,6 +40,14 @@ describe('OidcStrategy', () => {
       );
     });
 
+    it('should return user info with token method w/ email', async () => {
+      service.options.userInfoMethod = UserInfoMethod.token;
+      const MOCK_ACCESS_TOKEN_W_EMAIL =
+        'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoiMTUxNjIzOTAyMiIsImVtYWlsIjoidGVzdEB0ZXN0LnRlc3QifQ.X6xe7Gm8LjbBqKeNgEyoGoJaleN9WDWsMmBti412bpI';
+      const userInfo = await getUserInfo(MOCK_ACCESS_TOKEN_W_EMAIL, service, idpKey);
+      expect(userInfo.email).toBe('test@test.test');
+    });
+
     it('should return user info with remote user info method', async () => {
       service.options.userInfoMethod = UserInfoMethod.endpoint;
       service.idpInfos[idpKey].client.userinfo = () => {

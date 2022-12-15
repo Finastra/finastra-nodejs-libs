@@ -14,6 +14,7 @@ export async function getUserInfo(
   let userInfoData = await (oidcService.options.userInfoMethod === UserInfoMethod.token
     ? userInfo(token, oidcService.options.userInfoMapping)
     : userInfoRemote(token, oidcService, idpKey));
+
   if (oidcService.options.userInfoCallback) {
     userInfoData = {
       ...userInfoData,
