@@ -14,6 +14,7 @@ export async function getUserInfo(
   let userInfoData = await (oidcService.options.userInfoMethod === UserInfoMethod.token
     ? userInfo(token, oidcService.options.userInfoMapping)
     : userInfoRemote(token, oidcService, idpKey));
+
   if (oidcService.options.userInfoCallback) {
     userInfoData = {
       ...userInfoData,
@@ -45,5 +46,6 @@ function userInfo(token: string, userInfoMapping?: UserInfoMapping): UserInfo {
     id: identity[id] || identity.sub,
     username: identity[username] || identity.name || identity.username || identity.sub,
     tenant: identity.tenant,
+    ...(identity.email && { email: identity.email }),
   };
 }
