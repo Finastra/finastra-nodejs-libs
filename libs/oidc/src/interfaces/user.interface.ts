@@ -4,6 +4,7 @@ export type UserInfo = {
   id?: string;
   tenant?: string;
   username?: string;
+  email?: string;
   isGuest?: boolean;
 };
 

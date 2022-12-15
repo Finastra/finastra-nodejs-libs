@@ -45,5 +45,6 @@ function userInfo(token: string, userInfoMapping?: UserInfoMapping): UserInfo {
     id: identity[id] || identity.sub,
     username: identity[username] || identity.name || identity.username || identity.sub,
     tenant: identity.tenant,
+    ...(identity.email && { email: identity.email }),
   };
 }
