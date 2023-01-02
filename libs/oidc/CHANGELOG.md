@@ -5,6 +5,8 @@
 <!-- TOC -->
 
 - [Changelog](#changelog)
+  - [2023-01-02](#2023-01-02)
+    - [Bugfixes](#bugfixes)
   - [2022-12-15](#2022-12-15)
     - [Feature](#feature)
   - [2022-08-01](#2022-08-01)
@@ -150,6 +152,12 @@
     - [Bug fixes](#bug-fixes)
 
 <!-- /TOC -->
+
+## 0.26.1 (2023-01-02)
+
+### Bugfixes
+
+- Update nestjs/jwt from 9.0.0 to 10.0.1
 
 ## 0.26.0 (2022-12-15)
 
