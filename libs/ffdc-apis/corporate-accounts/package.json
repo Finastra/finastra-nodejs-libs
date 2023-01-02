@@ -13,7 +13,7 @@
     "directory": "libs/ffdc-apis/corporate-accounts"
   },
   "dependencies": {
-    "@nestjs/jwt": "^9.0.0",
+    "@nestjs/jwt": "^10.0.1",
     "@nestjs/passport": "^9.0.0",
     "openid-client": "^4.9.0",
     "passport": "^0.5.3",
