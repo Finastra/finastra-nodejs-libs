@@ -17,6 +17,6 @@
     "@nestjs/passport": "^9.0.0",
     "openid-client": "^4.9.0",
     "passport": "^0.5.3",
-    "passport-jwt": "^4.0.0"
+    "passport-jwt": "^4.0.1"
   }
 }

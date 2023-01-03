@@ -23,7 +23,7 @@
     "flatted": "^3.2.6",
     "openid-client": "^4.9.0",
     "passport": "^0.5.3",
-    "passport-jwt": "^4.0.0"
+    "passport-jwt": "^4.0.1"
   },
   "optionalDependencies": {
     "connect-mongo": "4.6.0",
