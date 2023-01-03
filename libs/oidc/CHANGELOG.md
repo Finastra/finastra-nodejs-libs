@@ -5,6 +5,8 @@
 <!-- TOC -->
 
 - [Changelog](#changelog)
+  - [2023-01-03](#2023-01-03)
+    - [Bugfixes](#bugfixes)
   - [2023-01-02](#2023-01-02)
     - [Bugfixes](#bugfixes)
   - [2022-12-15](#2022-12-15)
@@ -152,6 +154,13 @@
     - [Bug fixes](#bug-fixes)
 
 <!-- /TOC -->
+
+## 0.26.2 (2023-01-03)
+
+### Bugfixes
+
+- Update passport-jwt from 4.0.0 to 4.0.1
+- Update passport from 0.5.3 to 0.6.0
 
 ## 0.26.1 (2023-01-02)
 
