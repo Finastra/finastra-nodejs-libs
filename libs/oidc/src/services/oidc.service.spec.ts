@@ -395,7 +395,9 @@ describe('OidcService', () => {
       };
       service.getIdpInfosKey = jest.fn().mockReturnValue(idpKey);
       service.options = MOCK_OIDC_MODULE_OPTIONS;
-      req.logout = jest.fn();
+      req.logout = jest.fn().mockImplementation(callback => {
+        callback();
+      });
       req.isAuthenticated = jest.fn().mockReturnValue(true);
       spyLogout = jest.spyOn(req, 'logout');
       spyResponse = jest.spyOn(res, 'redirect');
