@@ -28,5 +28,9 @@
   "optionalDependencies": {
     "connect-mongo": "4.6.0",
     "@types/mongodb": "^4.0.6"
+  },
+  "overrides": {
+    "jsonwebtoken": "9.0.0",
+    "http-cache-semantics": "4.1.1",
   }
 }
