@@ -5,6 +5,8 @@
 <!-- TOC -->
 
 - [Changelog](#changelog)
+  - [0.26.4 (2023-05-09)](#0264-2023-05-09)
+    - [Bugfixes](#bugfixes)
   - [0.26.3 (2023-01-10)](#0263-2023-01-10)
     - [Bugfixes](#bugfixes)
   - [0.26.2 (2023-01-03)](#0262-2023-01-03)
@@ -156,6 +158,18 @@
     - [Bug fixes](#bug-fixes-3)
 
 <!-- /TOC -->
+## 0.26.4 (2023-05-09)
+
+### Bugfixes
+
+- Bugfix for whitesource
+- Update @nest/core from 9.0.4 to 9.0.5
+- Updates @nestjs/cli from 9.0.0 to 9.4.2
+- Update openid-client from 4.9.0 to 5.4.0
+- Updates webpack from 5.73.0 to 5.80.0
+- Overrides jsonwebtoke to 9.0.0
+- Overrides http-cache-semantics to 4.1.1
+- Overrides apollo-server-core to 3.11.0
 
 ## 0.26.3 (2023-01-10)
 

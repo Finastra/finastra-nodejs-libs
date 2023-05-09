@@ -3,6 +3,8 @@
 <!-- TOC -->
 
 - [Changelog](#changelog)
+  - [0.4.4 (2023-05-09)](#044-2023-05-09)
+    - [Bugfixes](#bugfixes)
   - [0.4.3 (2023-01-03)](#043-2023-01-03)
     - [Bugfixes](#bugfixes)
   - [0.4.2 (2023-01-02)](#042-2023-01-02)
@@ -21,6 +23,14 @@
     - [Bug fixes](#bug-fixes)
 
 <!-- /TOC -->
+## 0.4.4 (2023-05-09)
+
+### Bugfixes
+
+- Update openid-client from 4.9.0 to 5.4.0
+- Overrides jsonwebtoke to 9.0.0
+- Overrides http-cache-semantics to 4.1.1
+
 ## 0.4.3 (2023-01-03)
 
 ### Bugfixes
