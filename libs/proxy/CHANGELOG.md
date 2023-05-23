@@ -4,6 +4,8 @@
 
 <!-- TOC depthfrom:2 depthto:3 -->
 
+- [2023-06-23](#2023-06-23)
+  - [Bugfixes](#bugfixes)
 - [2022-05-18](#2022-05-18)
   - [Features](#features)
 - [2021-11-4](#2021-11-4)
@@ -30,6 +32,12 @@
   - [Bug fixes](#bug-fixes)
 
 <!-- /TOC -->
+
+## 0.7.1 (2023-06-23)
+
+### Bugfixes
+
+- Fixes [#276](https://github.com/Finastra/finastra-nodejs-libs/pull/276), allowing `Content-Type` & `Accept` headers provided by request
 
 ## 0.7.0 (2022-05-18)
 
