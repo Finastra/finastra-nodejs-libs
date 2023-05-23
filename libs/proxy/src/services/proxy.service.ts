@@ -74,10 +74,18 @@ export class ProxyService {
       target: getBaseURL(target),
       headers: {
         ...(token && { authorization: 'Bearer ' + token }),
-        'content-type': 'application/json',
-        accept: 'application/json',
       },
     };
+
+    // Set default "Accept" header if not provided by request headers or is set to "*/*"
+    if (!('accept' in req.headers) || req.headers.accept === '*/*') {
+      defaultOptions.headers['accept'] = 'application/json'
+    }
+
+    // Set default "Content-Type" header if not provided by request headers
+    if (!('content-type' in req.headers)) {
+      defaultOptions.headers['content-type'] = 'application/json'
+    }
 
     // Allow http-server options overriding
     const requestOptions = { ...defaultOptions, ...options };
