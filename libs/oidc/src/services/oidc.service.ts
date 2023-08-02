@@ -3,8 +3,9 @@ import axios from 'axios';
 import { Request, Response } from 'express';
 import * as handlebars from 'handlebars';
 import { JWKS } from 'jose';
-import { Client, custom, Issuer } from 'openid-client';
+import { Client, Issuer, custom } from 'openid-client';
 import { stringify } from 'querystring';
+import { promisify } from 'util';
 import { v4 as uuid } from 'uuid';
 import { ChannelType, IdentityProviderOptions, OidcModuleOptions } from '../interfaces';
 import { OIDC_MODULE_OPTIONS, SESSION_STATE_COOKIE } from '../oidc.constants';
@@ -13,6 +14,7 @@ import { loginPopupTemplate } from '../templates/login-popup.hbs';
 import { SSRPagesService } from './ssr-pages.service';
 import passport = require('passport');
 
+const authenticatePromise = promisify(passport.authenticate.bind(passport));
 const logger = new Logger('OidcService');
 
 declare module 'express-session' {
@@ -164,40 +166,38 @@ export class OidcService implements OnModuleInit {
           JSON.stringify({ redirect_url: `${prefix}${redirect_url}`, loginpopup: loginpopup }),
           'utf-8',
         ).toString('base64');
-        passport.authenticate(
-          strategy,
-          {
+
+        try {
+          const user = await authenticatePromise(strategy, {
             ...req['options'],
             failureRedirect: `${prefix}/login`,
             state: redirect_url,
-          },
-          (err, user, info) => {
-            if (err || !user) {
-              return next(err || info);
+          });
+
+          req.logIn(user, err => {
+            if (err) {
+              return next(err);
             }
-            req.logIn(user, err => {
-              if (err) {
-                return next(err);
-              }
-              this.updateSessionDuration(req);
-              let state = req.query['state'] as string;
-              const buff = Buffer.from(state, 'base64').toString('utf-8');
-              state = JSON.parse(buff);
-              let url: string = state['redirect_url'];
-              url = !url.startsWith('/') ? `/${url}` : url;
-              const loginpopup = state['loginpopup'];
-              if (loginpopup) {
-                return res.send(`
-                    <script type="text/javascript">
-                        window.close();
-                    </script >
-                `);
-              } else {
-                return res.redirect(url);
-              }
-            });
-          },
-        )(req, res, next);
+            this.updateSessionDuration(req);
+            let state = req.query['state'] as string;
+            const buff = Buffer.from(state, 'base64').toString('utf-8');
+            state = JSON.parse(buff);
+            let url: string = state['redirect_url'];
+            url = !url.startsWith('/') ? `/${url}` : url;
+            const loginpopup = state['loginpopup'];
+            if (loginpopup) {
+              return res.send(`
+                  <script type="text/javascript">
+                      window.close();
+                  </script >
+              `);
+            } else {
+              return res.redirect(url);
+            }
+          });
+        } catch (err) {
+          return next(err);
+        }
       }
     } catch (err) {
       res.status(HttpStatus.NOT_FOUND).send();
