@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Request, Response } from 'express';
 import * as handlebars from 'handlebars';
 import { JWKS } from 'jose';
-import { Client, custom, Issuer } from 'openid-client';
+import { Client, Issuer, custom } from 'openid-client';
 import { stringify } from 'querystring';
 import { v4 as uuid } from 'uuid';
 import { ChannelType, IdentityProviderOptions, OidcModuleOptions } from '../interfaces';
@@ -165,7 +165,7 @@ export class OidcService implements OnModuleInit {
           'utf-8',
         ).toString('base64');
         passport.authenticate(
-          strategy,
+          Object.create(strategy),
           {
             ...req['options'],
             failureRedirect: `${prefix}/login`,
