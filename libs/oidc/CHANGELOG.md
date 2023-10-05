@@ -5,6 +5,8 @@
 <!-- TOC -->
 
 - [Changelog](#changelog)
+  - [0.26.5 (2023-10-05)](#0265-2023-10-05)
+    - [Bugfixes](#bugfixes)
   - [0.26.4 (2023-10-04)](#0264-2023-10-04)
     - [Bugfixes](#bugfixes)
   - [0.26.3 (2023-01-10)](#0263-2023-01-10)
@@ -158,6 +160,14 @@
     - [Bug fixes](#bug-fixes-3)
 
 <!-- /TOC -->
+
+## 0.26.5 (2023-10-05)
+
+### Bugfixes
+
+- Update semver from 6.3.0 to 6.3.1
+- Update word-wrap from 1.2.3 to 1.2.4
+- Creating `GuestTokenGuard`
 
 ## 0.26.4 (2023-10-04)
 
