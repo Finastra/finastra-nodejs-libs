@@ -5,6 +5,8 @@
 <!-- TOC -->
 
 - [Changelog](#changelog)
+  - [0.26.6 (2023-10-05)](#0266-2023-10-05)
+    - [Bugfixes](#bugfixes)
   - [0.26.5 (2023-10-05)](#0265-2023-10-05)
     - [Bugfixes](#bugfixes)
   - [0.26.4 (2023-10-04)](#0264-2023-10-04)
@@ -160,6 +162,12 @@
     - [Bug fixes](#bug-fixes-3)
 
 <!-- /TOC -->
+
+## 0.26.6 (2023-10-05)
+
+### Bugfixes
+
+- `GuestTokenGuard` included in oidc.module
 
 ## 0.26.5 (2023-10-05)
 
