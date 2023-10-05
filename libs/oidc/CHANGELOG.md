@@ -5,6 +5,8 @@
 <!-- TOC -->
 
 - [Changelog](#changelog)
+  - [0.26.4 (2023-10-04)](#0264-2023-10-04)
+    - [Bugfixes](#bugfixes)
   - [0.26.3 (2023-01-10)](#0263-2023-01-10)
     - [Bugfixes](#bugfixes)
   - [0.26.2 (2023-01-03)](#0262-2023-01-03)
@@ -157,11 +159,17 @@
 
 <!-- /TOC -->
 
+## 0.26.4 (2023-10-04)
+
+### Bugfixes
+
+- Bugfix creating new `strategy` object passed into `passport.authenticate` in oidc.service
+
 ## 0.26.3 (2023-01-10)
 
 ### Bugfixes
 
-- Bugfix updating the ```logout``` method in oidc.service to be asynchronous, to follow breaking change in passport 0.6.0
+- Bugfix updating the `logout` method in oidc.service to be asynchronous, to follow breaking change in passport 0.6.0
 
 ## 0.26.2 (2023-01-03)
 
