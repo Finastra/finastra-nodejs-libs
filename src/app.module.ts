@@ -6,7 +6,6 @@ import { ApolloDriver } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
-import { CatsModule } from './cats/cats.module';
 import { GqlConfigService } from './configs/graphql-config.service';
 import { OidcConfigService } from './configs/oidc-config.service';
 import { ProxyConfigService } from './configs/proxy-config.service';
@@ -22,7 +21,6 @@ import { ProxyConfigService } from './configs/proxy-config.service';
       useClass: ProxyConfigService,
       imports: [ConfigModule],
     }),
-    CatsModule,
     CorporateAccountsModule.forRoot({}),
     ConfigModule.forRoot({
       // envFilePath: './envs/localhost.env',
