@@ -7,7 +7,7 @@ import { AuthMultitenantController } from './controllers/auth-multitenant.contro
 import { AuthController } from './controllers/auth.controller';
 import { LoginCallbackController } from './controllers/login-callback.controller';
 import { HttpExceptionFilter } from './filters';
-import { TenancyGuard, TokenGuard } from './guards';
+import { GuestTokenGuard, TenancyGuard, TokenGuard } from './guards';
 import { OidcModuleAsyncOptions, OidcModuleOptions, OidcOptionsFactory } from './interfaces';
 import { LoginMiddleware, UserMiddleware } from './middlewares';
 import { OIDC_MODULE_OPTIONS } from './oidc.constants';
@@ -28,6 +28,7 @@ import { SessionSerializer } from './utils/session.serializer';
   providers: [
     SessionSerializer,
     TokenGuard,
+    GuestTokenGuard,
     OidcService,
     SSRPagesService,
     {
