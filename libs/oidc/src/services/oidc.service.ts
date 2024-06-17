@@ -164,9 +164,6 @@ export class OidcService implements OnModuleInit {
           JSON.stringify({ redirect_url: `${prefix}${redirect_url}`, loginpopup: loginpopup }),
           'utf-8',
         ).toString('base64');
-        logger.log('DEBUG strategy: ', Object.create(strategy)); //TODO: remove after
-        logger.log('DEBUG redirect_url: ', redirect_url); //TODO: remove after
-        logger.log('DEBUG failureRedirect: ', `${prefix}/login`); //TODO: remove after
         passport.authenticate(
           Object.create(strategy),
           {
@@ -178,7 +175,6 @@ export class OidcService implements OnModuleInit {
             if (err || !user) {
               return next(err || info);
             }
-            logger.log('DEBUG req from passport.authenticate: ', req); //TODO: remove after
             req.logIn(user, err => {
               if (err) {
                 return next(err);
@@ -197,8 +193,6 @@ export class OidcService implements OnModuleInit {
                     </script >
                 `);
               } else {
-                logger.log('DEBUG return from redirect url'); //TODO: remove after
-                logger.log('DEBUG url: ', url); //TODO: remove after
                 return res.redirect(url);
               }
             });
@@ -336,7 +330,6 @@ export class OidcService implements OnModuleInit {
   }
 
   updateSessionDuration(req) {
-    logger.log('DEBUG req from updateSessionDuration', req); //TODO: remove after
     if (req.session) {
       req.session.cookie.maxAge = req.user.authTokens.refreshExpiresIn * 1000;
     }
