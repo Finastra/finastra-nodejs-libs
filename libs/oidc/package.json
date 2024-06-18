@@ -1,15 +1,12 @@
 {
   "name": "@finastra/nestjs-oidc",
-  "version": "0.26.7-beta.8",
+  "version": "0.26.7-beta.9",
   "main": "index.js",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/Finastra/finastra-nodejs-libs.git",
     "directory": "libs/oidc"
-  },
-  "scripts": {
-    "prepack": "cp ./libs/oidc/package.json ./dist/libs/oidc/src/"
   },
   "dependencies": {
     "@finastra/ssr-pages": "0.1.6",

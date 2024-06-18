@@ -21,7 +21,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typings:gen": "ts-node generate-typings",
-    "fix:deps": "npm-force-resolutions"
+    "fix:deps": "npm-force-resolutions",
+    "prepack:oidc": "cp ./libs/oidc/package.json ./dist/libs/oidc/src/"
   },
   "dependencies": {
     "@finastra/ssr-pages": "0.1.6",
@@ -41,12 +42,13 @@
     "cookie": "0.5.0",
     "cpx": "1.5.0",
     "csurf": "1.11.0",
-    "express-session": "1.17.3",
+    "express-session": "^1.17.3",
     "flatted": "3.2.6",
     "graphql": "16.5.0",
     "graphql-tools": "8.3.0",
     "helmet": "5.1.0",
     "http-proxy": "1.18.1",
+    "memorystore": "^1.6.7",
     "mongoose": "6.4.6",
     "npm-force-resolutions": "0.0.10",
     "openid-client": "4.9.0",

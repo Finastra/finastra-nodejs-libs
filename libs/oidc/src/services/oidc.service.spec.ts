@@ -588,7 +588,7 @@ describe('OidcService', () => {
         },
       };
       options.defaultHttpOptions = {
-        timeout: 0,
+        timeout: 40000,
       };
     });
 

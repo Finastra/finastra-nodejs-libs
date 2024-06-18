@@ -26,7 +26,7 @@ export class OidcMultitenantSingleChannelConfig implements OidcOptionsFactory {
       origin: this.configService.get('OIDC_ORIGIN'),
       userInfoMethod: UserInfoMethod.token,
       defaultHttpOptions: {
-        timeout: 20000,
+        timeout: 40000,
       },
     };
 

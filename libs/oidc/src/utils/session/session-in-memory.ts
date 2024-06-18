@@ -11,7 +11,7 @@ export function sessionInMemory(app: INestApplication, name: string) {
       ...baseSession,
       store: new MemoryStore({
         checkPeriod: 86400000, // prune expired entries every 24h
-        // stale: true, TODO: need to check behavior
+        stale: true,
       }),
     }),
   );
