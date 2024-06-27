@@ -17,7 +17,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     const { body, headers, method, params, query, url, user } = request;
 
-    this.logger.warn({ request: { body, headers, method, params, query, url, user }, exception });
+    this.logger.error({ request: { body, headers, method, params, query, url, user }, exception });
 
     switch (status) {
       case MisdirectedStatus.MISDIRECTED:
