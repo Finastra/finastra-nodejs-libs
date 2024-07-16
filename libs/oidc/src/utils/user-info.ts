@@ -51,7 +51,7 @@
 // }
 
 import { Logger } from '@nestjs/common';
-import { decodeJwt, JWTPayload } from 'jose';
+import { JWT } from 'jose';
 import { Client, UserinfoResponse } from 'openid-client';
 import { OidcModuleOptions, UserInfo, UserInfoMapping, UserInfoMethod } from '../interfaces';
 
@@ -62,9 +62,9 @@ export async function getUserInfo(
   options: OidcModuleOptions,
   client: Client
 ): Promise<UserInfo | UserinfoResponse> {
-  let userInfoData = await (options.userInfoMethod === UserInfoMethod.token
-    ? userInfo(token, options.userInfoMapping)
-    : userInfoRemote(token, client));
+  let userInfoData = (options.userInfoMethod === UserInfoMethod.token
+    ? await userInfo(token, client, options.userInfoMapping)
+    : await userInfoRemote(token, client));
 
   if (options.userInfoCallback) {
     const userCallback = await options.userInfoCallback(userInfoData.username, options.externalIdps)
@@ -78,8 +78,14 @@ export async function getUserInfo(
   return userInfoData;
 }
 
-function userInfo(token: string, userInfoMapping?: UserInfoMapping): UserInfo {
-  const jwtPayload: JWTPayload = decodeJwt(token);
+async function userInfo(token: string, client: Client, userInfoMapping?: UserInfoMapping): Promise<UserInfo> {
+  // const res = await fetch(client.issuer.metadata.jwks_uri);
+  // const jwks/* : JSONWebKeySet */ = await res.json();
+  // const tokenStore = await jose.createRemoteJWKSet(new URL(client.issuer.metadata.jwks_uri))
+  // const decodedJwt = await jose.jwtVerify(token, tokenStore);
+  // const jwtPayload: jose.JWTPayload = decodedJwt.payload;
+  // const jwtPayload: jose.JWTPayload = jose.decodeJwt(token);
+  const jwtPayload: any = JWT.decode(token);
   const { id, username } = userInfoMapping ?? {};
   return {
     id: jwtPayload.id as string ?? jwtPayload.sub ?? id,
@@ -98,6 +104,6 @@ async function userInfoRemote(
   } catch (err) {
     const msg = `Error accessing user information`;
     logger.error(msg);
-    return userInfo(token);
+    return userInfo(token, client);
   }
 }

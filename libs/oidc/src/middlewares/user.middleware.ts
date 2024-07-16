@@ -1,5 +1,4 @@
 import { Inject, Injectable, NestMiddleware, Next, Req, Res } from '@nestjs/common';
-import { createRemoteJWKSet, jwtVerify } from 'jose';
 import { ExtractJwt } from 'passport-jwt';
 import { ChannelType, OidcModuleOptions } from '../interfaces';
 import { OIDC_MODULE_OPTIONS } from '../oidc.constants';
@@ -33,11 +32,13 @@ export class UserMiddleware implements NestMiddleware {
         await this.service.createStrategyMultitenant(tenantId, channelType);
       }
 
-      const client = this.service.idpInfos.get(key).client
-      const jwks = await createRemoteJWKSet(new URL(client.issuer.metadata.jwks_uri));
-      const decodedJwt = await jwtVerify(jwt, jwks);
+      // const client = this.service.idpInfos.get(key).client
+      // const jwks = await createRemoteJWKSet(new URL(client.issuer.metadata.jwks_uri));
+      // const decodedJwt = await jwtVerify(jwt, jwks);
 
-      req.user = decodedJwt;
+      // const decodedJwt = JWT.verify(jwt, this.service.idpInfos.get(key).tokenStore);
+
+      // req.user = decodedJwt;
       if (this.service.options.externalIdps) {
         req.user['authTokens'] = await authenticateExternalIdps(this.service.options.externalIdps);
       }
