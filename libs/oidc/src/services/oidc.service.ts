@@ -4,7 +4,6 @@ import { NextFunction, Request, Response } from 'express';
 import * as handlebars from 'handlebars';
 import { BaseClient, ClientMetadata, Issuer, custom } from 'openid-client';
 import { stringify } from 'querystring';
-import { v4 as uuid } from 'uuid';
 import { ChannelType, IdentityProviderOptions, IdpInfo, OidcModuleOptions } from '../interfaces';
 import { OIDC_MODULE_OPTIONS, SESSION_STATE_COOKIE } from '../oidc.constants';
 import { OidcPassportStrategy } from '../strategies';
@@ -34,7 +33,7 @@ export class OidcService {
   }
 
   async createStrategyMultitenant(tenantId: string, channelType?: string) {
-    let strategy;
+    // let strategy;
     if (this.options.defaultHttpOptions) {
       custom.setHttpOptionsDefaults(this.options.defaultHttpOptions);
     }
@@ -59,18 +58,15 @@ export class OidcService {
       }
       const trustIssuer = await Issuer.discover(issuer);
       const client = new trustIssuer.Client(clientMetadata);
-
       const key = this.getIdpInfosKey(tenantId, channelType);
+      const strategy = new OidcPassportStrategy(client, this.options, channelType);
+      this.options.authParams.redirect_uri = redirectUri;
+      // this.options.authParams.nonce = this.options.authParams.nonce === 'true' ? uuid() : this.options.authParams.nonce;
 
       this.idpInfos.set(key, {
         client,
         strategy,
       });
-      this.options.authParams.redirect_uri = redirectUri;
-      this.options.authParams.nonce = this.options.authParams.nonce === 'true' ? uuid() : this.options.authParams.nonce;
-
-      strategy = new OidcPassportStrategy(client, this.options, channelType);
-      this.idpInfos[key].strategy = strategy;
 
       return strategy;
     } catch (err) {
@@ -182,8 +178,9 @@ export class OidcService {
 
     req.logout(() => {
       req.session.destroy(async () => {
+        const key = this.getIdpInfosKey(tenantId, channelType);
         const end_session_endpoint =
-          this.idpInfos[this.getIdpInfosKey(tenantId, channelType)].trustIssuer.metadata.end_session_endpoint;
+          this.idpInfos.get(key).client.issuer.metadata.end_session_endpoint;
         if (end_session_endpoint) {
           res.redirect(
             `${end_session_endpoint}?post_logout_redirect_uri=${this.options.redirectUriLogout ? this.options.redirectUriLogout : this.options.origin

@@ -77,3 +77,16 @@ export interface IdpInfo {
 export interface IdpInfos {
   [tokenName: string]: IdpInfo;
 }
+
+export interface OidcEnvironmentVariables {
+  OIDC_CLIENT_ID: string;
+  OIDC_CLIENT_SECRET: string;
+  OIDC_ISSUER: string;
+  OIDC_ORIGIN: string;
+  OIDC_REDIRECT_URI: string;
+  OIDC_SCOPE: string;
+  OIDC_RESOURCE: string;
+  CLOCK_TOLERANCE: number;
+  TIMEOUT: number;
+  USER_INFO_METHOD: UserInfoMethod;
+}

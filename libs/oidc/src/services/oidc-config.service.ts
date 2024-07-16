@@ -1,12 +1,7 @@
-import { Injectable } from '@nestjs/common';
-
-// @Injectable()
-// export class OidcConfigService extends OidcSingleTenantConfig {}
-
-import { Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AuthorizationParameters, ClientMetadata, generators } from 'openid-client';
-import { OidcModuleOptions, OidcOptionsFactory, UserInfoMethod } from './interfaces';
+import { OidcEnvironmentVariables, OidcModuleOptions, OidcOptionsFactory, UserInfoMethod } from '../interfaces';
 
 @Injectable()
 export class OidcConfigService implements OidcOptionsFactory {
@@ -18,13 +13,15 @@ export class OidcConfigService implements OidcOptionsFactory {
 
   readonly logger = new Logger(OidcConfigService.name);
 
-  constructor(private configService: ConfigService) { }
+  constructor(private configService: ConfigService<OidcEnvironmentVariables>) {
+    this.createModuleConfig()
+  }
 
   createModuleConfig(): OidcModuleOptions {
     const issuer = this.configService.get('OIDC_ISSUER');
     const client_id = this.configService.get('OIDC_CLIENT_ID');
     const origin = this.configService.get('OIDC_ORIGIN');
-    const redirect_uri = origin ? `${origin}/login/callback` : this.configService.get('OIDC_REDIRECT_URI');
+    const redirect_uri = this.configService.get('OIDC_REDIRECT_URI') ?? `${origin}/login/callback`;
     const nonce = generators.nonce();
 
     this.logger.log(`
@@ -35,6 +32,7 @@ redirect_uri  : ${redirect_uri}`);
 
     const options = {
       issuer,
+      origin,
       clientMetadata: {
         client_id,
         client_secret: this.configService.get('OIDC_CLIENT_SECRET'),
@@ -47,8 +45,7 @@ redirect_uri  : ${redirect_uri}`);
         redirect_uri: redirect_uri,
         clockTolerance: this.configService.get('CLOCK_TOLERANCE') ?? 10,
       } as AuthorizationParameters,
-      origin,
-      userInfoMethod: UserInfoMethod.token,
+      userInfoMethod: this.configService.get('USER_INFO_METHOD') ?? UserInfoMethod.token,
       defaultHttpOptions: {
         timeout: this.configService.get('TIMEOUT') ?? 40000,
       },
