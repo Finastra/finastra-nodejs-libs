@@ -1,31 +1,51 @@
 import { DynamicModule, Global, MiddlewareConsumer, Module, NestModule, Provider, RequestMethod } from '@nestjs/common';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
 import { TenantSwitchController } from './controllers';
 import { AuthMultitenantMultiChannelController } from './controllers/auth-multitenant-multichannel.controller';
 import { AuthMultitenantController } from './controllers/auth-multitenant.controller';
 import { AuthController } from './controllers/auth.controller';
-import { LoginCallbackController } from './controllers/login-callback.controller';
 import { HttpExceptionFilter } from './filters';
 import { GuestTokenGuard, TenancyGuard, TokenGuard } from './guards';
 import { OidcModuleAsyncOptions, OidcModuleOptions, OidcOptionsFactory } from './interfaces';
 import { LoginMiddleware, UserMiddleware } from './middlewares';
+import { OidcConfigService } from './oidc-config.service';
 import { OIDC_MODULE_OPTIONS } from './oidc.constants';
 import { OidcService, SSRPagesService } from './services';
+import { OidcPassportStrategy, STRATEGY_NAME } from './strategies';
 import { mergeDefaults } from './utils';
 import { SessionSerializer } from './utils/session.serializer';
 
 @Global()
 @Module({
-  imports: [JwtModule.register({})],
+  imports: [
+    JwtModule.register({}),
+    PassportModule.register({ session: true, defaultStrategy: STRATEGY_NAME })
+  ],
   controllers: [
     AuthController,
     AuthMultitenantController,
     AuthMultitenantMultiChannelController,
-    LoginCallbackController,
     TenantSwitchController,
   ],
   providers: [
+    OidcConfigService,
+    {
+      provide: OIDC_MODULE_OPTIONS,
+      useFactory: (oidcConfigService: OidcConfigService) => oidcConfigService.getOptions(),
+      inject: [OidcConfigService]
+    },
+    {
+      provide: 'OidcStrategy',
+      useFactory: async (options: OidcModuleOptions, oidcService: OidcService) => {
+        const client = await oidcService.buildOpenIdClient(options);
+        const strategy = new OidcPassportStrategy(client, options);
+        oidcService.idpInfos.set('default.default', { client, strategy });
+        return strategy;
+      },
+      inject: [OIDC_MODULE_OPTIONS, OidcService]
+    },
     SessionSerializer,
     TokenGuard,
     GuestTokenGuard,

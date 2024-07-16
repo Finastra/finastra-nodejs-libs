@@ -1,5 +1,5 @@
 import { Controller, Get, Header, Next, Param, Req, Res } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { UserinfoResponse } from 'openid-client';
 import { isAvailableRouteForMultitenant } from '../decorators';
 import { CurrentUser } from '../decorators/current-user.decorator';
@@ -21,8 +21,8 @@ export class AuthMultitenantController {
 
   @Get('/login')
   @Header('Cache-Control', 'no-store, max-age=0')
-  login(@Req() req: Request, @Res() res: Response, @Next() next: Function, @Param() params) {
-    this.oidcService.login(req, res, next, params);
+  login(@Req() req: Request, @Res() res: Response, @Next() next: NextFunction, @Param() tenantId: string) {
+    this.oidcService.loginMultitenant(req, res, next, tenantId);
   }
 
   @Get('/logout')
@@ -33,7 +33,7 @@ export class AuthMultitenantController {
 
   @Get('/refresh-token')
   @Header('Cache-Control', 'no-store, max-age=0')
-  async refreshTokens(@Req() req: Request, @Res() res: Response, @Next() next: Function) {
+  async refreshTokens(@Req() req: Request, @Res() res: Response, @Next() next: NextFunction) {
     this.oidcService.refreshTokens(req, res, next);
   }
 

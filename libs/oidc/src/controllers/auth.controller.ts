@@ -1,9 +1,10 @@
-import { Controller, Get, Header, Next, Param, Req, Res } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { Controller, Get, Header, Next, Param, Req, Res, UseGuards } from '@nestjs/common';
+import { NextFunction, Request, Response } from 'express';
 import { UserinfoResponse } from 'openid-client';
 import { isAvailableRouteForMultitenant } from '../decorators';
 import { CurrentUser } from '../decorators/current-user.decorator';
 import { Public } from '../decorators/public.decorator';
+import { LoginGuard } from '../guards/login.guard';
 import { UserInfo } from '../interfaces';
 import { OidcService } from '../services';
 
@@ -11,7 +12,7 @@ import { OidcService } from '../services';
 @isAvailableRouteForMultitenant(false)
 @Controller()
 export class AuthController {
-  constructor(public oidcService: OidcService) {}
+  constructor(public oidcService: OidcService) { }
 
   @Get('/user')
   @Header('Cache-Control', 'no-store, max-age=0')
@@ -20,9 +21,17 @@ export class AuthController {
   }
 
   @Get('/login')
+  @UseGuards(LoginGuard)
   @Header('Cache-Control', 'no-store, max-age=0')
-  login(@Req() req: Request, @Res() res: Response, @Next() next: Function, @Param() params) {
-    this.oidcService.login(req, res, next, params);
+  login(@Req() req: Request, @Res() res: Response, @Next() next: NextFunction, @Param() params) {
+    // this.oidcService.login(req, res, next, params);
+  }
+
+  @Get('/login/callback')
+  @Public()
+  @UseGuards(LoginGuard)
+  loginCallback(@Req() req: Request, @Res() res: Response, @Next() next: NextFunction, @Param() params: any) {
+    this.oidcService.loginCallback(req, res, next, params);
   }
 
   @Get('/logout')
@@ -33,7 +42,7 @@ export class AuthController {
 
   @Get('/refresh-token')
   @Header('Cache-Control', 'no-store, max-age=0')
-  refreshTokens(@Req() req: Request, @Res() res: Response, @Next() next: Function) {
+  refreshTokens(@Req() req: Request, @Res() res: Response, @Next() next: NextFunction) {
     this.oidcService.refreshTokens(req, res, next);
   }
 

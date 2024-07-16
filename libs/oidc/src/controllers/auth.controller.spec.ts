@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthController } from './auth.controller';
-import { createResponse, createRequest } from 'node-mocks-http';
-import { MockOidcService, MOCK_REQUEST } from '../mocks';
+import { createRequest, createResponse } from 'node-mocks-http';
+import { MOCK_REQUEST, MockOidcService } from '../mocks';
 import { OidcService } from '../services';
+import { AuthController } from './auth.controller';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -73,6 +73,14 @@ describe('AuthController', () => {
       const spy = jest.spyOn(oidcService, 'loggedOut').mockReturnThis();
       await controller.loggedOut(MOCK_REQ, MOCK_RES, MOCK_PARAMS);
       expect(spy).toHaveBeenCalledWith(MOCK_REQ, MOCK_RES, MOCK_PARAMS);
+    });
+  });
+
+  describe('loginCallback', () => {
+    it('should call oidcService login', async () => {
+      const spy = jest.spyOn(oidcService, 'loginCallback').mockReturnThis();
+      await controller.loginCallback(MOCK_REQ, MOCK_RES, MOCK_NEXT, MOCK_PARAMS);
+      expect(spy).toHaveBeenCalledWith(MOCK_REQ, MOCK_RES, MOCK_NEXT, MOCK_PARAMS);
     });
   });
 });

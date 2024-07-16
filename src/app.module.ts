@@ -1,13 +1,13 @@
 import { CorporateAccountsModule } from '@finastra/api_corporate-accounts';
 import { LoggerModule } from '@finastra/nestjs-logger';
 import { OidcModule } from '@finastra/nestjs-oidc';
+import { OidcConfigService } from '@finastra/nestjs-oidc/oidc-config.service';
 import { ProxyModule } from '@finastra/nestjs-proxy';
 import { ApolloDriver } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { GqlConfigService } from './configs/graphql-config.service';
-import { OidcConfigService } from './configs/oidc-config.service';
 import { ProxyConfigService } from './configs/proxy-config.service';
 
 @Module({
@@ -35,4 +35,4 @@ import { ProxyConfigService } from './configs/proxy-config.service';
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule { }

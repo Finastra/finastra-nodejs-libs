@@ -1,13 +1,14 @@
-import { Injectable, NestMiddleware, Next, Req, Res } from '@nestjs/common';
-import { JWT } from 'jose';
+import { Inject, Injectable, NestMiddleware, Next, Req, Res } from '@nestjs/common';
+import { createRemoteJWKSet, jwtVerify } from 'jose';
 import { ExtractJwt } from 'passport-jwt';
-import { ChannelType } from '../interfaces';
+import { ChannelType, OidcModuleOptions } from '../interfaces';
+import { OIDC_MODULE_OPTIONS } from '../oidc.constants';
 import { OidcService } from '../services';
 import { authenticateExternalIdps, getUserInfo } from '../utils';
 
 @Injectable()
 export class UserMiddleware implements NestMiddleware {
-  constructor(private service: OidcService) {}
+  constructor(private service: OidcService, @Inject(OIDC_MODULE_OPTIONS) public options: OidcModuleOptions) { }
   async use(@Req() req, @Res() res, @Next() next) {
     try {
       const jwt = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
@@ -28,16 +29,19 @@ export class UserMiddleware implements NestMiddleware {
 
       const key = this.service.getIdpInfosKey(tenantId, channelType);
 
-      if (!this.service.idpInfos[key] || !this.service.idpInfos[key].tokenStore) {
-        await this.service.createStrategy(tenantId, channelType);
+      if (!this.service.idpInfos.get(key)) {
+        await this.service.createStrategyMultitenant(tenantId, channelType);
       }
-      const decodedJwt = JWT.verify(jwt, this.service.idpInfos[key].tokenStore);
+
+      const client = this.service.idpInfos.get(key).client
+      const jwks = await createRemoteJWKSet(new URL(client.issuer.metadata.jwks_uri));
+      const decodedJwt = await jwtVerify(jwt, jwks);
 
       req.user = decodedJwt;
       if (this.service.options.externalIdps) {
         req.user['authTokens'] = await authenticateExternalIdps(this.service.options.externalIdps);
       }
-      req.user['userinfo'] = await getUserInfo(jwt, this.service, key);
+      req.user['userinfo'] = await getUserInfo(jwt, this.options, this.service.idpInfos.get(key).client);
       req.user['userinfo'].channel = channelType;
 
       next();

@@ -1,5 +1,5 @@
 import { Controller, Get, Next, Param, Req, Res } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { isAvailableRouteForMultitenant } from '../decorators';
 import { Public } from '../decorators/public.decorator';
 import { OidcService } from '../services';
@@ -7,7 +7,7 @@ import { OidcService } from '../services';
 @isAvailableRouteForMultitenant(true)
 @Controller('/:tenantId/:channelType')
 export class AuthMultitenantMultiChannelController {
-  constructor(public oidcService: OidcService) {}
+  constructor(public oidcService: OidcService) { }
 
   @Get('/user')
   user(@Req() req) {
@@ -16,8 +16,8 @@ export class AuthMultitenantMultiChannelController {
 
   @Public()
   @Get('/login')
-  login(@Req() req: Request, @Res() res: Response, @Next() next: Function, @Param() params) {
-    this.oidcService.login(req, res, next, params);
+  login(@Req() req: Request, @Res() res: Response, @Next() next: NextFunction, @Param() tenantId: string, @Param() channelType: string) {
+    this.oidcService.loginMultitenant(req, res, next, tenantId, channelType);
   }
 
   @Public()

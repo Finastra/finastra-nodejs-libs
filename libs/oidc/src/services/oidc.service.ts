@@ -1,14 +1,13 @@
-import { HttpStatus, Inject, Injectable, Logger, Next, OnModuleInit, Param, Req, Res } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable, Logger, Next, Param, Req, Res } from '@nestjs/common';
 import axios from 'axios';
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import * as handlebars from 'handlebars';
-import { JWKS } from 'jose';
-import { Client, Issuer, custom } from 'openid-client';
+import { BaseClient, ClientMetadata, Issuer, custom } from 'openid-client';
 import { stringify } from 'querystring';
 import { v4 as uuid } from 'uuid';
-import { ChannelType, IdentityProviderOptions, OidcModuleOptions } from '../interfaces';
+import { ChannelType, IdentityProviderOptions, IdpInfo, OidcModuleOptions } from '../interfaces';
 import { OIDC_MODULE_OPTIONS, SESSION_STATE_COOKIE } from '../oidc.constants';
-import { OidcStrategy } from '../strategies';
+import { OidcPassportStrategy } from '../strategies';
 import { loginPopupTemplate } from '../templates/login-popup.hbs';
 import { SSRPagesService } from './ssr-pages.service';
 import passport = require('passport');
@@ -23,17 +22,9 @@ declare module 'express-session' {
 }
 
 @Injectable()
-export class OidcService implements OnModuleInit {
+export class OidcService {
   isMultitenant: boolean = false;
-  strategy: any;
-  idpInfos: {
-    [tokenName: string]: {
-      trustIssuer: Issuer<Client>;
-      tokenStore: JWKS.KeyStore;
-      client: Client;
-      strategy: OidcStrategy;
-    };
-  } = {};
+  idpInfos: Map<string, IdpInfo> = new Map<string, IdpInfo>();
 
   constructor(
     @Inject(OIDC_MODULE_OPTIONS) public options: OidcModuleOptions,
@@ -42,13 +33,7 @@ export class OidcService implements OnModuleInit {
     this.isMultitenant = !!this.options.issuerOrigin;
   }
 
-  async onModuleInit() {
-    if (!this.isMultitenant) {
-      this.strategy = await this.createStrategy();
-    }
-  }
-
-  async createStrategy(tenantId?: string, channelType?: ChannelType) {
+  async createStrategyMultitenant(tenantId: string, channelType?: string) {
     let strategy;
     if (this.options.defaultHttpOptions) {
       custom.setHttpOptionsDefaults(this.options.defaultHttpOptions);
@@ -74,20 +59,17 @@ export class OidcService implements OnModuleInit {
       }
       const trustIssuer = await Issuer.discover(issuer);
       const client = new trustIssuer.Client(clientMetadata);
-      const tokenStore = await trustIssuer.keystore();
 
       const key = this.getIdpInfosKey(tenantId, channelType);
 
-      this.idpInfos[key] = {
-        trustIssuer,
+      this.idpInfos.set(key, {
         client,
-        tokenStore,
         strategy,
-      };
+      });
       this.options.authParams.redirect_uri = redirectUri;
       this.options.authParams.nonce = this.options.authParams.nonce === 'true' ? uuid() : this.options.authParams.nonce;
 
-      strategy = new OidcStrategy(this, key, channelType);
+      strategy = new OidcPassportStrategy(client, this.options, channelType);
       this.idpInfos[key].strategy = strategy;
 
       return strategy;
@@ -112,32 +94,16 @@ export class OidcService implements OnModuleInit {
     }
   }
 
-  getIdpInfosKey(tenantId, channelType): string {
-    return `${tenantId}.${channelType}`;
-  }
 
-  isExpired(expiresAt: number): boolean {
-    if (expiresAt != null) {
-      let remainingTime = expiresAt - Date.now() / 1000;
-      return remainingTime <= 0;
-    }
-    return false;
-  }
-
-  async login(@Req() req: Request, @Res() res: Response, @Next() next: Function, @Param() params) {
+  async loginMultitenant(req: Request, res: Response, next: NextFunction, tenant: string, channelType?: string) {
     try {
-      const tenantId = params.tenantId || req.session['tenant'];
-      const channel = this.options.channelType || params.channelType || req.session['channel'];
+      const tenantID = tenant ?? req.session['tenant'];
+      const channel = channelType ?? this.options.channelType ?? req.session['channel'];
+      const key = this.getIdpInfosKey(tenantID, channelType);
 
-      const strategy =
-        this.strategy ||
-        (this.idpInfos[this.getIdpInfosKey(tenantId, channel)] &&
-          this.idpInfos[this.getIdpInfosKey(tenantId, channel)].strategy) ||
-        (await this.createStrategy(tenantId, channel));
+      const prefix = channel && tenantID ? (this.options.channelType ? `/${tenantID}` : `/${tenantID}/${channel}`) : '';
 
-      const prefix = channel && tenantId ? (this.options.channelType ? `/${tenantId}` : `/${tenantId}/${channel}`) : '';
-
-      req.session['tenant'] = tenantId;
+      req.session['tenant'] = tenantID;
       req.session['channel'] = channel;
 
       const isEmbeded = req.headers && req.headers['sec-fetch-dest'] === 'iframe' ? true : false;
@@ -153,12 +119,9 @@ export class OidcService implements OnModuleInit {
         res.send(templatePopupPage({ sso_url: ssoUrl, redirect_url: redirect_url }));
       } else {
         const loginpopup = req.query.loginpopup === 'true';
-        const strategy =
-          this.strategy ||
-          (this.idpInfos[this.getIdpInfosKey(tenantId, channel)] &&
-            this.idpInfos[this.getIdpInfosKey(tenantId, channel)].strategy) ||
-          (await this.createStrategy(tenantId, channel));
-        req.session['tenant'] = tenantId;
+        const key = this.getIdpInfosKey(tenantID, channel);
+        const strategy = this.idpInfos.get(key)?.strategy ?? await this.createStrategyMultitenant(tenantID, channel);
+        req.session['tenant'] = tenantID;
         req.session['channel'] = channel;
         redirect_url = Buffer.from(
           JSON.stringify({ redirect_url: `${prefix}${redirect_url}`, loginpopup: loginpopup }),
@@ -204,6 +167,14 @@ export class OidcService implements OnModuleInit {
     }
   }
 
+  async loginCallback(req: Request, res: Response, next: NextFunction, params: any) {
+    if (params.length > 0) {
+      return
+    } else {
+      res.redirect('/')
+    }
+  }
+
   async logout(@Req() req: Request, @Res() res: Response, @Param() params) {
     const id_token = req.user ? req.user['id_token'] : undefined;
     const tenantId = params.tenantId || req.session['tenant'];
@@ -215,8 +186,7 @@ export class OidcService implements OnModuleInit {
           this.idpInfos[this.getIdpInfosKey(tenantId, channelType)].trustIssuer.metadata.end_session_endpoint;
         if (end_session_endpoint) {
           res.redirect(
-            `${end_session_endpoint}?post_logout_redirect_uri=${
-              this.options.redirectUriLogout ? this.options.redirectUriLogout : this.options.origin
+            `${end_session_endpoint}?post_logout_redirect_uri=${this.options.redirectUriLogout ? this.options.redirectUriLogout : this.options.origin
             }&client_id=${this.options.clientMetadata.client_id}${id_token ? '&id_token_hint=' + id_token : ''}`,
           );
         } else {
@@ -346,4 +316,30 @@ export class OidcService implements OnModuleInit {
     const channelPrefix = this.options.channelType ? '' : req.query.channelType || params.channelType;
     return [tenantPrefix, channelPrefix].filter(Boolean).join('/');
   }
+
+  getIdpInfosKey(tenantId = 'default', channelType = 'default'): string {
+    return `${tenantId}.${channelType}`;
+  }
+
+  isExpired(expiresAt: number): boolean {
+    if (expiresAt != null) {
+      let remainingTime = expiresAt - Date.now() / 1000;
+      return remainingTime <= 0;
+    }
+    return false;
+  }
+
+  buildOpenIdClient = async (options: OidcModuleOptions): Promise<BaseClient> => {
+    const issuer: Issuer<BaseClient> = await Issuer.discover(options.issuer);
+    console.log('Discovered issuer %s %O', issuer.issuer, issuer.metadata);
+
+    const client = new issuer.Client({
+      client_id: options.clientMetadata.client_id,
+      client_secret: options.clientMetadata.client_secret,
+      redirect_uris: options.clientMetadata.redirect_uris,
+      token_endpoint_auth_method: options.clientMetadata.token_endpoint_auth_method
+    } as ClientMetadata);
+
+    return client;
+  };
 }

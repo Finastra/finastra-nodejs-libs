@@ -2,7 +2,7 @@
   "debug.node.autoAttach": "on",
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.organizeImports": true
+    "source.organizeImports": "explicit"
   },
   "conventionalCommits.scopes": [
     "logger",

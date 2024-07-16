@@ -1,5 +1,6 @@
 import { ModuleMetadata, Type } from '@nestjs/common/interfaces';
-import { AuthorizationParameters, ClientMetadata, HttpOptions } from 'openid-client';
+import { AuthorizationParameters, Client, ClientMetadata, HttpOptions } from 'openid-client';
+import { OidcPassportStrategy } from '../strategies';
 import { UserInfoMapping } from './user.interface';
 
 export type OidcModuleOptions = {
@@ -19,8 +20,8 @@ export type OidcModuleOptions = {
     clientMetadata: ClientMetadata;
   },
   { issuerOrigin: string } & ({ b2c: OidcChannelOptions } | { b2e: OidcChannelOptions }) & {
-      channelType?: ChannelType;
-    }
+    channelType?: ChannelType;
+  }
 >;
 
 interface OidcChannelOptions {
@@ -65,4 +66,14 @@ export interface IdentityProviderOptions {
 
 export interface ExternalIdps {
   [idpName: string]: IdentityProviderOptions;
+}
+
+export interface IdpInfo {
+  client: Client;
+  strategy: OidcPassportStrategy;
+  // strategy: Strategy<UserinfoResponse<UserInfo>, BaseClient>;
+}
+
+export interface IdpInfos {
+  [tokenName: string]: IdpInfo;
 }
