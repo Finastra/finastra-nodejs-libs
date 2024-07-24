@@ -5,7 +5,7 @@ import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { readFileSync } from 'fs';
 import { AppModule } from './app.module';
-import { HttpExceptionGlobalFilter } from './filters/http-exception-global.filter';
+// import { HttpExceptionGlobalFilter } from './filters/http-exception-global.filter';
 
 async function bootstrap() {
   const logger = new OMSLogger();
@@ -24,7 +24,7 @@ async function bootstrap() {
   });
   app.useLogger(logger);
   app.useGlobalInterceptors(new HttpLoggingInterceptor());
-  app.useGlobalFilters(new HttpExceptionGlobalFilter());
+  // app.useGlobalFilters(new HttpExceptionGlobalFilter());
 
   app.useGlobalGuards(app.get(TokenGuard));
 

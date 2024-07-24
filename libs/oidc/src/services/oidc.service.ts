@@ -61,7 +61,6 @@ export class OidcService {
       const key = this.getIdpInfosKey(tenantId, channelType);
       const strategy = new OidcPassportStrategy(client, this.options, channelType);
       this.options.authParams.redirect_uri = redirectUri;
-      // this.options.authParams.nonce = this.options.authParams.nonce === 'true' ? uuid() : this.options.authParams.nonce;
 
       this.idpInfos.set(key, {
         client,
@@ -249,8 +248,10 @@ export class OidcService {
   }
 
   async requestTokenRefresh(user: OidcUser) {
+    const key = this.getIdpInfosKey();
+    const idpInfo = this.idpInfos.get(key);
     const authToken = user.authTokens
-    if (!authToken.accessToken || !authToken.refreshToken || !authToken.tokenEndpoint) {
+    if (!authToken.accessToken || !authToken.refreshToken || !authToken.tokenEndpoint || !idpInfo.client.issuer.metadata.token_endpoint) {
       throw new Error('Missing token endpoint');
     }
 

@@ -2,20 +2,18 @@ import { DynamicModule, Global, MiddlewareConsumer, Module, NestModule, Provider
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { TenantSwitchController } from './controllers';
+import { LoginCallbackController, TenantSwitchController } from './controllers';
 import { AuthMultitenantMultiChannelController } from './controllers/auth-multitenant-multichannel.controller';
 import { AuthMultitenantController } from './controllers/auth-multitenant.controller';
 import { AuthController } from './controllers/auth.controller';
 import { HttpExceptionFilter } from './filters';
-import { /* GuestTokenGuard,  */ TenancyGuard, TokenGuard } from './guards';
+import { TenancyGuard, TokenGuard } from './guards';
 import { OidcModuleAsyncOptions, OidcModuleOptions, OidcOptionsFactory } from './interfaces';
 import { LoginMiddleware } from './middlewares';
 import { OIDC_MODULE_OPTIONS, STRATEGY_NAME } from './oidc.constants';
 import { OidcService, SSRPagesService } from './services';
 import { OidcConfigService } from './services/oidc-config.service';
 import { OidcPassportStrategy } from './strategies';
-// import { mergeDefaults } from './utils';
-import { LoginCallbackController } from './controllers/login-callback.controller';
 import { SessionSerializer } from './utils/session.serializer';
 
 @Global()
@@ -51,7 +49,6 @@ import { SessionSerializer } from './utils/session.serializer';
     },
     SessionSerializer,
     TokenGuard,
-    // GuestTokenGuard,
     SSRPagesService,
     {
       provide: APP_GUARD,
