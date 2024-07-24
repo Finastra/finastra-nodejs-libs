@@ -2,6 +2,7 @@ import { HttpLoggingInterceptor, OMSLogger } from '@finastra/nestjs-logger';
 import { setupSession, TokenGuard } from '@finastra/nestjs-oidc';
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { readFileSync } from 'fs';
 import { AppModule } from './app.module';
 import { HttpExceptionGlobalFilter } from './filters/http-exception-global.filter';
@@ -17,7 +18,7 @@ async function bootstrap() {
     };
   }
 
-  const app = await NestFactory.create(AppModule, {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     logger,
     httpsOptions,
   });

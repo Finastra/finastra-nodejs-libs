@@ -4,7 +4,7 @@ import { NextFunction, Request, Response } from 'express';
 import * as handlebars from 'handlebars';
 import { BaseClient, ClientMetadata, Issuer, custom } from 'openid-client';
 import { stringify } from 'querystring';
-import { ChannelType, IdentityProviderOptions, IdpInfo, OidcModuleOptions } from '../interfaces';
+import { ChannelType, IdentityProviderOptions, IdpInfo, OidcModuleOptions, OidcUser } from '../interfaces';
 import { OIDC_MODULE_OPTIONS, SESSION_STATE_COOKIE } from '../oidc.constants';
 import { OidcPassportStrategy } from '../strategies';
 import { loginPopupTemplate } from '../templates/login-popup.hbs';
@@ -248,13 +248,14 @@ export class OidcService {
     res.send(loggedOutPage);
   }
 
-  async requestTokenRefresh(authToken: IdentityProviderOptions) {
+  async requestTokenRefresh(user: OidcUser) {
+    const authToken = user.authTokens
     if (!authToken.accessToken || !authToken.refreshToken || !authToken.tokenEndpoint) {
       throw new Error('Missing token endpoint');
     }
 
     let clientMetadata;
-    switch (authToken.channel) {
+    switch (user.userinfo.channel) {
       case ChannelType.b2c:
         clientMetadata = this.options[ChannelType.b2c].clientMetadata;
         break;
@@ -279,7 +280,7 @@ export class OidcService {
         client_secret: clientMetadata.client_secret,
         grant_type: 'refresh_token',
         refresh_token: authToken.refreshToken,
-        scope: authToken.scope,
+        // scope: authToken.scope,
       }),
     });
 
@@ -328,7 +329,6 @@ export class OidcService {
 
   buildOpenIdClient = async (options: OidcModuleOptions): Promise<BaseClient> => {
     const issuer: Issuer<BaseClient> = await Issuer.discover(options.issuer);
-    console.log('Discovered issuer %s %O', issuer.issuer, issuer.metadata);
 
     const client = new issuer.Client({
       client_id: options.clientMetadata.client_id,

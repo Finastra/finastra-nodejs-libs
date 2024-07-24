@@ -6,6 +6,7 @@ export interface UserInfo {
   username?: string;
   email?: string;
   isGuest?: boolean;
+  channel?: string;
 };
 
 export interface UserInfoMapping {

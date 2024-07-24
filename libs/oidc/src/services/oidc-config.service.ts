@@ -7,8 +7,16 @@ import { OidcEnvironmentVariables, OidcModuleOptions, OidcOptionsFactory, UserIn
 export class OidcConfigService implements OidcOptionsFactory {
   #options: OidcModuleOptions;
 
-  getOptions(): OidcModuleOptions {
-    return this.#options;
+  getOptions(defaultModuleOptions?: OidcModuleOptions): OidcModuleOptions {
+    const newOptions = {
+      ...defaultModuleOptions ?? {},
+      ...this.#options ?? this.createModuleConfig(),
+    } as OidcModuleOptions;
+    newOptions.authParams = {
+      ...defaultModuleOptions?.authParams ?? {},
+      ...this.#options.authParams ?? this.createModuleConfig().authParams,
+    };
+    return newOptions;
   }
 
   readonly logger = new Logger(OidcConfigService.name);

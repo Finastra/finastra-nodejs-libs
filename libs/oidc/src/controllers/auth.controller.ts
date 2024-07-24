@@ -27,13 +27,6 @@ export class AuthController {
     // this.oidcService.login(req, res, next, params);
   }
 
-  @Get('/login/callback')
-  @Public()
-  @UseGuards(LoginGuard)
-  loginCallback(@Req() req: Request, @Res() res: Response, @Next() next: NextFunction, @Param() params: any) {
-    this.oidcService.loginCallback(req, res, next, params);
-  }
-
   @Get('/logout')
   @Header('Cache-Control', 'no-store, max-age=0')
   async logout(@Req() req: Request, @Res() res: Response, @Param() params) {

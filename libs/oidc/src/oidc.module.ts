@@ -7,14 +7,15 @@ import { AuthMultitenantMultiChannelController } from './controllers/auth-multit
 import { AuthMultitenantController } from './controllers/auth-multitenant.controller';
 import { AuthController } from './controllers/auth.controller';
 import { HttpExceptionFilter } from './filters';
-import { GuestTokenGuard, TenancyGuard, TokenGuard } from './guards';
+import { /* GuestTokenGuard,  */ TenancyGuard, TokenGuard } from './guards';
 import { OidcModuleAsyncOptions, OidcModuleOptions, OidcOptionsFactory } from './interfaces';
-import { LoginMiddleware, UserMiddleware } from './middlewares';
-import { OIDC_MODULE_OPTIONS } from './oidc.constants';
+import { LoginMiddleware } from './middlewares';
+import { OIDC_MODULE_OPTIONS, STRATEGY_NAME } from './oidc.constants';
 import { OidcService, SSRPagesService } from './services';
 import { OidcConfigService } from './services/oidc-config.service';
-import { OidcPassportStrategy, STRATEGY_NAME } from './strategies';
+import { OidcPassportStrategy } from './strategies';
 // import { mergeDefaults } from './utils';
+import { LoginCallbackController } from './controllers/login-callback.controller';
 import { SessionSerializer } from './utils/session.serializer';
 
 @Global()
@@ -28,6 +29,7 @@ import { SessionSerializer } from './utils/session.serializer';
     AuthMultitenantController,
     AuthMultitenantMultiChannelController,
     TenantSwitchController,
+    LoginCallbackController
   ],
   providers: [
     OidcConfigService,
@@ -49,7 +51,7 @@ import { SessionSerializer } from './utils/session.serializer';
     },
     SessionSerializer,
     TokenGuard,
-    GuestTokenGuard,
+    // GuestTokenGuard,
     SSRPagesService,
     {
       provide: APP_GUARD,
@@ -64,10 +66,10 @@ import { SessionSerializer } from './utils/session.serializer';
 })
 export class OidcModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(UserMiddleware)
-      .exclude({ path: '/user', method: RequestMethod.GET })
-      .forRoutes({ path: '*', method: RequestMethod.ALL });
+    // consumer
+    //   .apply(UserMiddleware)
+    //   .exclude({ path: '/user', method: RequestMethod.GET })
+    //   .forRoutes({ path: '*', method: RequestMethod.ALL });
 
     consumer
       .apply(LoginMiddleware)

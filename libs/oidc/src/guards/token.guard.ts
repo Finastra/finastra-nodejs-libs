@@ -1,12 +1,13 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
+import { OidcUser } from '../interfaces';
 import { OidcService } from '../services';
 import { hasDecorator } from '../utils/has-decorator';
 
 @Injectable()
 export class TokenGuard implements CanActivate {
-  constructor(private readonly reflector: Reflector, private oidcService: OidcService) {}
+  constructor(private readonly reflector: Reflector, private oidcService: OidcService) { }
   async canActivate(context: ExecutionContext) {
     let request;
     if (context['contextType'] === 'graphql') {
@@ -14,17 +15,17 @@ export class TokenGuard implements CanActivate {
     } else {
       request = context.switchToHttp().getRequest();
     }
-    const params = request.params;
+    // const params = request.params;
     const isPublic = hasDecorator('isPublic', context, this.reflector);
 
     if (isPublic) return true;
 
-    const prefix = params && params.tenantId && params.channelType ? `/${params.tenantId}/${params.channelType}` : '';
+    // const prefix = params && params.tenantId && params.channelType ? `/${params.tenantId}/${params.channelType}` : '';
 
     if (request.isAuthenticated()) {
-      if (this.oidcService.isExpired(request.user['authTokens'].expiresAt)) {
+      if (this.oidcService.isExpired((request.user as OidcUser)?.authTokens.expiresAt)) {
         await this.oidcService
-          .requestTokenRefresh(request.user['authTokens'])
+          .requestTokenRefresh((request.user as OidcUser)?.authTokens)
           .then(data => {
             this.oidcService.updateUserAuthToken(data, request);
             this.oidcService.updateSessionDuration(request);
