@@ -34,7 +34,7 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 .env
-.env.*
+**.env
 coverage
 .history
 /finastra-nodejs-libs.iml
