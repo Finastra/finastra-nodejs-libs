@@ -1,7 +1,8 @@
 import { ConsoleLogger, Injectable, Scope } from '@nestjs/common';
+import { v4 as uuid } from 'uuid';
 import { OMSLogLevel } from './OMSLog.interface';
 
-@Injectable({ scope: Scope.TRANSIENT })
+@Injectable({ scope: Scope.DEFAULT })
 export class OMSLogger extends ConsoleLogger {
   private print(logLevel: OMSLogLevel, message: string, context?: string, stackTrace?: string) {
     let currentContext = context;
@@ -15,9 +16,14 @@ export class OMSLogger extends ConsoleLogger {
       msg: message,
       logger: currentContext,
       stack_trace: stackTrace,
+      instanceID: this.instanceID
     };
 
     console.log(JSON.stringify(logEntry));
+  }
+
+  constructor(private instanceID: string = uuid()) {
+    super();
   }
 
   log(message: string, context?: string) {
