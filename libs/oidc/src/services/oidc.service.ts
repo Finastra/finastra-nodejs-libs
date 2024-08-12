@@ -1,5 +1,4 @@
-import { OMSLogger } from '@finastra/nestjs-logger';
-import { HttpStatus, Inject, Injectable, Next, OnModuleInit, Param, Req, Res } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable, Logger, Next, OnModuleInit, Param, Req, Res } from '@nestjs/common';
 import axios from 'axios';
 import { Request, Response } from 'express';
 import * as handlebars from 'handlebars';
@@ -13,8 +12,6 @@ import { OidcStrategy } from '../strategies';
 import { loginPopupTemplate } from '../templates/login-popup.hbs';
 import { SSRPagesService } from './ssr-pages.service';
 import passport = require('passport');
-
-// const logger = new Logger('OidcService');
 
 declare module 'express-session' {
   interface SessionData {
@@ -39,7 +36,7 @@ export class OidcService implements OnModuleInit {
   constructor(
     @Inject(OIDC_MODULE_OPTIONS) public options: OidcModuleOptions,
     private ssrPagesService: SSRPagesService,
-    private logger: OMSLogger,
+    private logger: Logger,
   ) {
     this.isMultitenant = !!this.options.issuerOrigin;
   }
