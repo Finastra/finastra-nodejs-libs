@@ -71,11 +71,11 @@ export class OidcModule implements NestModule {
     };
   }
 
-  static forRootAsync(options: OidcModuleAsyncOptions): DynamicModule {
+  static forRootAsync(options: OidcModuleAsyncOptions, serverInstanceID: string): DynamicModule {
     return {
       module: OidcModule,
       imports: options.imports,
-      providers: [...this.createAsyncProviders(options)],
+      providers: [...this.createAsyncProviders(options), { provide: 'SERVER_INSTANCE_ID', useValue: serverInstanceID }],
     };
   }
 
