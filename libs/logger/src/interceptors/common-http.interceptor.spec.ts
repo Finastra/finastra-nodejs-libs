@@ -1,5 +1,6 @@
 import { createMock } from '@golevelup/nestjs-testing';
 import { CallHandler, ExecutionContext } from '@nestjs/common';
+import { randomUUID } from 'crypto';
 import { of } from 'rxjs';
 import { HttpLoggingInterceptor } from './common-http.interceptor';
 
@@ -7,7 +8,7 @@ describe('HttpLoggingInterceptor', () => {
   let interceptor;
 
   beforeEach(() => {
-    interceptor = new HttpLoggingInterceptor();
+    interceptor = new HttpLoggingInterceptor(randomUUID());
   });
 
   it('should be defined', () => {

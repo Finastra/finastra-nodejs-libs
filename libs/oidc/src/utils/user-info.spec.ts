@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto';
 import { JWKS } from 'jose';
 import { UserInfoMethod } from '../interfaces';
 import { MOCK_CLIENT_INSTANCE, MOCK_OIDC_MODULE_OPTIONS, MOCK_TRUST_ISSUER } from '../mocks';
@@ -15,7 +16,7 @@ describe('OidcStrategy', () => {
   let service;
 
   beforeEach(() => {
-    service = new OidcService(MOCK_OIDC_MODULE_OPTIONS, new SSRPagesService());
+    service = new OidcService(MOCK_OIDC_MODULE_OPTIONS, randomUUID(), new SSRPagesService());
     service.idpInfos[idpKey] = {
       client: MOCK_CLIENT_INSTANCE,
       tokenStore: new JWKS.KeyStore([]),

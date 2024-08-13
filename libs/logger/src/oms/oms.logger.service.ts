@@ -23,7 +23,7 @@ export class OMSLogger extends ConsoleLogger {
       instanceID: this.serverInstanceID,
     };
 
-    super.log.apply(this, [...arguments, JSON.stringify(logEntry)]);
+    console.log(JSON.stringify(logEntry));
   }
 
   log(message: string, context?: string) {

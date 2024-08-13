@@ -106,7 +106,7 @@ export class OidcService implements OnModuleInit {
       }
       const docUrl = 'https://github.com/finastra/finastra-nodejs-libs/blob/develop/libs/oidc/README.md';
       const msg = `Error accessing the issuer/tokenStore. Check if the url is valid or increase the timeout in the defaultHttpOptions : ${docUrl}`;
-      this.logger.error(msg, err.stack);
+      this.logger.error(msg, err?.stack);
       this.logger.log('Terminating application');
       process.exit(1);
     }
