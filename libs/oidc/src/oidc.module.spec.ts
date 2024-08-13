@@ -1,9 +1,10 @@
-import { TestingModule, Test } from '@nestjs/testing';
 import { createMock } from '@golevelup/nestjs-testing';
-import { Issuer } from 'openid-client';
-import { OidcModule } from './oidc.module';
-import { MOCK_OIDC_MODULE_OPTIONS, MOCK_ISSUER_INSTANCE } from './mocks';
 import { MiddlewareConsumer } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
+import { randomUUID } from 'crypto';
+import { Issuer } from 'openid-client';
+import { MOCK_ISSUER_INSTANCE, MOCK_OIDC_MODULE_OPTIONS } from './mocks';
+import { OidcModule } from './oidc.module';
 
 describe('OidcModule', () => {
   describe('register sync', () => {
@@ -34,7 +35,7 @@ describe('OidcModule', () => {
         imports: [
           OidcModule.forRootAsync({
             useFactory: async () => MOCK_OIDC_MODULE_OPTIONS,
-          }),
+          }, randomUUID()),
         ],
       }).compile();
     });
@@ -63,7 +64,7 @@ describe('OidcModule', () => {
         imports: [
           OidcModule.forRootAsync({
             useClass: oidcModuleOptions,
-          }),
+          }, randomUUID()),
         ],
       }).compile();
     });
