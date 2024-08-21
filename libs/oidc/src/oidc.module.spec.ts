@@ -15,7 +15,7 @@ describe('OidcModule', () => {
       IssuerMock.keystore = jest.fn();
       jest.spyOn(Issuer, 'discover').mockImplementation(() => Promise.resolve(IssuerMock));
       module = await Test.createTestingModule({
-        imports: [OidcModule.forRoot(MOCK_OIDC_MODULE_OPTIONS)],
+        imports: [OidcModule.forRoot(MOCK_OIDC_MODULE_OPTIONS, randomUUID())],
       }).compile();
     });
 

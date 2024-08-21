@@ -1,3 +1,4 @@
+import { SERVER_INSTANCE_ID } from '@finastra/nestjs-logger';
 import { DynamicModule, Global, MiddlewareConsumer, Module, NestModule, Provider, RequestMethod } from '@nestjs/common';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
@@ -58,7 +59,7 @@ export class OidcModule implements NestModule {
       );
   }
 
-  static forRoot(options: OidcModuleOptions): DynamicModule {
+  static forRoot(options: OidcModuleOptions, serverInstanceID: string): DynamicModule {
     options = mergeDefaults(options);
     return {
       module: OidcModule,
@@ -67,6 +68,7 @@ export class OidcModule implements NestModule {
           provide: OIDC_MODULE_OPTIONS,
           useValue: options,
         },
+        { provide: SERVER_INSTANCE_ID, useValue: serverInstanceID }
       ],
     };
   }

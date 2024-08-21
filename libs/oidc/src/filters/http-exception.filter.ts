@@ -7,7 +7,7 @@ import { SSRPagesService } from '../services';
 export class HttpExceptionFilter implements ExceptionFilter {
   readonly logger = new Logger(HttpExceptionFilter.name);
 
-  constructor(private ssrPagesService: SSRPagesService) {}
+  constructor(private ssrPagesService: SSRPagesService) { }
 
   catch(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
@@ -15,9 +15,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest();
     const status = exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    const { body, headers, method, params, query, url, user } = request;
+    const { method, params, query, url, user } = request;
 
-    this.logger.error({ request: { body, headers, method, params, query, url, user }, exception });
+    // this.logger.error({ request: { method, params, query, url, user }, exception });
+    this.logger.error(`${{ 'HttpExceptionFilter': method, params, query, url, user, exception }}`);
 
     switch (status) {
       case MisdirectedStatus.MISDIRECTED:
