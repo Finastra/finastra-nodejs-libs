@@ -1,4 +1,3 @@
-import { SERVER_INSTANCE_ID } from '@finastra/nestjs-logger';
 import { HttpStatus, Inject, Injectable, Logger, Next, OnModuleInit, Param, Req, Res } from '@nestjs/common';
 import axios from 'axios';
 import { Request, Response } from 'express';
@@ -37,7 +36,6 @@ export class OidcService implements OnModuleInit {
 
   constructor(
     @Inject(OIDC_MODULE_OPTIONS) public options: OidcModuleOptions,
-    @Inject(SERVER_INSTANCE_ID) private serverInstanceID: string,
     private ssrPagesService: SSRPagesService,
   ) {
     this.isMultitenant = !!this.options.issuerOrigin;
@@ -102,7 +100,7 @@ export class OidcService implements OnModuleInit {
             channelType,
           },
         });
-        this.logger.error(err?.message, err?.stack, errorMsg);
+        this.logger.error(`err?.message`, err?.stack, errorMsg);
         throw new Error();
       }
       const docUrl = 'https://github.com/finastra/finastra-nodejs-libs/blob/develop/libs/oidc/README.md';
@@ -126,7 +124,7 @@ export class OidcService implements OnModuleInit {
   }
 
   async login(@Req() req: Request, @Res() res: Response, @Next() next: Function, @Param() params) {
-    this.logger.log(`url: ${req.url}, session: ${JSON.stringify(req.session)}, ip: ${req.ip}, method: ${req.method}, instanceID: ${this.serverInstanceID}`);
+    this.logger.log(`url: ${req.url}, session: ${JSON.stringify(req.session)}, ip: ${req.ip}, method: ${req.method}`);
     try {
       const tenantId = params.tenantId || req.session['tenant'];
       const channel = this.options.channelType || params.channelType || req.session['channel'];
@@ -175,12 +173,12 @@ export class OidcService implements OnModuleInit {
           },
           (err, user, info) => {
             if (err || !user) {
-              this.logger.error(`url: ${req.url}, session: ${JSON.stringify(req.session)}, ip: ${req.ip}, method: ${req.method}, instanceID: ${this.serverInstanceID}, error message: ${err?.message}`);
+              this.logger.error(`url: ${req.url}, session: ${JSON.stringify(req.session)}, ip: ${req.ip}, method: ${req.method}, error message: ${err?.message}`);
               return next(err || info);
             }
             req.logIn(user, err => {
               if (err) {
-                this.logger.error(`url: ${req.url}, session: ${JSON.stringify(req.session)}, ip: ${req.ip}, method: ${req.method}, instanceID: ${this.serverInstanceID}, error message: ${err?.message}`);
+                this.logger.error(`url: ${req.url}, session: ${JSON.stringify(req.session)}, ip: ${req.ip}, method: ${req.method}, error message: ${err?.message}`);
                 return next(err);
               }
               this.updateSessionDuration(req);
@@ -204,7 +202,7 @@ export class OidcService implements OnModuleInit {
         )(req, res, next);
       }
     } catch (err) {
-      this.logger.error(`url: ${req.url}, session: ${JSON.stringify(req.session)}, ip: ${req.ip}, method: ${req.method}, instanceID: ${this.serverInstanceID}, message: ${err.message}`);
+      this.logger.error(`url: ${req.url}, session: ${JSON.stringify(req.session)}, ip: ${req.ip}, method: ${req.method}, message: ${err.message}`);
       res.status(HttpStatus.NOT_FOUND).send();
     }
   }
