@@ -1,5 +1,5 @@
+import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
-import { randomUUID } from 'crypto';
 import * as handlebars from 'handlebars';
 import { JWKS } from 'jose';
 import { createRequest, createResponse } from 'node-mocks-http';
@@ -12,7 +12,7 @@ import { SSRPagesService } from './ssr-pages.service';
 import passport = require('passport');
 
 describe('OidcService', () => {
-  let service = new OidcService(MOCK_OIDC_MODULE_OPTIONS, randomUUID(), new SSRPagesService());
+  let service = new OidcService(MOCK_OIDC_MODULE_OPTIONS, new ConfigService(), new SSRPagesService());
   let options: OidcModuleOptions = MOCK_OIDC_MODULE_OPTIONS;
   const idpKey = 'idpKey';
 

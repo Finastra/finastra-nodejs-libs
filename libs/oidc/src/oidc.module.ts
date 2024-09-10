@@ -1,4 +1,5 @@
 import { DynamicModule, Global, MiddlewareConsumer, Module, NestModule, Provider, RequestMethod } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { TenantSwitchController } from './controllers';
@@ -30,6 +31,7 @@ import { SessionSerializer } from './utils/session.serializer';
     TokenGuard,
     GuestTokenGuard,
     OidcService,
+    ConfigService,
     SSRPagesService,
     {
       provide: APP_GUARD,

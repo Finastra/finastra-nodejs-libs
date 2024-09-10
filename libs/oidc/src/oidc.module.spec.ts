@@ -1,12 +1,11 @@
 import { createMock } from '@golevelup/nestjs-testing';
 import { MiddlewareConsumer } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { randomUUID } from 'crypto';
 import { Issuer } from 'openid-client';
 import { MOCK_ISSUER_INSTANCE, MOCK_OIDC_MODULE_OPTIONS } from './mocks';
 import { OidcModule } from './oidc.module';
 
-describe('OidcModule', () => {
+describe(OidcModule.name, () => {
   describe('register sync', () => {
     let module: TestingModule;
 
@@ -15,7 +14,7 @@ describe('OidcModule', () => {
       IssuerMock.keystore = jest.fn();
       jest.spyOn(Issuer, 'discover').mockImplementation(() => Promise.resolve(IssuerMock));
       module = await Test.createTestingModule({
-        imports: [OidcModule.forRoot(MOCK_OIDC_MODULE_OPTIONS, randomUUID())],
+        imports: [OidcModule.forRoot(MOCK_OIDC_MODULE_OPTIONS)],
       }).compile();
     });
 
@@ -35,7 +34,7 @@ describe('OidcModule', () => {
         imports: [
           OidcModule.forRootAsync({
             useFactory: async () => MOCK_OIDC_MODULE_OPTIONS,
-          }, randomUUID()),
+          }),
         ],
       }).compile();
     });
@@ -64,7 +63,7 @@ describe('OidcModule', () => {
         imports: [
           OidcModule.forRootAsync({
             useClass: oidcModuleOptions,
-          }, randomUUID()),
+          }),
         ],
       }).compile();
     });
