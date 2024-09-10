@@ -1,13 +1,15 @@
-import { CallHandler, ExecutionContext, Inject, Injectable, Logger, NestInterceptor } from '@nestjs/common';
+import { CallHandler, ExecutionContext, Injectable, Logger, NestInterceptor } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { SERVER_INSTANCE_ID } from '../logger.module';
 
 @Injectable()
 export class HttpLoggingInterceptor implements NestInterceptor {
   readonly logger = new Logger(HttpLoggingInterceptor.name);
+  #instanceID: string;
 
-  constructor(@Inject(SERVER_INSTANCE_ID) private serverInstanceID: string) {
+  constructor(private configService: ConfigService) {
+    this.#instanceID = configService.get('SERVER_INSTANCE_ID');
   }
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
@@ -16,13 +18,13 @@ export class HttpLoggingInterceptor implements NestInterceptor {
 
     if (context['contextType'] !== 'graphql') {
       log = true;
-      this.logger.log(`START: ${context.getClass().name}.${context.getHandler().name}(): ${req.method} ${req.url} instanceID: ${this.serverInstanceID}`);
+      this.logger.log(`START: ${context.getClass().name}.${context.getHandler().name}(): ${req.method} ${req.url} instanceID: ${this.#instanceID}`);
     }
 
     return next.handle().pipe(
       tap(() => {
         if (log) {
-          this.logger.log(`STOP: ${context.getClass().name}.${context.getHandler().name}(): ${req.method} ${req.url} instanceID: ${this.serverInstanceID}`);
+          this.logger.log(`STOP: ${context.getClass().name}.${context.getHandler().name}(): ${req.method} ${req.url} instanceID: ${this.#instanceID}`);
         }
       }),
     );
