@@ -66,7 +66,7 @@ describe('OMSLogger - with mocked interactive console', () => {
     configService = await module.resolve<ConfigService>(ConfigService);
     jest.spyOn(console, 'log').mockImplementation(() => 'test');
 
-    process.stdout.isTTY = false;
+    process.stdout.isTTY = true;
   });
 
   it('should show debug message', () => {

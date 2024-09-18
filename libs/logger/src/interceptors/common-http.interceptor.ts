@@ -18,13 +18,13 @@ export class HttpLoggingInterceptor implements NestInterceptor {
 
     if (context['contextType'] !== 'graphql') {
       log = true;
-      this.logger.log(`START: ${context.getClass().name}.${context.getHandler().name}(): ${req.method} ${req.url} instanceID: ${this.#instanceID}`);
+      this.logger.log(`START: ${context.getClass().name}.${context.getHandler().name}(): ${req.method} ${req.url} instanceID: ${this.#instanceID} session: ${req.session}`);
     }
 
     return next.handle().pipe(
       tap(() => {
         if (log) {
-          this.logger.log(`STOP: ${context.getClass().name}.${context.getHandler().name}(): ${req.method} ${req.url} instanceID: ${this.#instanceID}`);
+          this.logger.log(`STOP: ${context.getClass().name}.${context.getHandler().name}(): ${req.method} ${req.url} instanceID: ${this.#instanceID} session: ${req.session}`);
         }
       }),
     );
