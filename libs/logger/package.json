@@ -14,7 +14,7 @@
     "directory": "libs/logger"
   },
   "optionalDependencies": {
-    "@nestjs/graphql": "^10.0.18",
+    "@nestjs/graphql": "^12.2.0",
     "graphql": "^16.5.0"
   }
 }
