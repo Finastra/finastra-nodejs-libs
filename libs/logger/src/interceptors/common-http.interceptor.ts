@@ -8,7 +8,7 @@ export class HttpLoggingInterceptor implements NestInterceptor {
   readonly logger = new Logger(HttpLoggingInterceptor.name);
   #instanceID: string;
 
-  constructor(private configService: ConfigService) {
+  constructor(configService: ConfigService) {
     this.#instanceID = configService.get('SERVER_INSTANCE_ID');
   }
 
@@ -18,13 +18,13 @@ export class HttpLoggingInterceptor implements NestInterceptor {
 
     if (context['contextType'] !== 'graphql') {
       log = true;
-      this.logger.log(`START: ${context.getClass().name}.${context.getHandler().name}(): ${req.method} ${req.url} instanceID: ${this.#instanceID} session: ${req.session}`);
+      this.logger.log(`START: ${context.getClass().name}.${context.getHandler().name}(): ${req.method} ${req.url} instanceID: ${this.#instanceID}`);
     }
 
     return next.handle().pipe(
       tap(() => {
         if (log) {
-          this.logger.log(`STOP: ${context.getClass().name}.${context.getHandler().name}(): ${req.method} ${req.url} instanceID: ${this.#instanceID} session: ${req.session}`);
+          this.logger.log(`STOP: ${context.getClass().name}.${context.getHandler().name}(): ${req.method} ${req.url} instanceID: ${this.#instanceID}`);
         }
       }),
     );
