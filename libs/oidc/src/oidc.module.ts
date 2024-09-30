@@ -1,4 +1,5 @@
 import { DynamicModule, Global, MiddlewareConsumer, Module, NestModule, Provider, RequestMethod } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { TenantSwitchController } from './controllers';
@@ -30,6 +31,7 @@ import { SessionSerializer } from './utils/session.serializer';
     TokenGuard,
     GuestTokenGuard,
     OidcService,
+    ConfigService,
     SSRPagesService,
     {
       provide: APP_GUARD,
@@ -66,7 +68,7 @@ export class OidcModule implements NestModule {
         {
           provide: OIDC_MODULE_OPTIONS,
           useValue: options,
-        },
+        }
       ],
     };
   }
@@ -75,7 +77,7 @@ export class OidcModule implements NestModule {
     return {
       module: OidcModule,
       imports: options.imports,
-      providers: [...this.createAsyncProviders(options)],
+      providers: this.createAsyncProviders(options),
     };
   }
 

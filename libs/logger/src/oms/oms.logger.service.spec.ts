@@ -1,15 +1,18 @@
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { OMSLogger } from './oms.logger.service';
 
 describe('OMSLogger', () => {
   let service: OMSLogger;
+  let configService: ConfigService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [OMSLogger],
+      providers: [OMSLogger, ConfigService],
     }).compile();
 
     service = await module.resolve<OMSLogger>(OMSLogger);
+    configService = await module.resolve<ConfigService>(ConfigService);
     jest.spyOn(console, 'log').mockImplementation(() => 'test');
 
     process.stdout.isTTY = false;
@@ -52,13 +55,15 @@ describe('OMSLogger', () => {
 
 describe('OMSLogger - with mocked interactive console', () => {
   let service: OMSLogger;
+  let configService: ConfigService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [OMSLogger],
+      providers: [OMSLogger, ConfigService],
     }).compile();
 
     service = await module.resolve<OMSLogger>(OMSLogger);
+    configService = await module.resolve<ConfigService>(ConfigService);
     jest.spyOn(console, 'log').mockImplementation(() => 'test');
 
     process.stdout.isTTY = true;

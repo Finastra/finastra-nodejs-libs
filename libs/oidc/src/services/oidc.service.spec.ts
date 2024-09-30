@@ -1,3 +1,4 @@
+import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import * as handlebars from 'handlebars';
 import { JWKS } from 'jose';
@@ -11,7 +12,7 @@ import { SSRPagesService } from './ssr-pages.service';
 import passport = require('passport');
 
 describe('OidcService', () => {
-  let service = new OidcService(MOCK_OIDC_MODULE_OPTIONS, new SSRPagesService());
+  let service = new OidcService(MOCK_OIDC_MODULE_OPTIONS, new ConfigService(), new SSRPagesService());
   let options: OidcModuleOptions = MOCK_OIDC_MODULE_OPTIONS;
   const idpKey = 'idpKey';
 
@@ -154,7 +155,7 @@ describe('OidcService', () => {
     it('should call passport authenticate for single tenant login', async () => {
       service.strategy = new OidcStrategy(service, idpKey);
       const spy = jest.spyOn(passport, 'authenticate').mockImplementation(() => {
-        return (req, res, next) => {};
+        return (req, res, next) => { };
       });
       await service.login(req, res, next, params);
       expect(spy).toHaveBeenCalled();
@@ -167,7 +168,7 @@ describe('OidcService', () => {
         channelType: 'b2c',
       };
       const spy = jest.spyOn(passport, 'authenticate').mockImplementation(() => {
-        return (req, res, next) => {};
+        return (req, res, next) => { };
       });
       await service.login(req, res, next, params);
       expect(spy).toHaveBeenCalled();
@@ -180,7 +181,7 @@ describe('OidcService', () => {
         tenantId: 'tenant',
       };
       const spy = jest.spyOn(passport, 'authenticate').mockImplementation(() => {
-        return (req, res, next) => {};
+        return (req, res, next) => { };
       });
       await service.login(req, res, next, params);
       expect(spy).toHaveBeenCalled();
@@ -211,7 +212,7 @@ describe('OidcService', () => {
 
       const spy = jest.spyOn(passport, 'authenticate').mockImplementation((strategy, options, cb) => {
         cb();
-        return (req, res, next) => {};
+        return (req, res, next) => { };
       });
 
       await service.login(req, res, next, params);
@@ -233,7 +234,7 @@ describe('OidcService', () => {
       const spy = jest.spyOn(passport, 'authenticate').mockImplementation((strategy, options, cb) => {
         const user = {};
         cb(null, user, null);
-        return (req, res, next) => {};
+        return (req, res, next) => { };
       });
 
       await service.login(req, res, next, params);
@@ -254,7 +255,7 @@ describe('OidcService', () => {
 
       const spy = jest.spyOn(passport, 'authenticate').mockImplementation((strategy, options, cb) => {
         cb(null, {}, null);
-        return (req, res, next) => {};
+        return (req, res, next) => { };
       });
 
       await service.login(req, res, next, params);
@@ -279,7 +280,7 @@ describe('OidcService', () => {
           state: options.state,
         };
         cb(null, {}, null);
-        return (req, res, next) => {};
+        return (req, res, next) => { };
       });
 
       const spyRes = jest.spyOn(res, 'redirect');
@@ -332,7 +333,7 @@ describe('OidcService', () => {
           state: options.state,
         };
         cb(null, {}, null);
-        return (req, res, next) => {};
+        return (req, res, next) => { };
       });
 
       const spyRes = jest.spyOn(res, 'redirect');
@@ -364,7 +365,7 @@ describe('OidcService', () => {
           state: options.state,
         };
         cb(null, {}, null);
-        return (req, res, next) => {};
+        return (req, res, next) => { };
       });
 
       const spyRes = jest.spyOn(res, 'redirect');

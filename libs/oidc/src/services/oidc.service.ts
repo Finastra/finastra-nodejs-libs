@@ -1,4 +1,5 @@
 import { HttpStatus, Inject, Injectable, Logger, Next, OnModuleInit, Param, Req, Res } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
 import { Request, Response } from 'express';
 import * as handlebars from 'handlebars';
@@ -13,19 +14,19 @@ import { loginPopupTemplate } from '../templates/login-popup.hbs';
 import { SSRPagesService } from './ssr-pages.service';
 import passport = require('passport');
 
-const logger = new Logger('OidcService');
-
-declare module 'express-session' {
-  interface SessionData {
-    tenant: string;
-    channel: string;
-  }
-}
+// declare module 'express-session' {
+//   interface SessionData {
+//     tenant: string;
+//     channel: string;
+//   }
+// }
 
 @Injectable()
 export class OidcService implements OnModuleInit {
+  readonly logger = new Logger(OidcService.name);
   isMultitenant: boolean = false;
   strategy: any;
+  #instanceID: string;
   idpInfos: {
     [tokenName: string]: {
       trustIssuer: Issuer<Client>;
@@ -37,9 +38,11 @@ export class OidcService implements OnModuleInit {
 
   constructor(
     @Inject(OIDC_MODULE_OPTIONS) public options: OidcModuleOptions,
+    configService: ConfigService,
     private ssrPagesService: SSRPagesService,
   ) {
     this.isMultitenant = !!this.options.issuerOrigin;
+    this.#instanceID = configService.get('SERVER_INSTANCE_ID');
   }
 
   async onModuleInit() {
@@ -93,21 +96,21 @@ export class OidcService implements OnModuleInit {
       return strategy;
     } catch (err) {
       if (this.isMultitenant) {
-        const errorMsg = {
-          error: err.message,
+        const errorMsg = JSON.stringify({
+          error: err?.message,
           debug: {
             origin: this.options.origin,
             tenantId,
             channelType,
           },
-        };
-        logger.error(errorMsg);
+        });
+        this.logger.error(`err?.message`, err?.stack, errorMsg);
         throw new Error();
       }
       const docUrl = 'https://github.com/finastra/finastra-nodejs-libs/blob/develop/libs/oidc/README.md';
       const msg = `Error accessing the issuer/tokenStore. Check if the url is valid or increase the timeout in the defaultHttpOptions : ${docUrl}`;
-      logger.error(msg);
-      logger.log('Terminating application');
+      this.logger.error(msg, err?.stack);
+      this.logger.log('Terminating application');
       process.exit(1);
     }
   }
@@ -125,6 +128,7 @@ export class OidcService implements OnModuleInit {
   }
 
   async login(@Req() req: Request, @Res() res: Response, @Next() next: Function, @Param() params) {
+    this.logger.log(`LOGIN url: ${req.url}, session: ${JSON.stringify(req.session)}, ip: ${req.ip}, method: ${req.method}, instanceID: ${this.#instanceID}`);
     try {
       const tenantId = params.tenantId || req.session['tenant'];
       const channel = this.options.channelType || params.channelType || req.session['channel'];
@@ -164,6 +168,8 @@ export class OidcService implements OnModuleInit {
           JSON.stringify({ redirect_url: `${prefix}${redirect_url}`, loginpopup: loginpopup }),
           'utf-8',
         ).toString('base64');
+        this.logger.log(`PRE_AUTHENTICATE url: ${req.url}, session: ${JSON.stringify(req.session)}, ip: ${req.ip}, method: ${req.method}, instanceID: ${this.#instanceID}`);
+
         passport.authenticate(
           Object.create(strategy),
           {
@@ -173,10 +179,13 @@ export class OidcService implements OnModuleInit {
           },
           (err, user, info) => {
             if (err || !user) {
+              this.logger.error(`AUTHENTICATE url: ${req.url}, session: ${JSON.stringify(req.session)}, ip: ${req.ip}, method: ${req.method}, error message: ${err?.message}, instanceID: ${this.#instanceID}`);
               return next(err || info);
             }
+            this.logger.log(`PRE_LOGIN_REQ url: ${req.url}, session: ${JSON.stringify(req.session)}, ip: ${req.ip}, method: ${req.method}, error message: ${err?.message}, instanceID: ${this.#instanceID}`);
             req.logIn(user, err => {
               if (err) {
+                this.logger.error(`LOGIN_REQ url: ${req.url}, session: ${JSON.stringify(req.session)}, ip: ${req.ip}, method: ${req.method}, error message: ${err?.message}, instanceID: ${this.#instanceID}`);
                 return next(err);
               }
               this.updateSessionDuration(req);
@@ -186,6 +195,7 @@ export class OidcService implements OnModuleInit {
               let url: string = state['redirect_url'];
               url = !url.startsWith('/') ? `/${url}` : url;
               const loginpopup = state['loginpopup'];
+              this.logger.log(`PRE_REDIRECT url: ${req.url}, session: ${JSON.stringify(req.session)}, ip: ${req.ip}, method: ${req.method}, error message: ${err?.message}, instanceID: ${this.#instanceID}`);
               if (loginpopup) {
                 return res.send(`
                     <script type="text/javascript">
@@ -193,6 +203,7 @@ export class OidcService implements OnModuleInit {
                     </script >
                 `);
               } else {
+                this.logger.log(`REDIRECT url: ${req.url}, session: ${JSON.stringify(req.session)}, ip: ${req.ip}, method: ${req.method}, instanceID: ${this.#instanceID}`);
                 return res.redirect(url);
               }
             });
@@ -200,6 +211,7 @@ export class OidcService implements OnModuleInit {
         )(req, res, next);
       }
     } catch (err) {
+      this.logger.error(`CATCH url: ${req.url}, session: ${JSON.stringify(req.session)}, ip: ${req.ip}, method: ${req.method}, message: ${err.message}, instanceID: ${this.#instanceID}`);
       res.status(HttpStatus.NOT_FOUND).send();
     }
   }
@@ -215,8 +227,7 @@ export class OidcService implements OnModuleInit {
           this.idpInfos[this.getIdpInfosKey(tenantId, channelType)].trustIssuer.metadata.end_session_endpoint;
         if (end_session_endpoint) {
           res.redirect(
-            `${end_session_endpoint}?post_logout_redirect_uri=${
-              this.options.redirectUriLogout ? this.options.redirectUriLogout : this.options.origin
+            `${end_session_endpoint}?post_logout_redirect_uri=${this.options.redirectUriLogout ? this.options.redirectUriLogout : this.options.origin
             }&client_id=${this.options.clientMetadata.client_id}${id_token ? '&id_token_hint=' + id_token : ''}`,
           );
         } else {
