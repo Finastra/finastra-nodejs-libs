@@ -5,11 +5,11 @@ import { OidcService } from '../services';
 
 @Controller('/login/callback')
 export class LoginCallbackController {
-  constructor(public oidcService: OidcService) {}
+  constructor(public oidcService: OidcService) { }
 
   @Public()
   @Get()
   loginCallback(@Req() req: Request, @Res() res: Response, @Next() next: Function, @Param() params) {
-    this.oidcService.login(req, res, next, params);
+    this.oidcService.loginCallback(req, res, next, params);
   }
 }
