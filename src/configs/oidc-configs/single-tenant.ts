@@ -6,7 +6,7 @@ import { ConfigService } from '@nestjs/config';
 export class OidcSingleTenantConfig implements OidcOptionsFactory {
   readonly logger = new Logger(OidcSingleTenantConfig.name);
 
-  constructor(private configService: ConfigService) {}
+  constructor(private configService: ConfigService) { }
 
   createModuleConfig(): OidcModuleOptions {
     const config = {
@@ -18,6 +18,7 @@ export class OidcSingleTenantConfig implements OidcOptionsFactory {
       authParams: {
         scope: this.configService.get('OIDC_SCOPE'),
         resource: this.configService.get('OIDC_RESOURCE'),
+        redirect_uri: this.configService.get('OIDC_REDIRECT_URI'),
         nonce: 'true',
       },
       origin: this.configService.get('OIDC_ORIGIN'),

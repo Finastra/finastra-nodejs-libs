@@ -6,7 +6,7 @@ import { ConfigService } from '@nestjs/config';
 export class OidcMultitenantMultiChannelConfig implements OidcOptionsFactory {
   readonly logger = new Logger(OidcMultitenantMultiChannelConfig.name);
 
-  constructor(private configService: ConfigService) {}
+  constructor(private configService: ConfigService) { }
 
   createModuleConfig(): OidcModuleOptions {
     const config = {
@@ -26,6 +26,7 @@ export class OidcMultitenantMultiChannelConfig implements OidcOptionsFactory {
       authParams: {
         scope: this.configService.get('OIDC_SCOPE'),
         resource: this.configService.get('OIDC_RESOURCE'),
+        redirect_uri: this.configService.get('OIDC_REDIRECT_URI'),
         nonce: 'true',
       },
       origin: this.configService.get('OIDC_ORIGIN'),
