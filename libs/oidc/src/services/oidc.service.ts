@@ -238,7 +238,7 @@ export class OidcService implements OnModuleInit {
     const sessionKey = `oidc:${url.parse(issuer.issuer).hostname}`;
     const session = req.session[sessionKey];
 
-    if (req.session?.[_regionRedirect] === this.#region) {
+    if (req.session?.[_regionRedirect] !== undefined && req.session?.[_regionRedirect] === this.#region) {
       this.logger.error(this.#sessionLog('NO SESSION AFTER REDIRECT TO SAME REGION', req, this.#instanceID, this.#region));
       return this.login(req, res, next, params);
     }
