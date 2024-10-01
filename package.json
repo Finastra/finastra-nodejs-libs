@@ -58,7 +58,7 @@
     "url-join": "^4.0.1"
   },
   "devDependencies": {
-    "@apollo/gateway": "^2.0.5",
+    "@apollo/gateway": "^2.9.2",
     "@golevelup/nestjs-testing": "^0.1.2",
     "@nestjs/cli": "^9.4.2",
     "@nestjs/schematics": "^9.0.1",
