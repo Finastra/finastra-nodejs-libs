@@ -13,15 +13,15 @@ import { OidcStrategy } from '../strategies';
 import { loginPopupTemplate } from '../templates/login-popup.hbs';
 import { SSRPagesService } from './ssr-pages.service';
 import passport = require('passport');
-const url = require('url');
+// const url = require('url');
 
-const _loginCallbackPath = 'login/callback';
+// const _loginCallbackPath = 'login/callback';
 
 @Injectable()
 export class OidcService implements OnModuleInit {
   readonly logger = new Logger(OidcService.name);
   #region: string;
-  #redirect_uri: string;
+  // #redirect_uri: string;
   isMultitenant: boolean = false;
   strategy: any;
   #instanceID: string;
@@ -42,7 +42,7 @@ export class OidcService implements OnModuleInit {
     this.isMultitenant = !!this.options.issuerOrigin;
     this.#instanceID = configService.get('SERVER_INSTANCE_ID');
     this.#region = configService.get('REGION_NAME');
-    this.#redirect_uri = configService.get('OIDC_REDIRECT_URI') ? `${configService.get('OIDC_REDIRECT_URI')}/${_loginCallbackPath}` : `${this.options.origin}/${_loginCallbackPath}`;
+    // this.#redirect_uri = configService.get('OIDC_REDIRECT_URI') ? `${configService.get('OIDC_REDIRECT_URI')}/${_loginCallbackPath}` : `${this.options.origin}/${_loginCallbackPath}`;
   }
 
   async onModuleInit() {
@@ -85,7 +85,7 @@ export class OidcService implements OnModuleInit {
         tokenStore,
         strategy,
       };
-      this.options.authParams.redirect_uri = this.#redirect_uri;
+      // this.options.authParams.redirect_uri = this.#redirect_uri;
       this.options.authParams.nonce = this.options.authParams.nonce === 'true' ? uuid() : this.options.authParams.nonce;
 
       strategy = new OidcStrategy(this, key, channelType);
@@ -126,7 +126,7 @@ export class OidcService implements OnModuleInit {
   }
 
   async login(@Req() req: Request, @Res() res: Response, @Next() next: Function, @Param() params) {
-    this.#sessionLog('LOGIN', req, this.#instanceID, this.#region);
+    this.#sessionLog({ name: 'LOGIN', req, instanceID: this.#instanceID, region: this.#region });
     try {
       const tenantId = params.tenantId || req.session['tenant'];
       const channel = this.options.channelType || params.channelType || req.session['channel'];
@@ -166,7 +166,7 @@ export class OidcService implements OnModuleInit {
           JSON.stringify({ redirect_url: `${prefix}${redirect_url}`, loginpopup: loginpopup }),
           'utf-8',
         ).toString('base64');
-        this.#sessionLog('PRE_AUTHENTICATE', req, this.#instanceID, this.#region);
+        this.#sessionLog({ name: 'PRE_AUTHENTICATE', req, instanceID: this.#instanceID, region: this.#region });
 
         passport.authenticate(
           Object.create(strategy),
@@ -177,13 +177,13 @@ export class OidcService implements OnModuleInit {
           },
           (err, user, info) => {
             if (err || !user) {
-              this.logger.error(this.#sessionLog('AUTHENTICATE ERROR', req, this.#instanceID, this.#region));
+              this.logger.error(this.#sessionLog({ name: 'AUTHENTICATE ERROR', req, instanceID: this.#instanceID, region: this.#region }));
               return next(err || info);
             }
-            this.logger.log(this.#sessionLog('PRE_LOGIN_REQ', req, this.#instanceID, this.#region));
+            this.logger.log(this.#sessionLog({ name: 'PRE_LOGIN_REQ', req, instanceID: this.#instanceID, region: this.#region }));
             req.logIn(user, err => {
               if (err) {
-                this.logger.error(this.#sessionLog('LOGIN_REQ ERROR', req, this.#instanceID, this.#region));
+                this.logger.error(this.#sessionLog({ name: 'LOGIN_REQ ERROR', req, instanceID: this.#instanceID, region: this.#region }));
                 return next(err);
               }
               this.updateSessionDuration(req);
@@ -193,7 +193,7 @@ export class OidcService implements OnModuleInit {
               let url: string = state['redirect_url'];
               url = !url.startsWith('/') ? `/${url}` : url;
               const loginpopup = state['loginpopup'];
-              this.logger.log(this.#sessionLog('PRE_REDIRECT', req, this.#instanceID, this.#region));
+              this.logger.log(this.#sessionLog({ name: 'PRE_REDIRECT', req, instanceID: this.#instanceID, region: this.#region }));
               if (loginpopup) {
                 return res.send(`
                     <script type="text/javascript">
@@ -201,7 +201,7 @@ export class OidcService implements OnModuleInit {
                     </script >
                 `);
               } else {
-                this.logger.log(this.#sessionLog('REDIRECT', req, this.#instanceID, this.#region));
+                this.logger.log(this.#sessionLog({ name: 'REDIRECT', req, instanceID: this.#instanceID, region: this.#region }));
                 return res.redirect(url);
               }
             });
@@ -209,7 +209,7 @@ export class OidcService implements OnModuleInit {
         )(req, res, next);
       }
     } catch (err) {
-      this.logger.error(this.#sessionLog('CATCH', req, this.#instanceID, this.#region));
+      this.logger.error(this.#sessionLog({ name: 'CATCH', req, instanceID: this.#instanceID, region: this.#region }));
       res.status(HttpStatus.NOT_FOUND).send();
     }
   }
@@ -221,23 +221,24 @@ export class OidcService implements OnModuleInit {
    * @param params
    * @returns redirect to other region when session details not found, login method when session params are present
    */
-  async loginCallback(@Req() req: Request, @Res() res: Response, @Next() next: Function, @Param() params) {
-    this.logger.log(this.#sessionLog('LOGIN CALLBACK', req, this.#instanceID, this.#region));
+  // async loginCallback(@Req() req: Request, @Res() res: Response, @Next() next: Function, @Param() params) {
+  //   this.logger.log(this.#sessionLog({ name: 'LOGIN CALLBACK', req, instanceID: this.#instanceID, region: this.#region }));
 
-    const tenantId = params.tenantId || req.session['tenant'];
-    const channel = this.options.channelType || params.channelType || req.session['channel'];
-    const key = this.getIdpInfosKey(tenantId, channel);
-    const issuer = this.idpInfos[key].trustIssuer.issuer;
-    const sessionKey = `oidc:${url.parse(issuer).hostname}`;
-    const session = req.session[sessionKey];
+  //   const tenantId = params.tenantId || req.session['tenant'];
+  //   const channel = this.options.channelType || params.channelType || req.session['channel'];
+  //   const key = this.getIdpInfosKey(tenantId, channel);
+  //   const issuer = this.idpInfos[key].trustIssuer.issuer;
+  //   const sessionKey = `oidc:${url.parse(issuer).hostname}`;
+  //   const session = req.session[sessionKey];
 
-    if (Object.keys(session || {}).length === 0) {
-      this.logger.log(this.#sessionLog('REGION REDIRECT', req, this.#instanceID, this.#region));
-      return res.redirect(this.#redirect_uri);
-    } else {
-      return this.login(req, res, next, params);
-    }
-  }
+  //   if (Object.keys(session || {}).length === 0) {
+  //     const url = this.#getRegionToRedirect(this.#region, this.#redirect_uri);
+  //     this.logger.log(this.#sessionLog({ name: 'REGION REDIRECT', req, instanceID: this.#instanceID, region: this.#region }));
+  //     return res.redirect(url);
+  //   } else {
+  //     return this.login(req, res, next, params);
+  //   }
+  // }
 
   async logout(@Req() req: Request, @Res() res: Response, @Param() params) {
     const id_token = req.user ? req.user['id_token'] : undefined;
@@ -381,7 +382,16 @@ export class OidcService implements OnModuleInit {
     return [tenantPrefix, channelPrefix].filter(Boolean).join('/');
   }
 
-  #sessionLog(name: string, req: Request, instanceID = this.#instanceID, region = this.#region): string {
+  // #getRegionToRedirect(region = this.#region, redirectUri = this.#redirect_uri): string {
+  //   const westEU: string = 'westeurope';
+  //   const northEU: string = 'northeurope';
+  //   const redirectRegion = region === westEU ? northEU : westEU;
+  //   return redirectUri.replace(this.#region, redirectRegion);
+  // }
+
+  #sessionLog({ name, req, instanceID = this.#instanceID, region = this.#region }: LogParams = {} as LogParams): string {
     return `${name.toLocaleUpperCase()} url: ${req.url}, session: ${JSON.stringify(req.session)}, ip: ${req.ip}, method: ${req.method}, instanceID: ${instanceID}, region: ${region}`;
   }
 }
+
+interface LogParams { name: string, req: Request, instanceID: string, region: string };
