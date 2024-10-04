@@ -7,7 +7,7 @@ import { SSRPagesService } from '../services';
 export class HttpExceptionFilter implements ExceptionFilter {
   readonly logger = new Logger(HttpExceptionFilter.name);
 
-  constructor(private ssrPagesService: SSRPagesService) {}
+  constructor(private ssrPagesService: SSRPagesService) { }
 
   catch(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp();

@@ -1,8 +1,16 @@
-import { Module } from '@nestjs/common';
+import { DynamicModule, Module } from '@nestjs/common';
 import { OMSLogger } from './oms/oms.logger.service';
 
 @Module({
-  providers: [ OMSLogger ],
-  exports: [ OMSLogger ],
+  providers: [
+    OMSLogger
+  ],
+  exports: [OMSLogger],
 })
-export class LoggerModule {}
+export class LoggerModule {
+  static register(): DynamicModule {
+    return {
+      module: LoggerModule
+    };
+  }
+}
