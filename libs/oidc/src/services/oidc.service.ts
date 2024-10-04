@@ -15,13 +15,13 @@ import { SSRPagesService } from './ssr-pages.service';
 import passport = require('passport');
 // const url = require('url');
 
-// const _loginCallbackPath = 'login/callback';
+const _loginCallbackPath = 'login/callback';
 
 @Injectable()
 export class OidcService implements OnModuleInit {
   readonly logger = new Logger(OidcService.name);
   #region: string;
-  // #redirect_uri: string;
+  #redirect_uri: string;
   isMultitenant: boolean = false;
   strategy: any;
   #instanceID: string;
@@ -42,7 +42,7 @@ export class OidcService implements OnModuleInit {
     this.isMultitenant = !!this.options.issuerOrigin;
     this.#instanceID = configService.get('SERVER_INSTANCE_ID');
     this.#region = configService.get('REGION_NAME');
-    // this.#redirect_uri = configService.get('OIDC_REDIRECT_URI') ? `${configService.get('OIDC_REDIRECT_URI')}/${_loginCallbackPath}` : `${this.options.origin}/${_loginCallbackPath}`;
+    this.#redirect_uri = configService.get('OIDC_REDIRECT_URI') ? `${configService.get('OIDC_REDIRECT_URI')}/${_loginCallbackPath}` : `${this.options.origin}/${_loginCallbackPath}`;
   }
 
   async onModuleInit() {
@@ -85,7 +85,7 @@ export class OidcService implements OnModuleInit {
         tokenStore,
         strategy,
       };
-      // this.options.authParams.redirect_uri = this.#redirect_uri;
+      this.options.authParams.redirect_uri = this.#redirect_uri;
       this.options.authParams.nonce = this.options.authParams.nonce === 'true' ? uuid() : this.options.authParams.nonce;
 
       strategy = new OidcStrategy(this, key, channelType);
